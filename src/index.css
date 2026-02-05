@@ -1,0 +1,28 @@
+
+/*
+  TEMPLATE STYLES: These styles are used as a base template.
+  AI is allowed to modify these styles as needed.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+    @apply bg-gray-50 text-gray-900;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* Custom styles for Logo component for responsive sizing and transitions */
+.logo-title {
+  @apply text-base md:text-lg lg:text-xl transition-colors duration-300;
+}
+
+.logo-subtitle {
+  @apply text-xs md:text-sm lg:text-base transition-colors duration-300;
+}
+
+/* No specific .logo-icon-bg needed as the background is now directly applied */
