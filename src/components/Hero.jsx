@@ -57,9 +57,8 @@ const Hero = () => {
               const element = document.getElementById('kontakt');
               if (element) element.scrollIntoView({ behavior: 'smooth' });
             }}
-            variant="outline"
             size="lg"
-            className="bg-transparent text-white border-white/50 hover:bg-white/10 px-8 py-6 text-lg rounded-full font-medium backdrop-blur-sm transition-all"
+            className="bg-white text-[#1B4965] hover:bg-gray-100 border-2 border-white px-8 py-6 text-lg rounded-full font-bold shadow-lg transition-transform hover:scale-105"
           >
             Kontakt oss <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
