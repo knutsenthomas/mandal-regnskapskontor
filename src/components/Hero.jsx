@@ -28,16 +28,16 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="hjem" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
+    <section id="hjem" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center bg-[#1B4965]">
 
-      {/* BAKGRUNNSBILDE - Nå dynamisk */}
+      {/* BAKGRUNNSBILDE */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${bgImage}')` }}
-      >
-        {/* Mørkt filter over bildet for å gjøre tekst lesbar */}
-        <div className="absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply" />
-      </div>
+      />
+
+      {/* FILTER (Overlay) - Ligger oppå bildet for å gi den dype blåfargen */}
+      <div className="absolute inset-0 z-0 bg-[#1B4965]/85" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
 
