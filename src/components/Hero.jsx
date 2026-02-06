@@ -8,7 +8,6 @@ const Hero = () => {
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
   const [bgImage, setBgImage] = useState('/hero-bg.jpg'); // Standard bilde (lokalt)
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const fetchHeroContent = async () => {
@@ -20,14 +19,13 @@ const Hero = () => {
       if (data) {
         setContent(data);
         // Hvis admin har lastet opp et bilde, bruk det. Ellers bruk standard.
-        if (data.hero_image && data.hero_image !== bgImage) {
-          setImageLoaded(false);
+        if (data.hero_image) {
           setBgImage(data.hero_image);
         }
       }
     };
     fetchHeroContent();
-  }, []); // Note: empty dependency array means this runs once on mount. If bgImage needs to react to props later, add dependencies.
+  }, []);
 
   return (
     <section id="hjem" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
@@ -37,14 +35,13 @@ const Hero = () => {
         <img
           src={bgImage}
           alt="Office background"
-          className={`w-full h-full object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onLoad={() => setImageLoaded(true)}
+          className="w-full h-full object-cover text-transparent"
         />
         {/* Mørkt filter over bildet for å gjøre tekst lesbar */}
-        <div className={`absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} />
+        <div className="absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply" />
       </div>
 
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
 
         <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
           {content?.hero_title || "Mandal Regnskapskontor AS"}
