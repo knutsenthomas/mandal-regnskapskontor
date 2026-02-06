@@ -40,7 +40,7 @@ const Hero = () => {
           onLoad={() => setImageLoaded(true)}
         />
         {/* Mørkt filter over bildet for å gjøre tekst lesbar */}
-        <div className="absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply" />
+        <div className={`absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
