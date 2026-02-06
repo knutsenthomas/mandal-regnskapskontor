@@ -32,12 +32,11 @@ const Hero = () => {
 
       {/* BAKGRUNNSBILDE */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-[#1B4965] bg-blend-multiply opacity-80"
         style={{ backgroundImage: `url('${bgImage}')` }}
       />
 
-      {/* FILTER (Overlay) - Ligger oppå bildet for å gi den dype blåfargen */}
-      <div className="absolute inset-0 z-0 bg-[#1B4965]/85" />
+
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
 
