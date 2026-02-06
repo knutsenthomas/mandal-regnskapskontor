@@ -43,7 +43,7 @@ const Hero = () => {
         <div className={`absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
 
         <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
           {content?.hero_title || "Mandal Regnskapskontor AS"}
