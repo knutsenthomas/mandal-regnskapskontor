@@ -20,13 +20,14 @@ const Hero = () => {
       if (data) {
         setContent(data);
         // Hvis admin har lastet opp et bilde, bruk det. Ellers bruk standard.
-        if (data.hero_image) {
+        if (data.hero_image && data.hero_image !== bgImage) {
+          setImageLoaded(false);
           setBgImage(data.hero_image);
         }
       }
     };
     fetchHeroContent();
-  }, []);
+  }, []); // Note: empty dependency array means this runs once on mount. If bgImage needs to react to props later, add dependencies.
 
   return (
     <section id="hjem" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">

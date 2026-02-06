@@ -1,4 +1,3 @@
-
 /*
   TEMPLATE STYLES: These styles are used as a base template.
   AI is allowed to modify these styles as needed.
@@ -12,8 +11,8 @@ html {
 }
 
 body {
-    @apply bg-[#1B4965] text-gray-900;
-    font-family: 'DM Sans', sans-serif;
+  @apply bg-black text-gray-900;
+  font-family: 'DM Sans', sans-serif;
 }
 
 /* Custom styles for Logo component for responsive sizing and transitions */
