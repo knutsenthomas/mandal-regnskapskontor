@@ -8,6 +8,7 @@ const Hero = () => {
   const navigate = useNavigate();
   const [content, setContent] = useState(null);
   const [bgImage, setBgImage] = useState('/hero-bg.jpg'); // Standard bilde (lokalt)
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const fetchHeroContent = async () => {
@@ -35,10 +36,11 @@ const Hero = () => {
         <img
           src={bgImage}
           alt="Office background"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
         />
         {/* Mørkt filter over bildet for å gjøre tekst lesbar */}
-        <div className="absolute inset-0 bg-[#1B4965]/80 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
