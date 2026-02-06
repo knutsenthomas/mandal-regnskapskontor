@@ -31,12 +31,10 @@ const Hero = () => {
     <section id="hjem" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
 
       {/* BAKGRUNNSBILDE - Nå dynamisk */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={bgImage}
-          alt="Office background"
-          className="w-full h-full object-cover text-transparent"
-        />
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${bgImage}')` }}
+      >
         {/* Mørkt filter over bildet for å gjøre tekst lesbar */}
         <div className="absolute inset-0 bg-[#1B4965]/95 mix-blend-multiply" />
       </div>
