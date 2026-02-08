@@ -52,28 +52,31 @@ const ContactForm = () => {
       const { error: supabaseError } = await supabase
         .from('contact_messages')
         .insert([
-          { 
-            navn: formData.navn, 
-            epost: formData.epost, 
-            telefon: formData.telefon, 
-            bedriftsnavn: formData.bedriftsnavn, 
-            melding: formData.melding 
+          {
+            navn: formData.navn,
+            epost: formData.epost,
+            telefon: formData.telefon,
+            bedriftsnavn: formData.bedriftsnavn,
+            melding: formData.melding
           }
         ]);
 
       if (supabaseError) throw supabaseError;
 
-      // 2. SEND E-POST VARSEL (Valgfritt, bruker Web3Forms)
-      // Hvis du kun vil bruke Supabase, kan du fjerne hele denne 'fetch'-blokken
-      await fetch("https://api.web3forms.com/submit", {
+      // 2. SEND E-POST VARSEL (Bruker Google Forms)
+      const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfSD_hhiM9Ud4D0VWuwgiNRdCK1KGf__RraDTCZ7dkbvff4Yw/formResponse";
+
+      const formParams = new URLSearchParams();
+      formParams.append('entry.599509457', formData.navn);        // Navn
+      formParams.append('entry.1400512221', formData.telefon);    // Telefon
+      formParams.append('entry.933613981', formData.epost);       // E-post
+      formParams.append('entry.737423993', formData.bedriftsnavn);// Bedrift
+      formParams.append('entry.900097937', formData.melding);     // Melding
+
+      await fetch(googleFormUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: "66c47691-798c-49ec-88cf-ced0cea68979", // <--- LEGG INN NØKKEL HER
-          subject: "Ny henvendelse",
-          from_name: "Mandal Regnskapskontor nettside",
-          ...formData,
-        }),
+        mode: "no-cors", // Viktig for Google Forms
+        body: formParams
       });
 
       // Suksess!
@@ -100,7 +103,7 @@ const ContactForm = () => {
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Overskrift */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -117,7 +120,7 @@ const ContactForm = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          
+
           {/* Kontaktinfo-kort (Venstre side) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -126,22 +129,22 @@ const ContactForm = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="bg-[#1B4965] rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden">
-               {/* ... Samme innhold som før ... */}
-               <h3 className="text-2xl font-bold mb-10 relative z-10">Kontaktinformasjon</h3>
-               <div className="space-y-8 relative z-10">
-                  <div className="flex items-start space-x-6">
-                    <Phone className="w-6 h-6 mt-1" />
-                    <div><p className="text-xs font-bold text-blue-200">Telefon</p><p className="text-xl">91 75 98 55</p></div>
-                  </div>
-                  <div className="flex items-start space-x-6">
-                    <Mail className="w-6 h-6 mt-1" />
-                    <div><p className="text-xs font-bold text-blue-200">E-post</p><p className="text-xl break-all">jan@mandalregnskapskontor.no</p></div>
-                  </div>
-                  <div className="flex items-start space-x-6">
-                    <MapPin className="w-6 h-6 mt-1" />
-                    <div><p className="text-xs font-bold text-blue-200">Adresse</p><p className="text-xl">Bryggegata 1, 4514 Mandal</p></div>
-                  </div>
-               </div>
+              {/* ... Samme innhold som før ... */}
+              <h3 className="text-2xl font-bold mb-10 relative z-10">Kontaktinformasjon</h3>
+              <div className="space-y-8 relative z-10">
+                <div className="flex items-start space-x-6">
+                  <Phone className="w-6 h-6 mt-1" />
+                  <div><p className="text-xs font-bold text-blue-200">Telefon</p><p className="text-xl">91 75 98 55</p></div>
+                </div>
+                <div className="flex items-start space-x-6">
+                  <Mail className="w-6 h-6 mt-1" />
+                  <div><p className="text-xs font-bold text-blue-200">E-post</p><p className="text-xl break-all">jan@mandalregnskapskontor.no</p></div>
+                </div>
+                <div className="flex items-start space-x-6">
+                  <MapPin className="w-6 h-6 mt-1" />
+                  <div><p className="text-xs font-bold text-blue-200">Adresse</p><p className="text-xl">Bryggegata 1, 4514 Mandal</p></div>
+                </div>
+              </div>
             </div>
           </motion.div>
 
@@ -153,7 +156,7 @@ const ContactForm = () => {
             transition={{ duration: 0.6 }}
           >
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Navn *</label>

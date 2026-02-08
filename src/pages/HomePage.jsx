@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import About from '@/components/About';
+import FinancialCalendar from '@/components/FinancialCalendar';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 
@@ -22,13 +23,16 @@ const HomePage = () => {
         <div id="hjem">
           <Hero />
         </div>
-        <div id="tjenester">
+        <div id="tjenester" className="scroll-mt-16">
           <Services />
         </div>
-        <div id="om-oss">
+        <div id="om-oss" className="scroll-mt-16">
           <About />
         </div>
-        <div id="kontakt">
+        <div id="kalender" className="scroll-mt-16">
+          <FinancialCalendar />
+        </div>
+        <div id="kontakt" className="scroll-mt-16">
           <ContactForm />
         </div>
         <Footer />

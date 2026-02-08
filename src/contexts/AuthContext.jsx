@@ -11,56 +11,20 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Check active session and verify admin status
-    const checkUser = async () => {
-      try {
-        console.log("Initializing Auth Context...");
-        if (!supabase) {
-          console.error("Supabase client is not initialized.");
-          setAuthError("Systemfeil: Databaseforbindelse mangler.");
-          setLoading(false);
-          return;
-        }
-
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error("Error fetching session:", error);
-          setAuthError(error.message);
-        }
-
-        if (session?.user) {
-          console.log("User session found:", session.user.email);
-          await verifyAdminStatus(session.user);
-        } else {
-          setUser(null);
-          setIsAdmin(false);
-        }
-      } catch (err) {
-        console.error("Unexpected error during auth initialization:", err);
-        setAuthError("Uventet feil ved oppstart.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkUser();
-
-    // Listen for auth changes
+    // Listen for auth changes - this fires immediately with initial session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log(`Auth state changed: ${event}`);
+
       if (session?.user) {
-        // If we just signed in, verify admin status again
-        if (event === 'SIGNED_IN') {
-          await verifyAdminStatus(session.user);
-        } else {
-          setUser(session.user);
-        }
+        // If we have a user, verify admin status
+        // This handles both initial load and subsequent sign-ins (including magic link)
+        await verifyAdminStatus(session.user);
       } else {
+        // No user session
         setUser(null);
         setIsAdmin(false);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -98,6 +62,9 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Unexpected error verifying admin:", err);
       setIsAdmin(false);
+    } finally {
+      // ALWAYS set loading to false after verification is done
+      setLoading(false);
     }
   };
 
@@ -134,6 +101,10 @@ export const AuthProvider = ({ children }) => {
         }
 
         console.log("Sign in successful and admin verified.");
+        // FIX: Update state immediately to avoid race condition with ProtectedRoute
+        setUser(data.user);
+        setIsAdmin(true);
+
         return { data, error: null };
       }
 

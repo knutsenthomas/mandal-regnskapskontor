@@ -116,6 +116,34 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
 
   const addItem = (field, emptyItem) => {
     setData(prev => ({ ...prev, [field]: [...prev[field], emptyItem] }));
+
+    let title = "Nytt element lagt til";
+    let description = "Et nytt felt er lagt til i listen.";
+
+    switch (field) {
+      case 'offerings':
+        title = "Nytt tilbudspunkt lagt til";
+        description = "Fyll inn ikon og tittel for det nye punktet.";
+        break;
+      case 'process_steps':
+        title = "Nytt prosessteg lagt til";
+        description = "Beskriv det nye steget i prosessen.";
+        break;
+      case 'pricing_packages':
+        title = "Ny prispakke lagt til";
+        description = "En ny, tom prispakke er opprettet.";
+        break;
+      case 'faqs':
+        title = "Nytt spørsmål lagt til";
+        description = "Skriv inn spørsmål og svar.";
+        break;
+    }
+
+    toast({
+      title: title,
+      description: description,
+      className: "bg-blue-50 border-blue-200"
+    });
   };
 
   const updateItem = (field, index, subField, value) => {
@@ -135,18 +163,51 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
     if (!newPackages[packageIndex].features) newPackages[packageIndex].features = [];
     newPackages[packageIndex].features.push("");
     setData(prev => ({ ...prev, pricing_packages: newPackages }));
+    toast({
+      title: "Ny funksjon lagt til",
+      description: "En ny linje for funksjon er lagt til i pakken.",
+      className: "bg-blue-50 border-blue-200"
+    });
   };
 
   const removeFeature = (packageIndex, featureIndex) => {
     const newPackages = [...data.pricing_packages];
     newPackages[packageIndex].features.splice(featureIndex, 1);
     setData(prev => ({ ...prev, pricing_packages: newPackages }));
+    toast({
+      title: "Funksjon slettet",
+      description: "Funksjonen er fjernet fra pakken.",
+      variant: "destructive"
+    });
   };
 
   const removeItem = (field, index) => {
     const newList = [...data[field]];
     newList.splice(index, 1);
     setData(prev => ({ ...prev, [field]: newList }));
+
+    let title = "Element slettet";
+
+    switch (field) {
+      case 'offerings':
+        title = "Tilbudspunkt slettet";
+        break;
+      case 'process_steps':
+        title = "Prosessteg slettet";
+        break;
+      case 'pricing_packages':
+        title = "Prispakke slettet";
+        break;
+      case 'faqs':
+        title = "Spørsmål slettet";
+        break;
+    }
+
+    toast({
+      title: title,
+      description: "Elementet er fjernet fra listen.",
+      variant: "destructive"
+    });
   };
 
   if (!selectedServiceId) return <div className="p-8 text-center text-gray-500">Velg en tjeneste for å redigere detaljer.</div>;
@@ -165,12 +226,12 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
         }
       `}</style>
 
-      <div className="flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-20 py-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-[#1B4965]">Redigerer detaljer</h2>
-        
-        <button 
-          onClick={handleSave} 
-          disabled={loading} 
+      <div className="flex justify-between items-center mb-8 pt-2">
+        <h2 className="text-lg font-semibold text-gray-700">Innhold</h2>
+
+        <button
+          onClick={handleSave}
+          disabled={loading}
           className="super-custom-save-btn inline-flex items-center justify-center px-4 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -219,12 +280,12 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
                 <SelectTrigger className="w-[180px] bg-white z-10">
                   <SelectValue placeholder="Ikon" />
                 </SelectTrigger>
-                
+
                 {/* HER ER FIKSEN: bg-white og z-50 for å dekke over bakgrunnen */}
                 <SelectContent className="bg-white border border-gray-200 shadow-xl z-50 max-h-[300px] overflow-y-auto">
                   {AVAILABLE_ICONS.map(icon => <SelectItem key={icon} value={icon} className="cursor-pointer hover:bg-gray-100">{icon}</SelectItem>)}
                 </SelectContent>
-                
+
               </Select>
               <input
                 type="text"

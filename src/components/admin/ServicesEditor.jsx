@@ -27,11 +27,21 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
   const addService = () => {
     setServices([...services, { title: '', description: '' }]);
+    toast({
+      title: "Ny tjeneste lagt til",
+      description: "Et nytt kort er opprettet nederst i listen.",
+      className: "bg-blue-50 border-blue-200"
+    });
   };
 
   const removeService = (index) => {
     const updatedServices = services.filter((_, i) => i !== index);
     setServices(updatedServices);
+    toast({
+      title: "Tjeneste slettet",
+      description: "Tjenesten er fjernet fra listen.",
+      variant: "destructive"
+    });
   };
 
   const handleSave = async () => {
@@ -90,14 +100,14 @@ const ServicesEditor = ({ content, onUpdate }) => {
       <div className="space-y-4">
         {services.map((service, index) => (
           <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative group">
-            <button 
+            <button
               onClick={() => removeService(index)}
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
               title="Slett tjeneste"
             >
               <Trash2 className="w-5 h-5" />
             </button>
-            
+
             <div className="space-y-4 pr-8">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
@@ -111,7 +121,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
                   placeholder="Navn på tjeneste"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Beskrivelse
@@ -136,8 +146,8 @@ const ServicesEditor = ({ content, onUpdate }) => {
       </div>
 
       <div className="flex justify-end pt-4 border-t border-gray-100">
-        <button 
-          onClick={handleSave} 
+        <button
+          onClick={handleSave}
           disabled={loading}
           className="super-custom-save-btn inline-flex items-center justify-center px-6 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

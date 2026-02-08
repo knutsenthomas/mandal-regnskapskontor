@@ -90,8 +90,8 @@ const LoginPage = () => {
       errorMessage = "Sjekk e-posten din for innloggingslenke.";
     } else if (error.message.includes("Invalid login credentials")) {
       errorMessage = "Feil e-post eller passord.";
-    } else if (error.message.includes("Bruker har ikke admin-rettigheter")) {
-      errorMessage = "Denne brukeren har ikke tilgang til admin-panelet.";
+    } else {
+      errorMessage = "Feil: " + error.message; // Show raw error for debugging
     }
 
     setLocalError(errorMessage);

@@ -33,10 +33,20 @@ const AboutEditor = ({ content, onUpdate }) => {
 
   const addValue = () => {
     setValues([...values, { title: '', description: '' }]);
+    toast({
+      title: "Ny verdi lagt til",
+      description: "Et nytt punkt er opprettet nederst.",
+      className: "bg-blue-50 border-blue-200"
+    });
   };
 
   const removeValue = (index) => {
     setValues(values.filter((_, i) => i !== index));
+    toast({
+      title: "Verdi slettet",
+      description: "Punktet er fjernet fra listen.",
+      variant: "destructive"
+    });
   };
 
   const handleImageUpload = async (e) => {
