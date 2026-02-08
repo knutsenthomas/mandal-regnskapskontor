@@ -7,24 +7,45 @@ import ServiceCard from './ServiceCard';
 
 const Services = () => {
   const [dbServices, setDbServices] = useState([]);
-  
+
   // Static configuration for visual assets (Icons and Gradients)
   // We map these to the database data by index
+  // Updated with placeholder images
   const serviceConfig = [
-    { icon: Calculator, gradient: 'from-[#1B4965] to-[#2A6F97]' },
-    { icon: FileText, gradient: 'from-[#1B4965] to-[#0F3347]' },
-    { icon: Users, gradient: 'from-[#2A6F97] to-[#468FAF]' },
-    { icon: ClipboardCheck, gradient: 'from-[#0F3347] to-[#1B4965]' },
-    { icon: TrendingUp, gradient: 'from-[#1B4965] to-[#2C7DA0]' }
+    {
+      icon: Calculator,
+      gradient: 'from-[#1B4965] to-[#2A6F97]',
+      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800' // Accounting 
+    },
+    {
+      icon: FileText,
+      gradient: 'from-[#1B4965] to-[#0F3347]',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800' // Invoicing/Paperwork (New URL)
+    },
+    {
+      icon: Users,
+      gradient: 'from-[#2A6F97] to-[#468FAF]',
+      image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800' // Team/Meeting
+    },
+    {
+      icon: ClipboardCheck,
+      gradient: 'from-[#0F3347] to-[#1B4965]',
+      image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800' // Audit/Checklist
+    },
+    {
+      icon: TrendingUp,
+      gradient: 'from-[#1B4965] to-[#2C7DA0]',
+      image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800' // Growth/Stocks
+    }
   ];
 
   // Default data in case DB is empty or loading
   const defaultServices = [
     { title: 'Regnskap', description: 'Full digital kontroll og presisjon i hver postering. Med våre moderne systemer sikrer vi at du alltid har full kontroll over din økonomiske status.' },
-    { title: 'Fakturering', description: 'Effektive rutiner som sikrer raskere innbetaling. Vi hjelper deg med alt fra fakturaoppsett til oppfølging av utestående beløp.' },
-    { title: 'Lønn & Personal', description: 'Trygg håndtering av dine ansattes viktigste gode. Vi tar oss av lønnsbehandling, skattetrekk og all nødvendig rapportering.' },
-    { title: 'Revisjon', description: 'Grundig gjennomgang som gir trygghet og innsikt. Våre erfarne revisorer sikrer at alt er i henhold til gjeldende regelverk.' },
-    { title: 'Skatteplanlegging', description: 'Spesialkompetanse innen prosjekt og utvikling. Vi optimaliserer din skattesituasjon på en lovlig og effektiv måte.' }
+    { title: 'Fakturering', description: 'Effektive rutiner som sikrer raskere innbetaling.' }, // Shortened description for card layout
+    { title: 'Lønn & Personal', description: 'Trygg håndtering av dine ansattes viktigste gode.' },
+    { title: 'Revisjon', description: 'Grundig gjennomgang som gir trygghet og innsikt.' },
+    { title: 'Skatteplanlegging', description: 'Optimaliser din skattesituasjon på en lovlig og effektiv måte.' }
   ];
 
   useEffect(() => {
@@ -93,14 +114,14 @@ const Services = () => {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4"
         >
           {displayServices.map((service, index) => (
-            <ServiceCard 
-              key={index} 
-              service={service} 
-              index={index} 
-              variants={item} 
+            <ServiceCard
+              key={index}
+              service={service}
+              index={index}
+              variants={item}
             />
           ))}
         </motion.div>

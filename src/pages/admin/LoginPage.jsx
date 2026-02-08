@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Briefcase, Lock, Mail, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,9 +16,15 @@ const LoginPage = () => {
   const [localError, setLocalError] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
 
-  const { signIn, signInWithMagicLink } = useAuth();
+  const { signIn, signInWithMagicLink, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/admin/dashboard');
+    }
+  }, [user, navigate]);
 
   const validateForm = (type) => {
     if (!email) {
@@ -255,4 +262,10 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+const LoginPageWithBoundary = () => (
+  <ErrorBoundary>
+    <LoginPage />
+  </ErrorBoundary>
+);
+
+export default LoginPageWithBoundary;

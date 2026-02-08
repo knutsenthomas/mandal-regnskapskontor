@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Listen for auth changes - this fires immediately with initial session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`Auth state changed: ${event}`);
+
 
       if (session?.user) {
         // If we have a user, verify admin status
@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
 
   const verifyAdminStatus = async (currentUser) => {
     try {
-      console.log("Verifying admin status for:", currentUser.email);
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
@@ -51,7 +50,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (data) {
-        console.log("Admin verified:", data);
         setUser(currentUser);
         setIsAdmin(true);
         setAuthError(null);
@@ -71,8 +69,6 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     setAuthError(null);
     try {
-      console.log("Attempting sign in for:", email);
-
       // Explicitly constructing the credentials object for Supabase
       const credentials = {
         email: email,
@@ -100,7 +96,6 @@ export const AuthProvider = ({ children }) => {
           throw new Error("Bruker har ikke admin-rettigheter.");
         }
 
-        console.log("Sign in successful and admin verified.");
         // FIX: Update state immediately to avoid race condition with ProtectedRoute
         setUser(data.user);
         setIsAdmin(true);
@@ -120,7 +115,6 @@ export const AuthProvider = ({ children }) => {
   const signInWithMagicLink = async (email) => {
     setAuthError(null);
     try {
-      console.log("Sending magic link to:", email);
       const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
@@ -138,7 +132,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    console.log("Signing out...");
     const { error } = await supabase.auth.signOut();
     if (error) console.error("Sign out error:", error);
     setUser(null);

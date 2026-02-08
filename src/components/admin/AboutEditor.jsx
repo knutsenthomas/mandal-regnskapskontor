@@ -136,20 +136,14 @@ const AboutEditor = ({ content, onUpdate }) => {
       {/* Image Section */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Bilde</label>
-        <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden h-64">
-          {aboutImage ? (
-            <img
-              src={aboutImage}
-              alt="Preview"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400">
-              <div className="flex flex-col items-center">
-                <ImageIcon className="w-12 h-12 mb-2" />
-                <span>Ingen bilde valgt</span>
-              </div>
-            </div>
+        <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden h-64 group">
+          <img
+            src={aboutImage || "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D"}
+            alt="Preview"
+            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+          />
+          {!aboutImage && (
+            <span className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium z-10">Standardbilde</span>
           )}
 
           <div className="relative z-10 flex flex-col items-center bg-white/90 p-4 rounded-xl shadow-sm backdrop-blur-sm">

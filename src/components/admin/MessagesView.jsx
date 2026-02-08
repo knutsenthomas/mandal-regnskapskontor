@@ -118,6 +118,30 @@ const MessagesView = () => {
 
     const unreadCount = messages.filter(m => !m.read).length;
 
+    const markAllAsRead = async () => {
+        try {
+            const { error } = await supabase
+                .from('contact_messages')
+                .update({ read: true })
+                .eq('read', false);
+
+            if (error) throw error;
+
+            setMessages(prev => prev.map(msg => ({ ...msg, read: true })));
+            toast({
+                title: "Suksess",
+                description: "Alle meldinger er markert som lest.",
+            });
+        } catch (err) {
+            console.error('Error marking all as read:', err);
+            toast({
+                title: "Feil",
+                description: "Kunne ikke markere alle som lest.",
+                variant: "destructive"
+            });
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-12 text-gray-500">
@@ -146,14 +170,22 @@ const MessagesView = () => {
                         Du har <span className="font-semibold text-[#1B4965]">{unreadCount}</span> uleste meldinger
                     </p>
                 </div>
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                        placeholder="Søk i meldinger..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9"
-                    />
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    {unreadCount > 0 && (
+                        <Button variant="outline" onClick={markAllAsRead} className="whitespace-nowrap">
+                            <MailOpen className="w-4 h-4 mr-2" />
+                            Marker alle som lest
+                        </Button>
+                    )}
+                    <div className="relative w-full sm:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                            placeholder="Søk i meldinger..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
                 </div>
             </div>
 

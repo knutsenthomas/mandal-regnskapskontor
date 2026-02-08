@@ -10,6 +10,8 @@ const GeneralEditor = ({ content, onUpdate }) => {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [logoUrl, setLogoUrl] = useState('');
+    const [logoText, setLogoText] = useState('');
+    const [faviconUrl, setFaviconUrl] = useState('');
     const [gaId, setGaId] = useState(''); // Google Analytics ID
 
     // Fetch initial data
@@ -23,12 +25,20 @@ const GeneralEditor = ({ content, onUpdate }) => {
     const fetchSettings = async () => {
         const { data } = await supabase
             .from('site_settings')
-            .select('value')
-            .eq('key', 'google_analytics_id')
-            .single();
+            .select('key, value');
 
         if (data) {
-            setGaId(data.value || '');
+            const settingsMap = {};
+            data.forEach(item => {
+                settingsMap[item.key] = item.value;
+            });
+
+            setGaId(settingsMap['google_analytics_id'] || '');
+            setLogoText(settingsMap['logo_text'] || '');
+            setFaviconUrl(settingsMap['favicon_url'] || '');
+            if (settingsMap['logo_url']) {
+                setLogoUrl(settingsMap['logo_url']);
+            }
         }
     };
 
@@ -71,30 +81,76 @@ const GeneralEditor = ({ content, onUpdate }) => {
         }
     };
 
+    const handleFaviconUpload = async (e) => {
+        try {
+            setUploading(true);
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `favicon-${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            // Last opp til Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('images') // Use same bucket for simplicity
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // Hent offentlig URL
+            const { data } = supabase.storage.from('images').getPublicUrl(filePath);
+            setFaviconUrl(data.publicUrl);
+
+            toast({
+                title: "Favicon lastet opp",
+                description: "Husk å lagre endringene.",
+                className: "bg-green-50 border-green-200"
+            });
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            toast({
+                title: "Feil ved opplasting",
+                description: "Kunne ikke laste opp favicon.",
+                variant: "destructive"
+            });
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleSave = async () => {
         setLoading(true);
 
         try {
             // 1. Update Content (Logo)
+            // 1. Update Content (Logo) via RPC
             if (content?.id) {
-                const { error: contentError } = await supabase
-                    .from('content')
-                    .update({ logo_url: logoUrl })
-                    .eq('id', content.id);
+                const { error: contentError } = await supabase.rpc('update_general_content', {
+                    p_id: content.id,
+                    p_logo_url: logoUrl
+                });
 
                 if (contentError) throw contentError;
             }
 
-            // 2. Update Settings (GA ID)
-            // Upsert logic for GA ID
-            const { error: settingsError } = await supabase
-                .from('site_settings')
-                .upsert({
-                    key: 'google_analytics_id',
-                    value: gaId
-                }, { onConflict: 'key' });
+            // 2. Update Settings (GA ID, Logo Text, Favicon) via RPC
+            // Since we have multiple settings, we call upsert for each or a loop
+            const settingsToUpdate = [
+                { key: 'google_analytics_id', value: gaId },
+                { key: 'logo_text', value: logoText },
+                { key: 'favicon_url', value: faviconUrl },
+                { key: 'logo_url', value: logoUrl }
+            ];
 
-            if (settingsError) throw settingsError;
+            for (const setting of settingsToUpdate) {
+                const { error: settingsError } = await supabase.rpc('upsert_site_setting', {
+                    p_key: setting.key,
+                    p_value: setting.value
+                });
+                if (settingsError) throw settingsError;
+            }
 
             toast({
                 title: "Lagret!",
@@ -158,6 +214,70 @@ const GeneralEditor = ({ content, onUpdate }) => {
                             </label>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">Anbefalt: PNG med gjennomsiktig bakgrunn</p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* LOGO TEXT SECTION */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Logo Tekst</CardTitle>
+                    <CardDescription>Overstyr teksten som vises ved siden av logoen (valgfritt).</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <input
+                        type="text"
+                        placeholder="MANDAL REGNSKAPSKONTOR"
+                        value={logoText}
+                        onChange={(e) => setLogoText(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                        La stå tom for å bruke standard tekst.
+                    </p>
+                </CardContent>
+            </Card>
+
+            {/* FAVICON SECTION */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Favicon</CardTitle>
+                    <CardDescription>Last opp ikonet som vises i nettleser-fanen.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50">
+                        {faviconUrl ? (
+                            <div className="relative group">
+                                <img src={faviconUrl} alt="Favicon Preview" className="h-12 w-12 object-contain mb-4" />
+                            </div>
+                        ) : (
+                            <div className="text-gray-400 flex flex-col items-center mb-4">
+                                <ImageIcon className="w-8 h-8 mb-2" />
+                                <span className="text-sm">Ingen favicon lastet opp</span>
+                            </div>
+                        )}
+
+                        <div className="relative">
+                            <input
+                                type="file"
+                                accept="image/x-icon,image/png,image/svg+xml"
+                                onChange={handleFaviconUpload}
+                                className="hidden"
+                                id="favicon-upload"
+                                disabled={uploading}
+                            />
+                            <label
+                                htmlFor="favicon-upload"
+                                className={`cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {uploading ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                ) : (
+                                    <Upload className="w-4 h-4 mr-2" />
+                                )}
+                                {uploading ? 'Laster opp...' : 'Last opp favicon'}
+                            </label>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

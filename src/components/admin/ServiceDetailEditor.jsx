@@ -232,7 +232,7 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <label className="block text-sm font-bold text-gray-700">Utvidet Beskrivelse (Innledning)</label>
+          <label className="block text-sm font-bold text-gray-700">Utvidet beskrivelse (Innledning)</label>
           <textarea
             value={data.extended_description}
             onChange={(e) => setData({ ...data, extended_description: e.target.value })}

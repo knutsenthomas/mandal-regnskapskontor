@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Activity, Calendar as CalIcon, Layers as LayersIcon } from 'lucide-react';
 
 // EDITORS
+import ThemeEditor from '@/components/admin/ThemeEditor';
 import HeroEditor from '@/components/admin/HeroEditor';
 import ServicesEditor from '@/components/admin/ServicesEditor';
 import ServiceDetailEditor from '@/components/admin/ServiceDetailEditor';
@@ -69,10 +70,11 @@ const AdminDashboard = () => {
       'services': 'Tjenester',
       'service-details': 'Rediger Tjenesteinnhold',
       'hero': 'Forside (Hero Seksjon)',
-      'about': 'Om Oss',
+      'about': 'Om oss',
       'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
-      'footer': 'Footer & Innstillinger'
+      'footer': 'Footer & Innstillinger',
+      'theme': 'Tema & Farger'
     };
     setActiveTabTitle(titles[activeTab] || 'Admin');
   }, [activeTab]);
@@ -97,12 +99,26 @@ const AdminDashboard = () => {
         supabase.from('site_settings').select('value').eq('key', 'google_analytics_id').single()
       ]);
 
-      const { data: contentData, error: contentError } = contentResult;
+      let { data: contentData, error: contentError } = contentResult;
       const { data: settingsData } = settingsResult; // Error here is fine if not found
 
       if (contentError) {
-        console.warn("Supabase fetch error (non-fatal for Calendar):", contentError);
-        if (contentError.code !== 'PGRST116') {
+        if (contentError.code === 'PGRST116') {
+          // No content found (row is missing). Let's create it!
+          const { data: newContent, error: createError } = await supabase
+            .from('content')
+            .insert([{}]) // Insert empty row, let DB handle defaults/ID
+            .select()
+            .single();
+
+          if (createError) {
+            console.error("Failed to create default content:", createError);
+            setFetchError("Kunne ikke opprette innholds-rad i databasen.");
+          } else {
+            contentData = newContent; // Use the newly created row
+          }
+        } else {
+          console.warn("Supabase fetch error:", contentError);
           setFetchError(contentError.message);
         }
       }
@@ -291,6 +307,9 @@ const AdminDashboard = () => {
           </div>
         );
 
+      case 'theme':
+        return <ThemeEditor />;
+
       default:
         return renderDashboardHome();
     }
@@ -328,6 +347,8 @@ const AdminDashboard = () => {
         open={isProfileOpen}
         onOpenChange={setIsProfileOpen}
       />
+
+
     </DashboardLayout>
   );
 };

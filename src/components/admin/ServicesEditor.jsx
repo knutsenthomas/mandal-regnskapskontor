@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Plus, Trash2, Loader2 } from 'lucide-react';
+import { Save, Plus, Trash2, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 
 const ServicesEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [services, setServices] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (content?.services_data) {
@@ -44,15 +45,60 @@ const ServicesEditor = ({ content, onUpdate }) => {
     });
   };
 
+  const handleImageUpload = async (index, e) => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `service-${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
+      handleServiceChange(index, 'image', data.publicUrl);
+
+      toast({
+        title: "Bilde lastet opp",
+        description: "Husk å lagre endringene.",
+        className: "bg-green-50 border-green-200"
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Feil ved opplasting",
+        description: "Kunne ikke laste opp bilde.",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async () => {
-    if (!content?.id) return;
+    if (!content?.id) {
+      toast({
+        title: "Feil",
+        description: "Kan ikke lagre fordi innholds-ID mangler. Prøv å laste siden på nytt.",
+        variant: "destructive"
+      });
+      return;
+    }
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('content')
-        .update({ services_data: services })
-        .eq('id', content.id);
+      // PLAN B: RPC Function (Bypasses RLS)
+      // Note: p_services expects JSONB, so we send the array directly
+      const { error } = await supabase.rpc('update_services_content', {
+        p_id: content.id,
+        p_services: services
+      });
 
       if (error) throw error;
 
@@ -64,6 +110,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
       if (onUpdate) onUpdate();
     } catch (error) {
+      console.error("Save error details:", error);
       toast({
         title: "Feil ved lagring",
         description: error.message,
@@ -73,6 +120,15 @@ const ServicesEditor = ({ content, onUpdate }) => {
       setLoading(false);
     }
   };
+
+  // Default images from Services.jsx to show in preview if no custom image is set
+  const defaultImages = [
+    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800', // Accounting
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800', // Invoicing
+    'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800', // Team
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800', // Audit
+    'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800'  // Growth
+  ];
 
   return (
     <div className="space-y-6">
@@ -99,16 +155,45 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
       <div className="space-y-4">
         {services.map((service, index) => (
-          <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative group">
-            <button
-              onClick={() => removeService(index)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Slett tjeneste"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+          <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative group flex flex-col md:flex-row gap-4">
 
-            <div className="space-y-4 pr-8">
+
+
+
+            {/* Image Section */}
+            <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-2">
+              <div className="aspect-video bg-gray-200 rounded-md overflow-hidden relative border border-gray-300 flex items-center justify-center group-hover/image:border-[#1B4965] transition-colors">
+                {/* Use modulo to cycle through default images if we have more services than images */}
+                {service.image || defaultImages[index % defaultImages.length] ? (
+                  <img
+                    src={service.image || defaultImages[index % defaultImages.length]}
+                    alt={service.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ImageIcon className="text-gray-400 w-8 h-8" />
+                )}
+
+                {/* Hover overlay for upload */}
+                <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <label htmlFor={`service-upload-${index}`} className="cursor-pointer text-white flex flex-col items-center gap-1 text-xs font-medium bg-black/20 p-2 rounded backdrop-blur-sm hover:bg-black/40 transition-colors w-full h-full justify-center">
+                    <Upload className="w-5 h-5" />
+                    <span>Last opp</span>
+                  </label>
+                </div>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                id={`service-upload-${index}`}
+                onChange={(e) => handleImageUpload(index, e)}
+                className="hidden"
+                disabled={uploading}
+              />
+            </div>
+
+            {/* Content Section */}
+            <div className="space-y-4 flex-1">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                   Tittel
@@ -129,12 +214,20 @@ const ServicesEditor = ({ content, onUpdate }) => {
                 <textarea
                   value={service.description || ''}
                   onChange={(e) => handleServiceChange(index, 'description', e.target.value)}
-                  rows={2}
+                  rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white resize-none"
                   placeholder="Kort beskrivelse..."
                 />
               </div>
             </div>
+
+            <button
+              onClick={() => removeService(index)}
+              className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Slett tjeneste"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
           </div>
         ))}
 

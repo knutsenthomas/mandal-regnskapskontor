@@ -1,23 +1,39 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
+import { useSite } from '@/contexts/SiteContext';
 
 const Logo = ({
 	color = 'dark',
 	isMobileMenu = false
 }) => {
+	const { logoUrl, logoText } = useSite();
 	const isDarkText = color === 'dark';
 
 	return (
 		<motion.div initial={false} className="flex items-center space-x-3 cursor-pointer select-none">
-			{/* Icon Container - Always Blue Background */}
-			<motion.div
-				className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-[#1B4965]"
-				whileHover={{ scale: 1.05 }}
-				whileTap={{ scale: 0.95 }}
-			>
-				<Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
-			</motion.div>
+			{/* Icon Container */}
+			{logoUrl ? (
+				<motion.div
+					className="flex-shrink-0"
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
+				>
+					<img
+						src={logoUrl}
+						alt="Logo"
+						className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+					/>
+				</motion.div>
+			) : (
+				<motion.div
+					className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-[#1B4965]"
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
+				>
+					<Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
+				</motion.div>
+			)}
 
 			{/* Text Container */}
 			<div className="flex flex-col justify-center">
@@ -25,10 +41,9 @@ const Logo = ({
 					initial={false}
 					animate={{ color: isDarkText ? '#1B4965' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
-					// ENDRING HER: Har fjernet 'font-serif' fra linjen under
 					className={`font-bold leading-tight tracking-wide uppercase whitespace-nowrap ${isMobileMenu ? 'text-sm' : 'text-sm sm:text-base md:text-lg'}`}
 				>
-					MANDAL REGNSKAPSKONTOR
+					{logoText || "MANDAL REGNSKAPSKONTOR"}
 				</motion.span>
 
 				<motion.span

@@ -14,11 +14,6 @@ const Navigation = () => {
   const isHome = location.pathname === '/' || location.pathname === '';
   const isTransparent = isHome && !scrolled;
 
-  // HIDE NAVIGATION ON ADMIN PAGES
-  if (location.pathname.startsWith('/admin')) {
-    return null;
-  }
-
   // Håndter scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +31,11 @@ const Navigation = () => {
       document.body.style.overflow = '';
     }
   }, [isOpen]);
+
+  // HIDE NAVIGATION ON ADMIN PAGES
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
 
   const handleLogoClick = () => {
     setIsOpen(false);
