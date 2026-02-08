@@ -14,6 +14,11 @@ const Navigation = () => {
   const isHome = location.pathname === '/' || location.pathname === '';
   const isTransparent = isHome && !scrolled;
 
+  // HIDE NAVIGATION ON ADMIN PAGES
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
+
   // Håndter scroll
   useEffect(() => {
     const handleScroll = () => {

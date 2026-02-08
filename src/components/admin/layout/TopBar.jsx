@@ -1,8 +1,8 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User, Menu } from 'lucide-react';
 
-const TopBar = ({ title }) => {
+const TopBar = ({ title, onMenuClick }) => {
     const { user } = useAuth();
     const email = user?.email || 'Ukjent bruker';
 
@@ -12,11 +12,18 @@ const TopBar = ({ title }) => {
     const displayName = name.charAt(0).toUpperCase() + name.slice(1);
 
     return (
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm z-10 sticky top-0">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 sticky top-0">
 
             {/* LEFT: Context/Title */}
-            <div className="flex items-center gap-4">
-                <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+            <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B4965]/20"
+                    aria-label="Åpne meny"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+                <h2 className="text-lg font-semibold text-gray-800 truncate">{title}</h2>
             </div>
 
             {/* RIGHT: User Profile & Actions */}

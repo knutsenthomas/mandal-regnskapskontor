@@ -1,9 +1,9 @@
 import React from 'react';
-import { LayoutDashboard, Calendar, Layers, Image, Info, Mail, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Calendar, Layers, Image, Info, Mail, Settings, LogOut, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
-const Sidebar = ({ activeTab, onTabChange }) => {
+const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
     const { signOut } = useAuth();
 
     const navItems = [
@@ -18,11 +18,22 @@ const Sidebar = ({ activeTab, onTabChange }) => {
     ];
 
     return (
-        <div className="flex flex-col h-full w-64 bg-[#1B4965] text-white transition-all duration-300 shadow-xl z-20">
+        <div className={cn(
+            "flex flex-col h-full w-64 bg-[#1B4965] text-white shadow-xl z-50 transition-transform duration-300 ease-in-out",
+            "fixed inset-y-0 left-0 md:relative md:translate-x-0", // Mobile: Fixed & Sidebar logic. Desktop: Relative & Always visible
+            isOpen ? "translate-x-0" : "-translate-x-full" // Toggle logic for mobile
+        )}>
 
             {/* HEADER / LOGO AREA */}
-            <div className="h-16 flex items-center px-6 border-b border-[#2C5D7C]">
-                <h1 className="text-xl font-bold tracking-tight">Admin<span className="font-light opacity-70">Panel</span></h1>
+            <div className="h-16 flex items-center justify-between px-6 border-b border-[#2C5D7C]">
+                <h1 className="text-xl font-bold tracking-tight truncate">Admin<span className="font-light opacity-70">Panel</span></h1>
+                {/* Close button for mobile */}
+                <button
+                    onClick={toggleSidebar}
+                    className="md:hidden text-white/70 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors"
+                >
+                    <X className="w-6 h-6" />
+                </button>
             </div>
 
             {/* NAVIGATION */}
@@ -44,11 +55,11 @@ const Sidebar = ({ activeTab, onTabChange }) => {
                         >
                             <Icon
                                 className={cn(
-                                    "w-5 h-5 transition-colors",
+                                    "w-5 h-5 transition-colors shrink-0",
                                     isActive ? "text-white" : "text-gray-400 group-hover:text-white"
                                 )}
                             />
-                            {item.label}
+                            <span className="truncate">{item.label}</span>
                         </button>
                     );
                 })}
@@ -60,8 +71,8 @@ const Sidebar = ({ activeTab, onTabChange }) => {
                     onClick={signOut}
                     className="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-red-200 hover:text-white hover:bg-red-900/20 rounded-md transition-colors"
                 >
-                    <LogOut className="w-5 h-5" />
-                    Logg ut
+                    <LogOut className="w-5 h-5 shrink-0" />
+                    <span className="truncate">Logg ut</span>
                 </button>
             </div>
         </div>

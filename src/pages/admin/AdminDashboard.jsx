@@ -43,7 +43,7 @@ const AdminDashboard = () => {
   // Update title when tab changes
   useEffect(() => {
     const titles = {
-      'dashboard': 'Dashbord Oversikt',
+      'dashboard': 'Mandal Regnskapskontor',
       'calendar': 'Kalender & Hendelser',
       'services': 'Tjenester',
       'service-details': 'Rediger Tjenesteinnhold',
