@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +20,9 @@ import ContactEditor from '@/components/admin/ContactEditor';
 import FooterEditor from '@/components/admin/FooterEditor';
 import CalendarEditor from '@/components/admin/CalendarEditor';
 import GeneralEditor from '@/components/admin/GeneralEditor';
+import MessagesView from '@/components/admin/MessagesView';
+import SearchCommand from '@/components/admin/SearchCommand';
+import ProfileSettings from '@/components/admin/ProfileSettings';
 
 // LAYOUT
 import DashboardLayout from '@/components/admin/layout/DashboardLayout';
@@ -32,23 +35,42 @@ const AdminDashboard = () => {
   // STATE FOR LAYOUT
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeTabTitle, setActiveTabTitle] = useState('Oversikt');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const { user, signOut } = useAuth(); // Correctly destructured now
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [fetchError, setFetchError] = useState(null);
   const [selectedServiceId, setSelectedServiceId] = useState("");
+
+  // Sync state with URL params on mount/update
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  // Update URL when tab changes
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   // Update title when tab changes
   useEffect(() => {
     const titles = {
       'dashboard': 'Mandal Regnskapskontor',
+      'messages': 'Innboks & Meldinger',
       'calendar': 'Kalender & Hendelser',
       'services': 'Tjenester',
       'service-details': 'Rediger Tjenesteinnhold',
       'hero': 'Forside (Hero Seksjon)',
       'about': 'Om Oss',
+      'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
       'footer': 'Footer & Innstillinger'
     };
@@ -211,6 +233,9 @@ const AdminDashboard = () => {
       case 'dashboard':
         return renderDashboardHome();
 
+      case 'messages':
+        return <MessagesView />;
+
       case 'calendar':
         return <CalendarEditor />;
 
@@ -248,6 +273,7 @@ const AdminDashboard = () => {
       case 'about':
         return content ? <AboutEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
 
+      case 'contact-settings':
       case 'contact':
         return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
 
@@ -273,12 +299,35 @@ const AdminDashboard = () => {
   return (
     <DashboardLayout
       activeTab={activeTab}
-      onTabChange={(tab) => {
-        setActiveTab(tab);
-      }}
+      onTabChange={handleTabChange}
       title={activeTabTitle}
+      onOpenSearch={() => setIsSearchOpen(true)}
+      onOpenProfile={() => setIsProfileOpen(true)}
     >
       {renderContent()}
+
+      <SearchCommand
+        open={isSearchOpen}
+        onOpenChange={setIsSearchOpen}
+        onNavigate={(tab, subId) => {
+          setActiveTab(tab);
+          if (subId !== undefined) {
+            // If we need to navigate to specific service, we might need more complex state
+            // For now, let's just switch tab. 
+            // If subId is passed for services, we could set selectedServiceId
+            if (tab === 'service-details' && subId !== undefined) {
+              // Map index to ID if possible or just rely on index string if that's what we used
+              // In fetchContent we mapped index to string ID.
+              setSelectedServiceId(subId.toString());
+            }
+          }
+        }}
+      />
+
+      <ProfileSettings
+        open={isProfileOpen}
+        onOpenChange={setIsProfileOpen}
+      />
     </DashboardLayout>
   );
 };

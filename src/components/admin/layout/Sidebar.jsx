@@ -8,12 +8,13 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
 
     const navItems = [
         { id: 'dashboard', label: 'Oversikt', icon: LayoutDashboard },
+        { id: 'messages', label: 'Meldinger', icon: Mail },
         { id: 'calendar', label: 'Kalender', icon: Calendar },
         { id: 'services', label: 'Tjenester', icon: Layers },
         { id: 'service-details', label: 'Tjeneste Detaljer', icon: Layers }, // Sub-item conceptually, but flat for now
         { id: 'hero', label: 'Forside (Hero)', icon: Image },
         { id: 'about', label: 'Om oss', icon: Info },
-        { id: 'contact', label: 'Kontakt', icon: Mail },
+        { id: 'contact-settings', label: 'Kontakt Info', icon: Settings }, // Renamed from 'contact' to avoid confusion with messages
         { id: 'footer', label: 'Footer / Innstillinger', icon: Settings },
     ];
 

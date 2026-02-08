@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
-const DashboardLayout = ({ children, activeTab, onTabChange, title }) => {
+const DashboardLayout = ({ children, activeTab, onTabChange, title, onOpenSearch, onOpenProfile }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -39,6 +39,8 @@ const DashboardLayout = ({ children, activeTab, onTabChange, title }) => {
                 <TopBar
                     title={title}
                     onMenuClick={toggleSidebar}
+                    onOpenSearch={onOpenSearch}
+                    onOpenProfile={onOpenProfile}
                 />
 
                 {/* CONTENT */}

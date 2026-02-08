@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "2.30.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^10.16.4",
     "ical.js": "^2.2.1",
     "lucide-react": "^0.292.0",

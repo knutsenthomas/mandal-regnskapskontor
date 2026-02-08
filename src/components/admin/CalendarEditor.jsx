@@ -184,22 +184,24 @@ const CalendarEditor = () => {
                         <p className="text-sm text-gray-500">
                             Lim inn "Secret Address in iCal format" fra Google Calendar eller ICS lenke fra Outlook.
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex flex-col gap-4">
                             <input
                                 type="text"
                                 value={icalUrl}
                                 onChange={(e) => setIcalUrl(e.target.value)}
                                 placeholder="https://calendar.google.com/calendar/ical/..."
-                                className="flex-1 p-2 border rounded-md"
+                                className="w-full p-2 border rounded-md"
                             />
-                            <Button
-                                onClick={handleSaveIcal}
-                                disabled={savingSettings}
-                                className="bg-[#1B4965] hover:bg-[#153a51] text-white"
-                            >
-                                {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                                Lagre
-                            </Button>
+                            <div className="flex justify-end">
+                                <Button
+                                    onClick={handleSaveIcal}
+                                    disabled={savingSettings}
+                                    className="bg-[#1B4965] hover:bg-[#153a51] text-white w-full md:w-auto"
+                                >
+                                    {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                    Lagre
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </CardContent>

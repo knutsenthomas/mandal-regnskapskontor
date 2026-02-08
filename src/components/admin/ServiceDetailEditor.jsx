@@ -228,15 +228,6 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
 
       <div className="flex justify-between items-center mb-8 pt-2">
         <h2 className="text-lg font-semibold text-gray-700">Innhold</h2>
-
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="super-custom-save-btn inline-flex items-center justify-center px-4 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Lagre endringer
-        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -412,6 +403,21 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="flex justify-end pt-4 border-t border-gray-100">
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="super-custom-save-btn inline-flex items-center justify-center px-6 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          Lagre endringer
+        </button>
       </div>
 
     </div>

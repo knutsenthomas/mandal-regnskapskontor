@@ -126,10 +126,10 @@ const ContactEditor = ({ content, onUpdate }) => {
       </div>
 
       <div className="flex justify-end pt-4 border-t border-gray-100">
-        <Button 
-          onClick={handleSave} 
+        <Button
+          onClick={handleSave}
           disabled={loading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white"
+          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
