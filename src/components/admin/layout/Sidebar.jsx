@@ -13,12 +13,13 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
         { id: 'messages', label: 'Meldinger', icon: Mail },
         { id: 'hero', label: 'Forside (Hero)', icon: Image },
         { id: 'services', label: 'Tjenester', icon: Layers },
-        { id: 'service-details', label: 'Tjeneste detaljer', icon: Layers }, // Sub-item conceptually, but flat for now
+        { id: 'service-details', label: 'Tjeneste detaljer', icon: Layers },
         { id: 'about', label: 'Om oss', icon: Info },
         { id: 'calendar', label: 'Kalender', icon: Calendar },
-        { id: 'contact-settings', label: 'Kontakt Info', icon: Settings }, // Renamed from 'contact' to avoid confusion with messages
+        { id: 'contact-settings', label: 'Kontakt Info', icon: Settings },
         { id: 'footer', label: 'Footer / Innstillinger', icon: Settings },
         { id: 'theme', label: 'Design', icon: Palette },
+        { id: 'seo', label: 'SEO & Synlighet', icon: Settings },
     ];
 
     return (
