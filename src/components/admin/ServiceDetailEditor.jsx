@@ -14,7 +14,7 @@ const AVAILABLE_ICONS = [
   "CheckCircle2", "Star", "Zap", "Layout"
 ];
 
-const ServiceDetailEditor = ({ selectedServiceId }) => {
+const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
@@ -32,6 +32,51 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
     }
   }, [selectedServiceId]);
 
+  const normalizeTitle = (title) => (title || '').toLowerCase();
+
+  const getIconSequenceForService = (title) => {
+    const t = normalizeTitle(title);
+
+    if (t.includes('regnskap') || t.includes('okonomi') || t.includes('økonomi')) {
+      return ['FileSpreadsheet', 'BookOpen', 'Banknote', 'FileCheck'];
+    }
+
+    if (t.includes('faktur') || t.includes('betaling')) {
+      return ['FileCheck', 'Send', 'Bell', 'Banknote'];
+    }
+
+    if (t.includes('lonn') || t.includes('lønn') || t.includes('personal')) {
+      return ['Users', 'Banknote', 'FileSpreadsheet', 'Bell'];
+    }
+
+    if (t.includes('revisjon') || t.includes('kontroll')) {
+      return ['Search', 'ShieldCheck', 'FileWarning', 'CheckCircle2'];
+    }
+
+    if (t.includes('radgiv') || t.includes('rådgiv') || t.includes('strategi')) {
+      return ['Users', 'Handshake', 'Zap', 'Star'];
+    }
+
+    if (t.includes('skatt') || t.includes('avgift')) {
+      return ['Stamp', 'Scale', 'FileSpreadsheet', 'CheckCircle2'];
+    }
+
+    if (t.includes('eiendom')) {
+      return ['Layout', 'Scale', 'Search', 'ShieldCheck'];
+    }
+
+    if (t.includes('operativ') || t.includes('leder')) {
+      return ['ListChecks', 'Bell', 'Send', 'CheckCircle2'];
+    }
+
+    return ['CheckCircle2', 'Star', 'Zap', 'ListChecks'];
+  };
+
+  const getDefaultOfferingIcon = (title, index) => {
+    const sequence = getIconSequenceForService(title);
+    return sequence[index % sequence.length] || 'CheckCircle2';
+  };
+
   const fetchDetails = async () => {
     setLoading(true);
     try {
@@ -48,7 +93,10 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
           id: details.id,
           extended_description: details.extended_description || '',
           target_audience: details.target_audience || '',
-          offerings: details.offerings || [],
+          offerings: (details.offerings || []).map((item, index) => ({
+            ...item,
+            icon: item?.icon || getDefaultOfferingIcon(serviceTitle, index)
+          })),
           process_steps: details.process_steps || [],
           pricing_packages: details.pricing_packages || [],
           faqs: details.faqs || []
@@ -75,24 +123,30 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
   };
 
   const handleSave = async () => {
+    if (!selectedServiceId) {
+      toast({
+        title: "Feil",
+        description: "Velg en tjeneste for a lagre innhold.",
+        variant: "destructive"
+      });
+      return;
+    }
     setLoading(true);
     try {
-      const payload = {
-        service_id: selectedServiceId,
-        extended_description: data.extended_description,
-        target_audience: data.target_audience,
-        offerings: data.offerings,
-        process_steps: data.process_steps,
-        pricing_packages: data.pricing_packages,
-        faqs: data.faqs
-      };
+      const offeringsWithIcons = (data.offerings || []).map((item, index) => ({
+        ...item,
+        icon: item?.icon || getDefaultOfferingIcon(serviceTitle, index)
+      }));
 
-      const { error } = await supabase
-        .from('service_details')
-        .upsert(
-          data.id ? { ...payload, id: data.id } : payload,
-          { onConflict: 'service_id' }
-        );
+      const { error } = await supabase.rpc('upsert_service_details', {
+        p_service_id: selectedServiceId,
+        p_extended_description: data.extended_description,
+        p_target_audience: data.target_audience,
+        p_offerings: offeringsWithIcons,
+        p_process_steps: data.process_steps,
+        p_pricing_packages: data.pricing_packages,
+        p_faqs: data.faqs
+      });
 
       if (error) throw error;
 
@@ -115,7 +169,13 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
   };
 
   const addItem = (field, emptyItem) => {
-    setData(prev => ({ ...prev, [field]: [...prev[field], emptyItem] }));
+    setData(prev => {
+      const nextItem = { ...emptyItem };
+      if (field === 'offerings' && !nextItem.icon) {
+        nextItem.icon = getDefaultOfferingIcon(serviceTitle, prev[field].length);
+      }
+      return { ...prev, [field]: [...prev[field], nextItem] };
+    });
 
     let title = "Nytt element lagt til";
     let description = "Et nytt felt er lagt til i listen.";
@@ -257,7 +317,7 @@ const ServiceDetailEditor = ({ selectedServiceId }) => {
       <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
         <div className="flex justify-between items-center">
           <label className="block text-lg font-bold text-gray-800">Hva vi tilbyr (Liste med ikoner)</label>
-          <Button size="sm" variant="outline" onClick={() => addItem('offerings', { title: '', icon: 'CheckCircle2' })}>
+          <Button size="sm" variant="outline" onClick={() => addItem('offerings', { title: '' })}>
             <Plus className="w-4 h-4 mr-2" /> Legg til punkt
           </Button>
         </div>

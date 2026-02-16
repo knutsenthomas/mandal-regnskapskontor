@@ -13,10 +13,14 @@ CREATE TABLE IF NOT EXISTS content (
   about_title TEXT,
   about_text TEXT,
   about_image TEXT,
+  about_values JSONB DEFAULT '[]'::jsonb,
   footer_text TEXT,
   facebook_url TEXT,
   linkedin_url TEXT
 );
+
+ALTER TABLE content
+  ADD COLUMN IF NOT EXISTS about_values JSONB DEFAULT '[]'::jsonb;
 
 -- 2. Ensure `site_settings` table exists
 CREATE TABLE IF NOT EXISTS site_settings (
@@ -49,6 +53,19 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     lest BOOLEAN DEFAULT FALSE
 );
 
+-- 4b. Ensure `service_details` table exists
+CREATE TABLE IF NOT EXISTS service_details (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  service_id TEXT UNIQUE NOT NULL,
+  extended_description TEXT,
+  target_audience TEXT,
+  offerings JSONB DEFAULT '[]'::jsonb,
+  process_steps JSONB DEFAULT '[]'::jsonb,
+  pricing_packages JSONB DEFAULT '[]'::jsonb,
+  faqs JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- 5. Insert default content if empty
 INSERT INTO content (hero_title, hero_subtitle, services_data)
 SELECT 'Mandal Regnskapskontor AS', 'Din partner for profesjonell regnskap', '[]'::jsonb
@@ -64,6 +81,7 @@ ALTER TABLE content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calendar_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_details ENABLE ROW LEVEL SECURITY;
 
 -- 8. POLICIES (Idempotent)
 -- Content
@@ -96,3 +114,10 @@ CREATE POLICY "Public can insert messages" ON contact_messages FOR INSERT WITH C
 
 DROP POLICY IF EXISTS "Admins can read messages" ON contact_messages;
 CREATE POLICY "Admins can read messages" ON contact_messages FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Service Details
+DROP POLICY IF EXISTS "Public can read service details" ON service_details;
+CREATE POLICY "Public can read service details" ON service_details FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Admins can write service details" ON service_details;
+CREATE POLICY "Admins can write service details" ON service_details FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');

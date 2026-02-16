@@ -86,18 +86,23 @@ const AboutEditor = ({ content, onUpdate }) => {
   };
 
   const handleSave = async () => {
-    if (!content?.id) return;
+    if (!content?.id) {
+      toast({
+        title: "Feil",
+        description: "Kan ikke lagre fordi innholds-ID mangler. Prøv å laste siden på nytt.",
+        variant: "destructive"
+      });
+      return;
+    }
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('content')
-        .update({
-          about_text: aboutText,
-          about_image: aboutImage,
-          about_values: values
-        })
-        .eq('id', content.id);
+      const { error } = await supabase.rpc('update_about_content', {
+        p_id: content.id,
+        p_text: aboutText,
+        p_image: aboutImage,
+        p_values: values
+      });
 
       if (error) throw error;
 

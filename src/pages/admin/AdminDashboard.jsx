@@ -258,8 +258,11 @@ const AdminDashboard = () => {
       case 'services':
         return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
 
-      case 'service-details':
-        return content ? (
+      case 'service-details': {
+        if (!content) return <p>Laster...</p>;
+        const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
+        const effectiveServiceName = servicesList.find(s => s.id === effectiveServiceId)?.name || '';
+        return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
               <div>
@@ -279,9 +282,13 @@ const AdminDashboard = () => {
                 </SelectContent>
               </Select>
             </div>
-            <ServiceDetailEditor selectedServiceId={selectedServiceId || (servicesList[0]?.id)} />
+            <ServiceDetailEditor
+              selectedServiceId={effectiveServiceId}
+              serviceTitle={effectiveServiceName}
+            />
           </div>
-        ) : <p>Laster...</p>;
+        );
+      }
 
       case 'hero':
         return content ? <HeroEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
