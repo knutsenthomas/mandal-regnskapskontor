@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter as Router, useLocation } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import ScrollToTop from './components/ScrollToTop';
-import Navigation from './components/Navigation';
-import HomePage from './pages/HomePage';
-import ServiceDetailPage from './pages/ServiceDetailPage';
-import LoginPage from './pages/admin/LoginPage';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from '../contexts/AuthContext';
+import ScrollToTop from '../components/ScrollToTop';
+import Navigation from '../components/Navigation';
+import HomePage from '../pages/HomePage';
+import ServiceDetailPage from '../pages/ServiceDetailPage';
+import LoginPage from '../pages/admin/LoginPage';
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import ProtectedRoute from '../components/ProtectedRoute';
 import ReactGA from 'react-ga4';
-import { supabase } from './lib/customSupabaseClient';
-import { Toaster } from './components/ui/toaster';
-import ErrorBoundary from './components/ErrorBoundary';
-import { SiteProvider } from './contexts/SiteContext';
+import { supabase } from '../lib/customSupabaseClient';
+import { Toaster } from '../components/ui/toaster';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { SiteProvider } from '../contexts/SiteContext';
 
 // Component to handle route changes
 const RouteTracker = () => {
