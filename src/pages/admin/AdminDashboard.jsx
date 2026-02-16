@@ -24,6 +24,7 @@ import GeneralEditor from '@/components/admin/GeneralEditor';
 import MessagesView from '@/components/admin/MessagesView';
 import SearchCommand from '@/components/admin/SearchCommand';
 import ProfileSettings from '@/components/admin/ProfileSettings';
+import SEOEditor from '@/app/admin/SEOEditor';
 
 // LAYOUT
 import DashboardLayout from '@/components/admin/layout/DashboardLayout';
@@ -74,7 +75,8 @@ const AdminDashboard = () => {
       'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
       'footer': 'Footer & Innstillinger',
-      'theme': 'Tema & Farger'
+      'theme': 'Tema & Farger',
+      'seo': 'SEO & Synlighet'
     };
     setActiveTabTitle(titles[activeTab] || 'Admin');
   }, [activeTab]);
@@ -248,16 +250,12 @@ const AdminDashboard = () => {
     switch (activeTab) {
       case 'dashboard':
         return renderDashboardHome();
-
       case 'messages':
         return <MessagesView />;
-
       case 'calendar':
         return <CalendarEditor />;
-
       case 'services':
         return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-
       case 'service-details': {
         if (!content) return <p>Laster...</p>;
         const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
@@ -289,17 +287,13 @@ const AdminDashboard = () => {
           </div>
         );
       }
-
       case 'hero':
         return content ? <HeroEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-
       case 'about':
         return content ? <AboutEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-
       case 'contact-settings':
       case 'contact':
         return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-
       case 'footer':
         return (
           <div className="space-y-8">
@@ -313,10 +307,10 @@ const AdminDashboard = () => {
             </div>
           </div>
         );
-
       case 'theme':
         return <ThemeEditor />;
-
+      case 'seo':
+        return <SEOEditor />;
       default:
         return renderDashboardHome();
     }
