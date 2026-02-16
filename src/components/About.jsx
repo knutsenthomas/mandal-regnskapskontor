@@ -107,7 +107,7 @@ Vi spesialiserer oss på å levere høykvalitets regnskaps- og finansielle tjene
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className={`grid grid-cols-1 sm:grid-cols-2 ${valuesGridCols} gap-8 max-w-6xl mx-auto`}
+          className={`grid grid-cols-1 sm:grid-cols-2 ${valuesGridCols} gap-8 max-w-6xl mx-auto justify-center`}
         >
           {displayValues.map((value, index) => {
             const Icon = icons[index % icons.length];
