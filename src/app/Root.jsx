@@ -7,6 +7,7 @@ import HomePage from '../pages/HomePage';
 import ServiceDetailPage from '../pages/ServiceDetailPage';
 import LoginPage from '../pages/admin/LoginPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
+import SetPasswordPage from '../pages/SetPasswordPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import ReactGA from 'react-ga4';
 import { supabase } from '../lib/customSupabaseClient';
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/service/:id" element={<ServiceDetailPage />} />
                 <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/set-password" element={<SetPasswordPage />} />
                 <Route
                   path="/admin/dashboard"
                   element={

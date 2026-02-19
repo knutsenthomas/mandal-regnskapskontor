@@ -25,6 +25,7 @@ import MessagesView from '@/components/admin/MessagesView';
 import SearchCommand from '@/components/admin/SearchCommand';
 import ProfileSettings from '@/components/admin/ProfileSettings';
 import SEOEditor from '@/app/admin/SEOEditor';
+import AnalyticsOverview from '@/components/admin/AnalyticsOverview';
 
 // LAYOUT
 import DashboardLayout from '@/components/admin/layout/DashboardLayout';
@@ -173,6 +174,9 @@ const AdminDashboard = () => {
         {/* Decoration */}
         <Activity className="absolute right-4 bottom-4 w-48 h-48 text-white/5 rotate-[-15deg]" />
       </div>
+
+      {/* GOOGLE ANALYTICS OVERSIKT */}
+      <AnalyticsOverview />
 
       {/* QUICK STATS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

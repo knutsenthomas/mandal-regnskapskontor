@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   }, [handleSession]);
 
   const signUp = useCallback(async (email, password, options) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options,
@@ -48,9 +48,25 @@ export const AuthProvider = ({ children }) => {
         title: "Sign up Failed",
         description: error.message || "Something went wrong",
       });
+      return { error };
     }
 
-    return { error };
+    // Legg automatisk til i admin_users-tabellen hvis registrering var vellykket
+    if (data && data.user && data.user.email) {
+      const { error: adminError } = await supabase
+        .from('admin_users')
+        .insert([{ email: data.user.email }]);
+      if (adminError) {
+        toast({
+          variant: "destructive",
+          title: "Admin-tilgang feilet",
+          description: adminError.message || "Kunne ikke legge til admin-rettigheter automatisk.",
+        });
+        return { error: adminError };
+      }
+    }
+
+    return { error: null };
   }, [toast]);
 
   const signIn = useCallback(async (email, password) => {

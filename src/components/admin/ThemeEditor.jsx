@@ -40,10 +40,15 @@ const ThemeEditor = () => {
     const handleSave = async () => {
         setLoading(true);
         try {
-            const settingsToUpdate = Object.keys(colors).map(key => ({
-                key,
-                value: colors[key]
-            }));
+            // Konverter HEX til HSL før lagring i CSS-variabler
+            const settingsToUpdate = Object.keys(colors).map(key => {
+                let value = colors[key];
+                // Konverter til HSL hvis HEX
+                if (value && value.startsWith('#')) {
+                    value = hexToHSL(value);
+                }
+                return { key, value };
+            });
 
             for (const setting of settingsToUpdate) {
                 const { error } = await supabase.rpc('upsert_site_setting', {
@@ -53,7 +58,6 @@ const ThemeEditor = () => {
                 if (error) throw error;
             }
 
-            // Trigger global refresh to apply styles via SiteContext
             await refreshSiteData();
 
             toast({
@@ -133,6 +137,54 @@ const ThemeEditor = () => {
         </div>
     );
 
+    // Legg til typografi-innstillinger
+    const fontFamilies = [
+        'Inter', 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Courier New', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito', 'Oswald', 'Poppins', 'Source Sans Pro', 'system-ui'
+    ];
+    const defaultTypography = {
+        font_family: 'Roboto',
+        h1_size: '2.5rem',
+        h2_size: '2rem',
+        h3_size: '1.5rem',
+        body_size: '1rem',
+    };
+    const [typography, setTypography] = useState(defaultTypography);
+
+    const handleTypographyChange = (key, value) => {
+        setTypography(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleSaveTypography = async () => {
+        setLoading(true);
+        try {
+            const settingsToUpdate = Object.keys(typography).map(key => ({
+                key,
+                value: typography[key]
+            }));
+            for (const setting of settingsToUpdate) {
+                const { error } = await supabase.rpc('upsert_site_setting', {
+                    p_key: setting.key,
+                    p_value: setting.value
+                });
+                if (error) throw error;
+            }
+            await refreshSiteData();
+            toast({
+                title: "Typografi oppdatert!",
+                description: "Tekstinnstillingene er lagret.",
+                className: "bg-green-50 border-green-200"
+            });
+        } catch (error) {
+            toast({
+                title: "Feil ved lagring",
+                description: "Kunne ikke lagre typografi.",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <Card>
@@ -176,6 +228,50 @@ const ThemeEditor = () => {
                         description="Bakgrunner for inaktive eller dempede elementer."
                         stateKey="theme_muted"
                     />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Palette className="w-5 h-5" />
+                        Typografi
+                    </CardTitle>
+                    <CardDescription>
+                        Velg font og tekststørrelse for alle teksttyper.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col gap-4">
+                        <label className="font-medium text-sm text-gray-900">Fontfamilie
+                            <select value={typography.font_family} onChange={e => handleTypographyChange('font_family', e.target.value)} className="border p-2 rounded mt-1">
+                                {fontFamilies.map(f => <option key={f} value={f}>{f}</option>)}
+                            </select>
+                        </label>
+                        <label className="font-medium text-sm text-gray-900">H1 størrelse
+                            <input type="text" value={typography.h1_size} onChange={e => handleTypographyChange('h1_size', e.target.value)} className="border p-2 rounded mt-1" placeholder="2.5rem" />
+                        </label>
+                        <label className="font-medium text-sm text-gray-900">H2 størrelse
+                            <input type="text" value={typography.h2_size} onChange={e => handleTypographyChange('h2_size', e.target.value)} className="border p-2 rounded mt-1" placeholder="2rem" />
+                        </label>
+                        <label className="font-medium text-sm text-gray-900">H3 størrelse
+                            <input type="text" value={typography.h3_size} onChange={e => handleTypographyChange('h3_size', e.target.value)} className="border p-2 rounded mt-1" placeholder="1.5rem" />
+                        </label>
+                        <label className="font-medium text-sm text-gray-900">Brødtekst størrelse
+                            <input type="text" value={typography.body_size} onChange={e => handleTypographyChange('body_size', e.target.value)} className="border p-2 rounded mt-1" placeholder="1rem" />
+                        </label>
+                    </div>
+                    {/* Live preview */}
+                    <div className="bg-gray-100 rounded p-4 mt-6 border">
+                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h1_size, fontWeight: 700 }}>Live H1: Mandal Regnskapskontor</div>
+                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h2_size, fontWeight: 600, marginTop: '1rem' }}>Live H2: Regnskapstjenester for alle</div>
+                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h3_size, fontWeight: 500, marginTop: '1rem' }}>Live H3: Personlig rådgivning</div>
+                        <div style={{ fontFamily: typography.font_family, fontSize: typography.body_size, marginTop: '1rem' }}>Live brødtekst: Her ser du hvordan font og størrelse vil se ut på nettsiden din.</div>
+                    </div>
+                    <Button onClick={handleSaveTypography} disabled={loading} className="bg-[#1B4965] hover:bg-[#0F3347] text-white mt-4">
+                        {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                        Lagre typografi
+                    </Button>
                 </CardContent>
             </Card>
 

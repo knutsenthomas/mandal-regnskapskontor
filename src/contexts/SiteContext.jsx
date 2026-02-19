@@ -14,6 +14,7 @@ export const SiteProvider = ({ children }) => {
         faviconUrl: null, // From 'site_settings'
         gaId: null, // From 'site_settings'
         theme: {}, // From 'site_settings' (theme_*)
+        font_family: null, // From 'site_settings'
     });
     const [loading, setLoading] = useState(true);
 
@@ -54,11 +55,9 @@ export const SiteProvider = ({ children }) => {
 
     const fetchSiteData = async () => {
         try {
-            // 1. Fetch Logo URL from 'content'
-            const { data: contentData } = await supabase
-                .from('content')
-                .select('logo_url')
-                .single();
+            // 1. Fetch Logo URL from 'content' - Removed as it's redundant and may cause 400 errors if column is missing
+            // We now rely on 'site_settings' or default fallbacks.
+            let contentData = null;
 
             // 2. Fetch Settings from 'site_settings'
             const { data: settingsData } = await supabase
@@ -98,13 +97,13 @@ export const SiteProvider = ({ children }) => {
                 }
             });
 
-
             const newSiteData = {
                 logoUrl: settingsMap['logo_url'] || contentData?.logo_url || null,
                 logoText: settingsMap['logo_text'] || null,
                 faviconUrl: settingsMap['favicon_url'] || null,
                 gaId: settingsMap['google_analytics_id'] || null,
                 theme: themeSettings,
+                font_family: settingsMap['font_family'] || null,
             };
 
             setSiteData(newSiteData);
@@ -139,6 +138,36 @@ export const SiteProvider = ({ children }) => {
             supabase.removeChannel(channel);
         };
     }, []);
+
+    useEffect(() => {
+        try {
+            if (siteData && siteData.font_family) {
+                document.body.style.setProperty('--site-font-family', siteData.font_family + ', sans-serif');
+                // Dynamisk Google Fonts import
+                const googleFonts = [
+                    'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito', 'Oswald', 'Poppins', 'Source Sans Pro'
+                ];
+                if (googleFonts.includes(siteData.font_family)) {
+                    const fontName = siteData.font_family.replace(/ /g, '+');
+                    const linkId = 'dynamic-google-font';
+                    let link = document.getElementById(linkId);
+                    if (!link) {
+                        link = document.createElement('link');
+                        link.id = linkId;
+                        link.rel = 'stylesheet';
+                        document.head.appendChild(link);
+                    }
+                    link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400;700&display=swap`;
+                }
+            } else {
+                document.body.style.setProperty('--site-font-family', 'DM Sans, sans-serif');
+            }
+        } catch (e) {
+            // Fallback til fabrikkinnstillinger
+            document.body.style.setProperty('--site-font-family', 'DM Sans, sans-serif');
+            // Du kan også resette typografi her hvis ønskelig
+        }
+    }, [siteData?.font_family]);
 
     const value = {
         ...siteData,
