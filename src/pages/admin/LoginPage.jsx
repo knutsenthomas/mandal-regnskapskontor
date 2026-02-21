@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Briefcase, Lock, Mail, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
@@ -15,6 +16,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
+  const [isResetEmailSent, setIsResetEmailSent] = useState(false);
 
   const { signIn, signInWithMagicLink, user } = useAuth();
   const navigate = useNavigate();
@@ -201,6 +203,54 @@ const LoginPage = () => {
               >
                 {isLoading ? "Logger inn..." : <span className="flex items-center">Logg inn <ArrowRight className="ml-2 h-4 w-4" /></span>}
               </Button>
+              <div className="flex justify-end mt-2">
+                {isResetEmailSent ? (
+                  <div className="w-full text-center py-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
+                    <p>
+                      Vi har sendt deg en lenke for å lage nytt passord.<br />
+                      Sjekk e-posten din: <strong>{email}</strong>
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-2 text-xs text-[#1B4965] underline"
+                      onClick={() => setIsResetEmailSent(false)}
+                    >
+                      Send på nytt
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-sm text-[#1B4965] hover:underline focus:outline-none"
+                    onClick={async () => {
+                      setLocalError("");
+                      if (!email || !email.includes("@")) {
+                        setLocalError("Skriv inn e-postadressen din først.");
+                        return;
+                      }
+                      setIsLoading(true);
+                      try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: window.location.origin + "/set-password"
+                        });
+                        if (error) throw error;
+                        setIsResetEmailSent(true);
+                        toast({
+                          title: "Sjekk e-posten din",
+                          description: "Vi har sendt deg en lenke for å lage nytt passord.",
+                          className: "bg-blue-50 border-blue-200 text-blue-800"
+                        });
+                      } catch (error) {
+                        setLocalError(error.message || "Noe gikk galt.");
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
+                  >
+                    Glemt passord?
+                  </button>
+                )}
+              </div>
             </form>
           </TabsContent>
 
