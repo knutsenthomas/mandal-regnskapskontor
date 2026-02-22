@@ -19,7 +19,6 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
         { id: 'contact-settings', label: 'Kontakt Info', icon: Settings },
         { id: 'footer', label: 'Footer / Innstillinger', icon: Settings },
         { id: 'theme', label: 'Design', icon: Palette },
-        { id: 'content-blocks', label: 'Alt tekstinnhold', icon: Info },
     ];
 
     return (
