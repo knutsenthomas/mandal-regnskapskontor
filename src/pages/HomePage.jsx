@@ -33,22 +33,32 @@ const HomePage = () => {
       </Helmet>
 
       <div className="min-h-screen">
-        <div id="hjem">
-          <Hero />
-        </div>
-        <div id="tjenester" className="scroll-mt-16">
-          <Services />
-        </div>
-        <div id="om-oss" className="scroll-mt-16">
-          <About />
-        </div>
-        <div id="kalender" className="scroll-mt-16">
-          <FinancialCalendar />
-        </div>
-        <div id="kontakt" className="scroll-mt-16">
-          <ContactForm />
-        </div>
-        <Footer />
+        {!loading && (
+          <div id="hjem">
+            <Hero />
+          </div>
+        )}
+        {!loading && (
+          <div id="tjenester" className="scroll-mt-16">
+            <Services />
+          </div>
+        )}
+        {!loading && (
+          <div id="om-oss" className="scroll-mt-16">
+            <About />
+          </div>
+        )}
+        {!loading && (
+          <div id="kalender" className="scroll-mt-16">
+            <FinancialCalendar />
+          </div>
+        )}
+        {!loading && (
+          <div id="kontakt" className="scroll-mt-16">
+            <ContactForm />
+          </div>
+        )}
+        {!loading && <Footer />}
       </div>
     </>
   );
