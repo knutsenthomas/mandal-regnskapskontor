@@ -60,7 +60,7 @@ const FooterEditor = () => {
   };
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 max-w-2xl mx-auto">
+    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 w-full">
       <h2 className="text-xl font-bold mb-4">Rediger footer-innhold</h2>
       {fields.map(f => (
         <div key={f.slug} className="mb-4">
