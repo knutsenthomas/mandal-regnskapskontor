@@ -1,109 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/customSupabaseClient';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2 } from 'lucide-react';
+import { useContent } from '@/contexts/ContentContext';
 
-const FooterEditor = ({ content, onUpdate }) => {
+const fields = [
+  { slug: 'footer.companyName', label: 'Firmanavn' },
+  { slug: 'footer.companyDesc', label: 'Beskrivelse' },
+  { slug: 'footer.quicklinksLabel', label: 'Hurtiglenker label' },
+  { slug: 'footer.contactLabel', label: 'Kontakt label' },
+  { slug: 'footer.phone', label: 'Telefon' },
+  { slug: 'footer.email', label: 'E-post' },
+  { slug: 'footer.address', label: 'Adresse' },
+  { slug: 'footer.hoursLabel', label: 'Åpningstider label' },
+  { slug: 'footer.hoursWeek', label: 'Åpningstider ukedager' },
+  { slug: 'footer.hoursWeekend', label: 'Åpningstider helg' },
+  { slug: 'footer.link.home', label: 'Lenke: Hjem' },
+  { slug: 'footer.link.services', label: 'Lenke: Tjenester' },
+  { slug: 'footer.link.about', label: 'Lenke: Om oss' },
+  { slug: 'footer.link.contact', label: 'Lenke: Kontakt' },
+  { slug: 'footer.adminlink', label: 'Adminlenke' },
+  { slug: 'footer.hours.weeklabel', label: 'Label ukedager' },
+  { slug: 'footer.hours.weekendlabel', label: 'Label helg' },
+  { slug: 'footer.copyright', label: 'Copyright' },
+];
+
+const FooterEditor = () => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [footerContent, setFooterContent] = useState(undefined);
-  const [gaMeasurementId, setGaMeasurementId] = useState(undefined);
-  const [gaApiSecret, setGaApiSecret] = useState("");
+  const [saving, setSaving] = useState(false);
+  // Lokal state for alle felter
+  const [values, setValues] = useState(() => Object.fromEntries(fields.map(f => [f.slug, ''])));
 
-  useEffect(() => {
-    if (content) {
-      setFooterContent(content.footer_content ?? '');
-      setGaMeasurementId(content.ga_measurement_id ?? '');
+  // Hent eksisterende verdier fra content_blocks
+  fields.forEach(f => {
+    const { content } = useContent(f.slug);
+    if (content && values[f.slug] === '') {
+      values[f.slug] = content;
     }
-  }, [content]);
+  });
 
-  const handleSave = async () => {
-    if (!content?.id) return;
-    setLoading(true);
-
-    try {
-      // Oppdater footer_content i content-tabellen
-      const { error: contentError } = await supabase
-        .from('content')
-        .update({ footer_content: footerContent })
-        .eq('id', content.id);
-      if (contentError) throw contentError;
-
-      // Oppdater Google Analytics Measurement ID i site_settings via RLS-funksjon
-      if (gaMeasurementId) {
-        const { error: gaError } = await supabase
-          .rpc('upsert_site_setting', {
-            p_key: 'google_analytics_id',
-            p_value: gaMeasurementId
-          });
-        if (gaError) throw gaError;
-      }
-
-      toast({
-        title: "Footer og Analytics oppdatert",
-        description: "Informasjonen er lagret.",
-        className: "bg-green-50 border-green-200"
-      });
-
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      toast({
-        title: "Feil ved lagring",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleChange = (slug, value) => {
+    setValues(v => ({ ...v, [slug]: value }));
   };
 
-  if (footerContent === undefined || gaMeasurementId === undefined) {
-    return (
-      <div className="flex items-center justify-center h-32">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-        <span className="ml-2 text-gray-500">Laster innhold ...</span>
-      </div>
-    );
-  }
+  const handleSave = async () => {
+    setSaving(true);
+    let error = null;
+    for (const f of fields) {
+      const { update } = useContent(f.slug);
+      const res = await update(values[f.slug]);
+      if (res) error = res;
+    }
+    setSaving(false);
+    toast({
+      title: error ? 'Feil ved lagring' : 'Lagret!',
+      description: error ? error.message : 'Footer-innholdet er oppdatert.',
+      variant: error ? 'destructive' : undefined
+    });
+  };
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Footer Tekst (Om bedriften i bunntekst)
-        </label>
-        <textarea
-          value={footerContent}
-          onChange={(e) => setFooterContent(e.target.value)}
-          rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
-          placeholder="Kort tekst om bedriften..."
-        />
-        <p className="mt-2 text-xs text-gray-500">
-          Dette vises vanligvis i første kolonne i bunnteksten.
-        </p>
-      </div>
-
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Google Analytics</label>
-        <input
-          type="text"
-          value={gaMeasurementId}
-          onChange={e => setGaMeasurementId(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] mb-2"
-          placeholder="Measurement ID (G-XXXXXXXXXX)"
-        />
-        <p className="text-xs text-gray-500">Koble nettsiden til Google Analytics 4 for å spore besøkende.</p>
-      </div>
-
+    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 max-w-2xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">Rediger footer-innhold</h2>
+      {fields.map(f => (
+        <div key={f.slug} className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
+          <input
+            type="text"
+            value={values[f.slug]}
+            onChange={e => handleChange(f.slug, e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+          />
+        </div>
+      ))}
       <div className="flex justify-end pt-4">
         <Button
           onClick={handleSave}
-          disabled={loading}
+          disabled={saving}
           className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
         >
-          {loading ? (
+          {saving ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           ) : (
             <Save className="w-4 h-4 mr-2" />

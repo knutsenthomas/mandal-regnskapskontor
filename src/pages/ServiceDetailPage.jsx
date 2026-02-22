@@ -1,3 +1,7 @@
+// Admin editor for "skreddersydd plan"-tekst
+import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
+  // Sjekk om vi er i admin-modus (f.eks. basert på URL eller context)
+  const isAdmin = window.location.pathname.startsWith('/admin');
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -201,16 +205,18 @@ const ServiceDetailPage = () => {
                       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                       
                       <div className="relative z-10">
-                        <h3 className="text-xl md:text-2xl font-bold mb-3 tracking-tight">Trenger du en skreddersydd plan?</h3>
-                        <p className="text-blue-100 mb-8 text-sm md:text-base leading-relaxed opacity-90 font-light">
-                          Vi tilpasser våre systemer nøyaktig etter dine behov og arbeidsflyt for maksimal effektivitet.
-                        </p>
-                        <Button 
-                          onClick={() => navigate('/?section=kontakt')}
-                          className="w-full bg-white text-[#1B4965] hover:bg-blue-50 font-bold h-14 rounded-xl text-base shadow-lg transition-all hover:shadow-xl"
-                        >
-                          Få et pristilbud
-                        </Button>
+                         {/* Redigerbar tekst fra content_blocks */}
+                              <h3 className="text-xl md:text-2xl font-bold mb-3 tracking-tight">
+                                {useContent('custom_plan_title').content || 'Trenger du en skreddersydd plan?'}
+                              </h3>
+                              <p className="text-blue-100 mb-8 text-sm md:text-base leading-relaxed opacity-90 font-light">
+                                {useContent('custom_plan_subtitle').content || 'Vi tilpasser våre systemer nøyaktig etter dine behov og arbeidsflyt for maksimal effektivitet.'}
+                              </p>
+                              {isAdmin && (
+                                <div className="mt-6">
+                                  <CustomPlanEditor />
+                                </div>
+                              )}
                       </div>
                    </div>
                 </div>
