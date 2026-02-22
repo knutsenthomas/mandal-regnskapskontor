@@ -12,11 +12,21 @@ import Footer from '@/components/Footer';
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
+    // Sett body-klasse for lasting
+    if (loading) {
+      document.body.classList.add('page-loading');
+    } else {
+      document.body.classList.remove('page-loading');
+    }
     // Simulerer lasting, evt. vent på nødvendige data
     const timer = setTimeout(() => setLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      document.body.classList.remove('page-loading');
+    };
+  }, [loading]);
 
   if (loading) {
     return <Loader text="Laster forsiden..." />;
