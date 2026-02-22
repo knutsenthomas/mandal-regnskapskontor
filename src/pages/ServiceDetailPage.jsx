@@ -93,7 +93,7 @@ const ServiceDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B4965]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800"></div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ const ServiceDetailPage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Tjenesten finnes ikke'}</h2>
-        <Button onClick={handleBack} className="bg-[#1B4965] hover:bg-[#0F3347]">
+        <Button onClick={handleBack} className="bg-blue-800 hover:bg-blue-900">
           <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til forsiden
         </Button>
       </div>
@@ -119,7 +119,7 @@ const ServiceDetailPage = () => {
       </Helmet>
 
       {/* Subtle Gradient Background */}
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100/80 pt-16 lg:pt-32">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-16 lg:pt-32">
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           
@@ -145,12 +145,12 @@ const ServiceDetailPage = () => {
                className="lg:col-span-6 flex flex-col items-start"
              >
                 {/* Service Icon */}
-                <div className="w-20 h-20 bg-[#EFF6FF] rounded-2xl flex items-center justify-center mb-8 shadow-sm ring-1 ring-blue-50">
+                 <div className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center mb-8 shadow-sm ring-1 ring-blue-100">
                    <Icon className="w-9 h-9 text-[#1B4965]" />
                 </div>
 
                 {/* Title - ENDRET: Fjernet 'font-serif' herfra */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0F172A] mb-8 tracking-tight leading-[1.1]">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-950 mb-8 tracking-tight leading-[1.1]">
                   {service.title}
                 </h1>
 
@@ -169,7 +169,7 @@ const ServiceDetailPage = () => {
                 <Button 
                   size="lg"
                   onClick={() => navigate('/?section=kontakt')}
-                  className="bg-[#1B4965] hover:bg-[#153a52] text-white text-base md:text-lg px-8 py-7 h-auto rounded-xl shadow-lg shadow-[#1B4965]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
+                  className="bg-[#1B4965] hover:bg-[#0F3347] text-white text-base md:text-lg px-8 py-7 h-auto rounded-xl shadow-lg shadow-[#1B4965]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
                 >
                   Bestill rådgivning for {service.title}
                 </Button>
@@ -182,9 +182,9 @@ const ServiceDetailPage = () => {
                transition={{ duration: 0.6, delay: 0.1 }}
                className="lg:col-span-6 w-full"
              >
-                <div className="bg-white rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden h-full shadow-sm ring-1 ring-gray-100">
+                <div className="bg-white rounded-3xl p-8 md:p-12 relative overflow-hidden h-full shadow-sm ring-1 ring-gray-100">
                    {/* ENDRET: Fjernet 'font-serif' herfra også for å være konsekvent */}
-                   <h2 className="text-3xl font-bold text-[#0F172A] mb-8">Hva vi tilbyr</h2>
+                   <h2 className="text-3xl font-bold text-blue-950 mb-8">Hva vi tilbyr</h2>
                    
                    <div className="mb-12">
                      {details?.offerings && details.offerings.length > 0 ? (

@@ -37,12 +37,12 @@ const Logo = ({
 
 			{/* Text Container */}
 			<div className="flex flex-col justify-center">
-				<motion.span
-					initial={false}
-					animate={{ color: isDarkText ? '#1B4965' : '#ffffff' }}
-					transition={{ duration: 0.3 }}
-					className={`font-bold leading-tight tracking-wide uppercase whitespace-nowrap ${isMobileMenu ? 'text-sm' : 'text-sm sm:text-base md:text-lg'}`}
-				>
+				   <motion.span
+					   initial={false}
+					   animate={{ color: isDarkText ? '#1e3a8a' : '#ffffff' }}
+					   transition={{ duration: 0.3 }}
+					   className={`font-bold leading-tight tracking-wide uppercase whitespace-nowrap ${isMobileMenu ? 'text-sm' : 'text-sm sm:text-base md:text-lg'}`}
+				   >
 					{logoText || "MANDAL REGNSKAPSKONTOR"}
 				</motion.span>
 

@@ -151,7 +151,7 @@ const AdminDashboard = () => {
   const renderDashboardHome = () => (
     <div className="space-y-6">
       {/* WELCOME BANNER */}
-      <div className="bg-gradient-to-r from-[#1B4965] to-[#235878] rounded-xl p-8 text-white shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#1B4965] to-[#0F3347] rounded-xl p-8 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl font-bold mb-2">Velkommen tilbake!</h2>
           <p className="text-blue-100 max-w-xl">

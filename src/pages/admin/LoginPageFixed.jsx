@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -81,7 +80,7 @@ const LoginPage = () => {
       toast({
         title: "Sjekk e-posten din",
         description: "Vi har sendt en magisk lenke til " + email,
-        className: "bg-blue-50 border-blue-200 text-blue-800"
+        className: "bg-[#EAF4FB] border-[#B6D6F2] text-[#1B4965]"
       });
     } catch (error) {
       handleLoginError(error);
@@ -95,12 +94,11 @@ const LoginPage = () => {
     let errorMessage = "Kunne ikke logge inn. Sjekk detaljene dine.";
 
     if (error.message.includes("check your email")) {
-      // Should actully be success path slightly different, but just in case
       errorMessage = "Sjekk e-posten din for innloggingslenke.";
     } else if (error.message.includes("Invalid login credentials")) {
       errorMessage = "Feil e-post eller passord.";
     } else {
-      errorMessage = "Feil: " + error.message; // Show raw error for debugging
+      errorMessage = "Feil: " + error.message;
     }
 
     setLocalError(errorMessage);
@@ -109,7 +107,7 @@ const LoginPage = () => {
       description: errorMessage,
       variant: "destructive"
     });
-            <h1 className="text-3xl font-bold text-[#1B4965] mb-6">Logg inn</h1>
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -172,7 +170,7 @@ const LoginPage = () => {
                     disabled={isLoading}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800"
+                    className="block w-full pl-10 px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B4965]"
                     placeholder="admin@eksempel.no"
                   />
                 </div>
@@ -238,7 +236,7 @@ const LoginPage = () => {
                         toast({
                           title: "Sjekk e-posten din",
                           description: "Vi har sendt deg en lenke for å lage nytt passord.",
-                          className: "bg-blue-50 border-blue-200 text-blue-800"
+                          className: "bg-[#EAF4FB] border-[#B6D6F2] text-[#1B4965]"
                         });
                       } catch (error) {
                         setLocalError(error.message || "Noe gikk galt.");
@@ -274,7 +272,7 @@ const LoginPage = () => {
             ) : (
               <form className="space-y-6" onSubmit={handleMagicLinkLogin}>
                 <div className="bg-[#EAF4FB] p-4 rounded-lg flex gap-3 text-[#1B4965] text-sm">
-                  <Sparkles className="w-5 h-5 flex-shrink-0" />
+                  <Sparkles className="w-5 w-5 flex-shrink-0" />
                   <p>Få en engangs-link på e-post. Du trenger ikke passord.</p>
                 </div>
 

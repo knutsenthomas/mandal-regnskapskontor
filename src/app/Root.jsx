@@ -5,7 +5,8 @@ import ScrollToTop from '../components/ScrollToTop';
 import Navigation from '../components/Navigation';
 import HomePage from '../pages/HomePage';
 import ServiceDetailPage from '../pages/ServiceDetailPage';
-import LoginPage from '../pages/admin/LoginPage';
+import LoginPageWithBoundary from '../pages/admin/LoginPageFixed';
+// import React fjernet, behold kun én import av React nedenfor
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import SetPasswordPage from '../pages/SetPasswordPage';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -29,7 +30,6 @@ const RouteTracker = () => {
 };
 
 function App() {
-
   useEffect(() => {
     const initGA = async () => {
       try {
@@ -51,7 +51,7 @@ function App() {
   }, []);
 
   return (
-    <SiteProvider> {/* SiteProvider wraps AuthProvider */}
+    <SiteProvider>
       <AuthProvider>
         <ErrorBoundary>
           <Router>
@@ -62,7 +62,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/service/:id" element={<ServiceDetailPage />} />
-                <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/admin/login" element={<LoginPageWithBoundary />} />
                 <Route path="/set-password" element={<SetPasswordPage />} />
                 <Route
                   path="/admin/dashboard"

@@ -91,7 +91,7 @@ const Services = () => {
       {/* Subtle background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
-        <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#468FAF] blur-3xl"></div>
+        <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#2A6F97] blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

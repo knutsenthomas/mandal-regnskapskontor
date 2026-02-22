@@ -129,7 +129,7 @@ const ContactForm = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="bg-[#1B4965] rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden">
-              {/* ... Samme innhold som før ... */}
+            <h2 className="text-2xl font-bold text-[#1B4965] mb-2">Kontakt oss</h2>
               <h3 className="text-2xl font-bold mb-10 relative z-10">Kontaktinformasjon</h3>
               <div className="space-y-8 relative z-10">
                 <div className="flex items-start space-x-6">
