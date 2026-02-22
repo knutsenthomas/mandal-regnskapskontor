@@ -66,11 +66,12 @@ const Services = () => {
   }, []);
 
   // Merge DB data with Config. If DB data is missing, use Default.
-  const displayServices = (dbServices.length > 0 ? dbServices : defaultServices).map((service, index) => ({
-    ...service,
-    // Fallback to safe defaults if index exceeds config length
-    ...(serviceConfig[index] || serviceConfig[0])
-  }));
+  const displayServices = dbServices.length > 0
+    ? dbServices.map((service, index) => ({
+        ...service,
+        ...(serviceConfig[index] || serviceConfig[0])
+      }))
+    : [];
 
   const container = {
     hidden: { opacity: 0 },
@@ -86,7 +87,8 @@ const Services = () => {
   };
 
   return (
-    <section className="py-24 bg-gray-50 relative overflow-hidden">
+    {displayServices.length > 0 && (
+      <section className="py-24 bg-gray-50 relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
