@@ -1,3 +1,4 @@
+import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
 import { useContent } from '@/contexts/ContentContext';
 // Admin editor for "skreddersydd plan"-tekst
 import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
@@ -176,8 +177,11 @@ const ServiceDetailPage = () => {
                   onClick={() => navigate('/?section=kontakt')}
                   className="bg-[#1B4965] hover:bg-[#0F3347] text-white text-base md:text-lg px-8 py-7 h-auto rounded-xl shadow-lg shadow-[#1B4965]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
                 >
-                  Bestill rådgivning for {service.title}
+                  {useContent('custom_plan_cta').content || `Bestill rådgivning for ${service.title}`}
                 </Button>
+                {isAdmin && (
+                  <CustomPlanCTAEditor />
+                )}
              </motion.div>
 
              {/* Right Column (Offerings Panel) */}
