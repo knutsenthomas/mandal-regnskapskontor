@@ -1,3 +1,4 @@
+import { useContent } from '@/contexts/ContentContext';
 // Admin editor for "skreddersydd plan"-tekst
 import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
   // Sjekk om vi er i admin-modus (f.eks. basert på URL eller context)
