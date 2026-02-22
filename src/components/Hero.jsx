@@ -10,7 +10,10 @@ const Hero = () => {
     hero_image: 'https://images.unsplash.com/photo-1697638164340-6c5fc558bdf2',
     primary_color: '#1B4965',
     hero_title: 'Mandal Regnskapskontor AS',
-    hero_subtitle: 'Din partner for profesjonell regnskap og finansiell rådgivning'
+    hero_lines: [
+      'Regnskap, Fakturering, Lønn, Revisjon, Skatt',
+      'Samt operativ lederstøtte'
+    ]
   });
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -28,7 +31,7 @@ const Hero = () => {
     const fetchSettings = async () => {
       const { data } = await supabase
         .from('content')
-        .select('hero_image, primary_color, hero_title, hero_subtitle')
+        .select('hero_image, primary_color, hero_title, hero_lines')
         .single();
 
       if (data) {
@@ -37,7 +40,7 @@ const Hero = () => {
           hero_image: data.hero_image || prev.hero_image,
           primary_color: data.primary_color || prev.primary_color,
           hero_title: data.hero_title || prev.hero_title,
-          hero_subtitle: data.hero_subtitle || prev.hero_subtitle
+          hero_lines: Array.isArray(data.hero_lines) && data.hero_lines.length > 0 ? data.hero_lines : prev.hero_lines
         }));
       }
       setLoading(false);
@@ -102,6 +105,7 @@ const Hero = () => {
           className="space-y-6"
         >
           {/* Tekststørrelse: 3xl på mobil, 5xl på tablet, 7xl på desktop */}
+
           <h1
             className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
             style={{ textWrap: 'balance' }}
@@ -109,9 +113,15 @@ const Hero = () => {
             {settings.hero_title}
           </h1>
 
-          <p className="text-xl sm:text-2xl text-blue-50 max-w-3xl mx-auto font-light">
-            {settings.hero_subtitle}
-          </p>
+          {settings.hero_lines && settings.hero_lines.map((line, idx) => (
+            <p
+              key={idx}
+              className="text-xl sm:text-2xl text-blue-50 max-w-3xl mx-auto font-light"
+              style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
+            >
+              {line}
+            </p>
+          ))}
 
           <div className="pt-8">
             <Button

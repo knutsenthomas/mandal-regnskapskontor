@@ -14,7 +14,7 @@ const HeroEditor = ({ content, onUpdate }) => {
     if (content) {
       setFormData({
         hero_title: content.hero_title ?? '',
-        hero_subtitle: content.hero_subtitle ?? '',
+        hero_lines: Array.isArray(content.hero_lines) ? content.hero_lines : [''],
         hero_image: content.hero_image ?? ''
       });
     }
@@ -22,6 +22,27 @@ const HeroEditor = ({ content, onUpdate }) => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLineChange = (idx, value) => {
+    setFormData(prev => ({
+      ...prev,
+      hero_lines: prev.hero_lines.map((line, i) => i === idx ? value : line)
+    }));
+  };
+
+  const handleAddLine = () => {
+    setFormData(prev => ({
+      ...prev,
+      hero_lines: [...prev.hero_lines, '']
+    }));
+  };
+
+  const handleRemoveLine = (idx) => {
+    setFormData(prev => ({
+      ...prev,
+      hero_lines: prev.hero_lines.filter((_, i) => i !== idx)
+    }));
   };
 
   const handleImageUpload = async (e) => {
@@ -73,7 +94,7 @@ const HeroEditor = ({ content, onUpdate }) => {
     const { error } = await supabase.rpc('update_hero_content', {
       p_id: content.id,
       p_title: formData.hero_title,
-      p_subtitle: formData.hero_subtitle,
+      p_lines: formData.hero_lines,
       p_image: formData.hero_image
     });
 
@@ -117,15 +138,24 @@ const HeroEditor = ({ content, onUpdate }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Undertittel</label>
-        <input
-          type="text"
-          name="hero_subtitle"
-          value={formData.hero_subtitle}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] mb-2"
-          placeholder="Undertittel på forsiden"
-        />
+        <label className="block text-sm font-medium text-gray-700 mb-1">Tekstlinjer under tittel</label>
+        <div className="space-y-2">
+          {formData.hero_lines && formData.hero_lines.map((line, idx) => (
+            <div key={idx} className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={line}
+                onChange={e => handleLineChange(idx, e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+                placeholder={`Linje ${idx + 1}`}
+              />
+              {formData.hero_lines.length > 1 && (
+                <button type="button" onClick={() => handleRemoveLine(idx)} className="text-red-500 text-xs px-2 py-1">Fjern</button>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={handleAddLine} className="text-[#1B4965] text-xs mt-2 px-2 py-1 border border-[#1B4965] rounded">+ Legg til linje</button>
+        </div>
       </div>
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">Forsidebilde</label>
