@@ -15,7 +15,14 @@ import { supabase } from '../lib/customSupabaseClient';
 import { Toaster } from '../components/ui/toaster';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { SiteProvider } from '../contexts/SiteContext';
+<<<<<<< HEAD
 import { ContentProvider } from '../contexts/ContentContext';
+import { useState } from 'react';
+import Loader from '../components/ui/loader';
+=======
+import { useState } from 'react';
+import Loader from '../components/ui/loader';
+>>>>>>> 4d80209 (Legg til preloader og loading-sikring)
 
 // Component to handle route changes
 const RouteTracker = () => {
@@ -31,7 +38,10 @@ const RouteTracker = () => {
 };
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    let cancelled = false;
     const initGA = async () => {
       try {
         const { data, error } = await supabase
@@ -48,8 +58,25 @@ function App() {
         console.warn("Failed to init GA:", error);
       }
     };
-    initGA();
+    Promise.all([
+      initGA(),
+      // Flere async kall kan legges til her
+    ]).catch(() => {
+      // Feil under lasting, men loader skal ikke henge
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
   }, []);
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
+        <Loader text="Laster innhold... Vennligst vent" />
+        <div style={{marginTop: 24, color: '#1B4965', fontWeight: 'bold', fontSize: 18}}>Siden starter straks alt er klart</div>
+      </div>
+    );
+  }
 
   return (
     <SiteProvider>
