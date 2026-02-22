@@ -32,8 +32,9 @@ const Navigation = () => {
     }
   }, [isOpen]);
 
-  // HIDE NAVIGATION ON ADMIN PAGES
-  if (location.pathname.startsWith('/admin')) {
+  // HIDE NAVIGATION ON ADMIN PAGES OR IF PAGE IS LOADING
+  const isLoading = document.body.classList.contains('page-loading');
+  if (location.pathname.startsWith('/admin') || isLoading) {
     return null;
   }
 
