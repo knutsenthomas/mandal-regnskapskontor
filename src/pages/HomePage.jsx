@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Loader } from '@/components/ui/loader';
 import { Helmet } from 'react-helmet';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
@@ -9,6 +10,18 @@ import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 
 const HomePage = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulerer lasting, evt. vent på nødvendige data
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader text="Laster forsiden..." />;
+  }
+
   return (
     <>
       <Helmet>
