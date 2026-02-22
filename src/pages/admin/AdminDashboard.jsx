@@ -281,26 +281,6 @@ const AdminDashboard = () => {
                 </SelectContent>
               </Select>
             </div>
-            {/* Nytt: Rediger alt innhold på tjenesteinnhold-sidene */}
-            <ServiceDetailContentEditor
-              service={content?.services_data?.[effectiveServiceId]}
-              details={content?.service_details?.[effectiveServiceId]}
-              onSave={async (updated) => {
-                // Oppdater i supabase (tilpass etter din datastruktur)
-                const newServices = [...(content?.services_data || [])];
-                newServices[effectiveServiceId] = {
-                  ...newServices[effectiveServiceId],
-                  title: updated.title,
-                  description: updated.description
-                };
-                await supabase.from('content').update({ services_data: newServices }).eq('id', content.id);
-                await supabase.from('service_details').update({
-                  extended_description: updated.extended_description,
-                  offerings: updated.offerings
-                }).eq('service_id', effectiveServiceId);
-                fetchContent();
-              }}
-            />
             <ServiceDetailEditor
               selectedServiceId={effectiveServiceId}
               serviceTitle={effectiveServiceName}
