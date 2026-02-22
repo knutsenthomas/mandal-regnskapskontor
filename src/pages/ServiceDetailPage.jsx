@@ -1,9 +1,3 @@
-import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
-import { useContent } from '@/contexts/ContentContext';
-// Admin editor for "skreddersydd plan"-tekst
-import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
-  // Sjekk om vi er i admin-modus (f.eks. basert på URL eller context)
-  const isAdmin = window.location.pathname.startsWith('/admin');
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -15,18 +9,30 @@ import {
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 
-// Reusable Components
+// Egne komponenter og kontekster
 import OfferingsList from '@/components/service-detail/OfferingsList';
+import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
+import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
+import { useContent } from '@/contexts/ContentContext';
 
 const ServiceDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
   const [service, setService] = useState(null);
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // NY FUNKSJON: Sender brukeren tilbake til forsiden og scroller til tjenestene
+  // Sjekk om vi er i admin-modus (flyttet inn i komponenten)
+  const isAdmin = window.location.pathname.startsWith('/admin');
+
+  // Hent innhold fra konteksten HER, på toppnivået av komponenten (React-regel)
+  const customPlanCta = useContent('custom_plan_cta');
+  const customPlanTitle = useContent('custom_plan_title');
+  const customPlanSubtitle = useContent('custom_plan_subtitle');
+
+  // Sender brukeren tilbake til forsiden og scroller til tjenestene
   const handleBack = () => {
     navigate('/');
     
@@ -155,7 +161,7 @@ const ServiceDetailPage = () => {
                    <Icon className="w-9 h-9 text-[#1B4965]" />
                 </div>
 
-                {/* Title - ENDRET: Fjernet 'font-serif' herfra */}
+                {/* Title */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-950 mb-8 tracking-tight leading-[1.1]">
                   {service.title}
                 </h1>
@@ -177,7 +183,8 @@ const ServiceDetailPage = () => {
                   onClick={() => navigate('/?section=kontakt')}
                   className="bg-[#1B4965] hover:bg-[#0F3347] text-white text-base md:text-lg px-8 py-7 h-auto rounded-xl shadow-lg shadow-[#1B4965]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
                 >
-                  {useContent('custom_plan_cta').content || `Bestill rådgivning for ${service.title}`}
+                  {/* Bruker hook-variabelen her */}
+                  {customPlanCta?.content || `Bestill rådgivning for ${service.title}`}
                 </Button>
                 {isAdmin && (
                   <CustomPlanCTAEditor />
@@ -192,7 +199,6 @@ const ServiceDetailPage = () => {
                className="lg:col-span-6 w-full"
              >
                 <div className="bg-white rounded-3xl p-8 md:p-12 relative overflow-hidden h-full shadow-sm ring-1 ring-gray-100">
-                   {/* ENDRET: Fjernet 'font-serif' herfra også for å være konsekvent */}
                    <h2 className="text-3xl font-bold text-blue-950 mb-8">Hva vi tilbyr</h2>
                    
                    <div className="mb-12">
@@ -210,18 +216,18 @@ const ServiceDetailPage = () => {
                       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                       
                       <div className="relative z-10">
-                         {/* Redigerbar tekst fra content_blocks */}
-                              <h3 className="text-xl md:text-2xl font-bold mb-3 tracking-tight">
-                                {useContent('custom_plan_title').content || 'Trenger du en skreddersydd plan?'}
-                              </h3>
-                              <p className="text-blue-100 mb-8 text-sm md:text-base leading-relaxed opacity-90 font-light">
-                                {useContent('custom_plan_subtitle').content || 'Vi tilpasser våre systemer nøyaktig etter dine behov og arbeidsflyt for maksimal effektivitet.'}
-                              </p>
-                              {isAdmin && (
-                                <div className="mt-6">
-                                  <CustomPlanEditor />
-                                </div>
-                              )}
+                         {/* Bruker hook-variablene her */}
+                         <h3 className="text-xl md:text-2xl font-bold mb-3 tracking-tight">
+                           {customPlanTitle?.content || 'Trenger du en skreddersydd plan?'}
+                         </h3>
+                         <p className="text-blue-100 mb-8 text-sm md:text-base leading-relaxed opacity-90 font-light">
+                           {customPlanSubtitle?.content || 'Vi tilpasser våre systemer nøyaktig etter dine behov og arbeidsflyt for maksimal effektivitet.'}
+                         </p>
+                         {isAdmin && (
+                           <div className="mt-6">
+                             <CustomPlanEditor />
+                           </div>
+                         )}
                       </div>
                    </div>
                 </div>

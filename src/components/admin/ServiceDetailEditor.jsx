@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Loader2, Plus, Trash2, GripVertical } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Save, Loader2, Plus, Trash2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AVAILABLE_ICONS = [
   "BookOpen", "FileSpreadsheet", "FileCheck", "UploadCloud",
@@ -30,6 +30,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     if (selectedServiceId) {
       fetchDetails();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedServiceId]);
 
   const normalizeTitle = (title) => (title || '').toLowerCase();
@@ -126,7 +127,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     if (!selectedServiceId) {
       toast({
         title: "Feil",
-        description: "Velg en tjeneste for a lagre innhold.",
+        description: "Velg en tjeneste for å lagre innhold.",
         variant: "destructive"
       });
       return;
@@ -197,6 +198,8 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
         title = "Nytt spørsmål lagt til";
         description = "Skriv inn spørsmål og svar.";
         break;
+      default:
+        break;
     }
 
     toast({
@@ -261,6 +264,8 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
       case 'faqs':
         title = "Spørsmål slettet";
         break;
+      default:
+        break;
     }
 
     toast({
@@ -280,18 +285,15 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
           color: white !important;
           border: none !important;
         }
-        .super-custom-save-btn:hover {
-          background-color: #0F3347 !important;
-          color: white !important;
-        }
       `}</style>
 
       <div className="flex justify-between items-center mb-8 pt-2">
         <h2 className="text-lg font-semibold text-gray-700">Innhold</h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-4">
+      {/* Innledning og Målgruppe */}
+      <div className="space-y-6">
+        <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-700">Utvidet beskrivelse (Innledning)</label>
           <textarea
             value={data.extended_description}
@@ -301,7 +303,8 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
             placeholder="Skriv innledningen til tjenestesiden her..."
           />
         </div>
-        <div className="space-y-4">
+        
+        <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-700">Målgruppe (Hvem er dette for?)</label>
           <textarea
             value={data.target_audience}
@@ -331,12 +334,9 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
                 <SelectTrigger className="w-[180px] bg-white z-10">
                   <SelectValue placeholder="Ikon" />
                 </SelectTrigger>
-
-                {/* HER ER FIKSEN: bg-white og z-50 for å dekke over bakgrunnen */}
                 <SelectContent className="bg-white border border-gray-200 shadow-xl z-50 max-h-[300px] overflow-y-auto">
                   {AVAILABLE_ICONS.map(icon => <SelectItem key={icon} value={icon} className="cursor-pointer hover:bg-gray-100">{icon}</SelectItem>)}
                 </SelectContent>
-
               </Select>
               <input
                 type="text"
@@ -353,10 +353,12 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
         </div>
       </div>
 
-      {/* Process Steps */}
+      {/* Prosess seksjon */}
       <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
         <div className="flex justify-between items-center">
-          <label className="block text-lg font-bold text-gray-800">Prosess (Steg for steg)</label>
+          <div className="flex items-center gap-2">
+            <label className="block text-lg font-bold text-gray-800">Prosess (Steg for steg)</label>
+          </div>
           <Button size="sm" variant="outline" onClick={() => addItem('process_steps', { title: '', description: '' })}>
             <Plus className="w-4 h-4 mr-2" /> Legg til steg
           </Button>
@@ -430,7 +432,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
         </div>
       </div>
 
-      {/* FAQs */}
+      {/* FAQ seksjon */}
       <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
         <div className="flex justify-between items-center">
           <label className="block text-lg font-bold text-gray-800">FAQ (Ofte stilte spørsmål)</label>
@@ -479,7 +481,6 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
           Lagre endringer
         </button>
       </div>
-
     </div>
   );
 };
