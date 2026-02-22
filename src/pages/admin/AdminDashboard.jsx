@@ -259,6 +259,11 @@ const AdminDashboard = () => {
         return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
       case 'service-details': {
         if (!content) return <p>Laster...</p>;
+        // Velg automatisk første tjeneste hvis ingen valgt
+        if (!selectedServiceId && servicesList.length > 0) {
+          setSelectedServiceId(servicesList[0].id);
+          return null; // Venter på state update
+        }
         const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
         const effectiveServiceName = servicesList.find(s => s.id === effectiveServiceId)?.name || '';
         return (
