@@ -15,6 +15,7 @@ import { supabase } from '../lib/customSupabaseClient';
 import { Toaster } from '../components/ui/toaster';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { SiteProvider } from '../contexts/SiteContext';
+import { ContentProvider } from '../contexts/ContentContext';
 
 // Component to handle route changes
 const RouteTracker = () => {
@@ -53,30 +54,32 @@ function App() {
   return (
     <SiteProvider>
       <AuthProvider>
-        <ErrorBoundary>
-          <Router>
-            <RouteTracker />
-            <ScrollToTop />
-            <Navigation />
-            <main className="pt-0">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/service/:id" element={<ServiceDetailPage />} />
-                <Route path="/admin/login" element={<LoginPageWithBoundary />} />
-                <Route path="/set-password" element={<SetPasswordPage />} />
-                <Route
-                  path="/admin/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
-            </main>
-            <Toaster />
-          </Router>
-        </ErrorBoundary>
+        <ContentProvider>
+          <ErrorBoundary>
+            <Router>
+              <RouteTracker />
+              <ScrollToTop />
+              <Navigation />
+              <main className="pt-0">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/service/:id" element={<ServiceDetailPage />} />
+                  <Route path="/admin/login" element={<LoginPageWithBoundary />} />
+                  <Route path="/set-password" element={<SetPasswordPage />} />
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </main>
+              <Toaster />
+            </Router>
+          </ErrorBoundary>
+        </ContentProvider>
       </AuthProvider>
     </SiteProvider>
   );

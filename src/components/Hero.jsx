@@ -1,55 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Loader } from '@/components/ui/loader';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { useContent } from '@/contexts/ContentContext';
 
 const Hero = () => {
-  const [settings, setSettings] = useState({
-    hero_image: 'https://images.unsplash.com/photo-1697638164340-6c5fc558bdf2',
-    primary_color: '#1B4965',
-    hero_title: 'Mandal Regnskapskontor AS',
-    hero_lines: [
-      'Regnskap, Fakturering, Lønn, Revisjon, Skatt',
-      'Samt operativ lederstøtte'
-    ]
-  });
-  const [loading, setLoading] = useState(true);
+  const { content: heroTitle } = useContent('hero.title');
+  const { content: heroLinesRaw } = useContent('hero.lines');
+  const { content: heroImage } = useContent('hero.image');
+  const { content: heroButton } = useContent('hero.button');
+  const { content: heroColor } = useContent('hero.primaryColor');
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Hvis bildet allerede er cached, sørg for at imageLoaded blir true
-  useEffect(() => {
-    if (settings.hero_image) {
-      const img = new window.Image();
-      img.src = settings.hero_image;
-      if (img.complete) setImageLoaded(true);
+  // Fallbacks
+  const fallbackImage = 'https://images.unsplash.com/photo-1697638164340-6c5fc558bdf2';
+  const fallbackTitle = 'Mandal Regnskapskontor AS';
+  const fallbackLines = [
+    'Regnskap, Fakturering, Lønn, Revisjon, Skatt',
+    'Samt operativ lederstøtte'
+  ];
+  let heroLines = fallbackLines;
+  if (heroLinesRaw) {
+    try {
+      const arr = JSON.parse(heroLinesRaw);
+      if (Array.isArray(arr) && arr.length > 0) heroLines = arr;
+    } catch {
+      heroLines = [heroLinesRaw];
     }
-  }, [settings.hero_image]);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const { data } = await supabase
-        .from('content')
-        .select('hero_image, primary_color, hero_title, hero_lines')
-        .single();
-
-      if (data) {
-        setSettings(prev => ({
-          ...prev,
-          hero_image: data.hero_image || prev.hero_image,
-          primary_color: data.primary_color || prev.primary_color,
-          hero_title: data.hero_title || prev.hero_title,
-          hero_lines: Array.isArray(data.hero_lines) && data.hero_lines.length > 0 ? data.hero_lines : prev.hero_lines
-        }));
-      }
-      setLoading(false);
-    };
-    fetchSettings();
-  }, []);
-
-  // Vis loader kun til data er lastet, ikke til bilde er ferdig
-  const showLoader = loading;
+  }
+  const color = heroColor || '#1B4965';
 
   const scrollToContact = () => {
     const contactSection = document.getElementById('kontakt');
@@ -61,17 +41,7 @@ const Hero = () => {
     }
   };
 
-  if (showLoader) {
-    return (
-      <section
-        className="relative w-full flex items-center justify-center overflow-hidden bg-[#0F3347]"
-        style={{ minHeight: '100vh', height: '100dvh' }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0F3347]/95 via-[#1B4965]/90 to-[#2A6F97]/85"></div>
-        <Loader text="Laster forsiden..." />
-      </section>
-    );
-  }
+  // Ingen loader, fallback vises alltid
 
   return (
     <section
@@ -81,7 +51,7 @@ const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={settings.hero_image}
+          src={heroImage || fallbackImage}
           alt="Regnskapskontor"
           className="w-full h-full object-cover object-center transition-opacity duration-700"
           onLoad={() => setImageLoaded(true)}
@@ -110,10 +80,10 @@ const Hero = () => {
             className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
             style={{ textWrap: 'balance' }}
           >
-            {settings.hero_title}
+            {heroTitle || fallbackTitle}
           </h1>
 
-          {settings.hero_lines && settings.hero_lines.map((line, idx) => (
+          {heroLines.map((line, idx) => (
             <p
               key={idx}
               className="text-xl sm:text-2xl text-blue-50 max-w-3xl mx-auto font-light"
@@ -127,10 +97,10 @@ const Hero = () => {
             <Button
               onClick={scrollToContact}
               size="lg"
-              style={{ backgroundColor: settings.primary_color }}
+              style={{ backgroundColor: color }}
               className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30"
             >
-              Kontakt oss
+              {heroButton || 'Kontakt oss'}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>

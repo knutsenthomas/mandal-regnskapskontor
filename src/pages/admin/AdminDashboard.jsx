@@ -26,6 +26,7 @@ import SearchCommand from '@/components/admin/SearchCommand';
 import ProfileSettings from '@/components/admin/ProfileSettings';
 import SEOEditor from '@/app/admin/SEOEditor';
 import AnalyticsOverview from '@/components/admin/AnalyticsOverview';
+import ContentBlocksEditor from '@/components/admin/ContentBlocksEditor';
 
 // LAYOUT
 import DashboardLayout from '@/components/admin/layout/DashboardLayout';
@@ -78,7 +79,8 @@ const AdminDashboard = () => {
       'contact': 'Kontaktinformasjon',
       'footer': 'Footer & Innstillinger',
       'theme': 'Tema & Farger',
-      'seo': 'SEO & Synlighet'
+      'seo': 'SEO & Synlighet',
+      'content-blocks': 'Alt tekstinnhold'
     };
     setActiveTabTitle(titles[activeTab] || 'Admin');
   }, [activeTab]);
@@ -309,6 +311,8 @@ const AdminDashboard = () => {
         return <ThemeEditor />;
       case 'seo':
         return <SEOEditor />;
+      case 'content-blocks':
+        return <ContentBlocksEditor />;
       default:
         return renderDashboardHome();
     }

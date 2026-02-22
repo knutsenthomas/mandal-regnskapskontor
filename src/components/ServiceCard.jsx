@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { useContent } from '@/contexts/ContentContext';
 
 const ServiceCard = ({ service, index, variants }) => {
   return (
@@ -33,17 +34,17 @@ const ServiceCard = ({ service, index, variants }) => {
 
           {/* Title */}
           <h3 className="text-xl xl:text-lg font-bold mb-2 tracking-tight leading-tight group-hover:text-blue-200 transition-colors">
-            {service.title}
+            {service.title || useContent('servicecard.title').content || 'Tittel'}
           </h3>
 
           {/* Description (truncated/shortened visually) */}
           <p className="text-gray-300 text-sm mb-4 line-clamp-3 font-light leading-relaxed opacity-90 group-hover:opacity-100">
-            {service.description}
+            {service.description || useContent('servicecard.description').content || 'Beskrivelse av tjenesten.'}
           </p>
 
           {/* Action Button */}
           <div className="inline-flex items-center justify-center bg-[#1B4965] hover:bg-[#0F3347] text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-300 w-fit group-hover:gap-2 shadow-lg">
-            <span>Les mer</span>
+            <span>{useContent('servicecard.button').content || 'Les mer'}</span>
             <ArrowRight className="w-0 h-4 opacity-0 -ml-2 group-hover:w-4 group-hover:ml-2 group-hover:opacity-100 transition-all duration-300" />
           </div>
         </div>
