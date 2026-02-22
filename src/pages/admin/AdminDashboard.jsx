@@ -30,6 +30,7 @@ import AnalyticsOverview from '@/components/admin/AnalyticsOverview';
 // LAYOUT
 import DashboardLayout from '@/components/admin/layout/DashboardLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { Loader } from '@/components/ui/loader';
 
 const AdminDashboard = () => {
   const [content, setContent] = useState(null);
@@ -142,14 +143,7 @@ const AdminDashboard = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B4965] mx-auto mb-4"></div>
-          <p className="text-gray-500">Laster admin-panelet...</p>
-        </div>
-      </div>
-    );
+    return <Loader text="Laster admin-panelet..." />;
   }
 
   // --- RENDER HELPERS ---
