@@ -92,7 +92,11 @@ export const SiteProvider = ({ children }) => {
                     themeSettings[key] = settingsMap[key];
                     const hsl = hexToHSL(settingsMap[key]);
                     if (hsl) {
-                        document.documentElement.style.setProperty(cssVarMap[key], hsl);
+                        // Bare påfør tema-variabler hvis vi IKKE er i admin-panelet
+                        // Dette hindrer at admin-UI (som bruker f.eks. bg-background) blir ødelagt av brukerens fargevalg
+                        if (!window.location.pathname.startsWith('/admin')) {
+                            document.documentElement.style.setProperty(cssVarMap[key], hsl);
+                        }
                     }
                 }
             });
