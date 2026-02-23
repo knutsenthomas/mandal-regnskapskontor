@@ -73,28 +73,34 @@ export function ContentProvider({ children }) {
 
   // Hent alle content blocks
   const fetchBlocks = useCallback(async () => {
-    setLoading(true);
-    const [blocksResult, contentResult] = await Promise.all([
-      supabase.from('content_blocks').select('*'),
-      supabase.from('content').select('*').single(),
-    ]);
+    try {
+      setLoading(true);
+      const [blocksResult, contentResult] = await Promise.all([
+        supabase.from('content_blocks').select('*'),
+        supabase.from('content').select('*').single(),
+      ]);
 
-    const { data, error } = blocksResult;
-    if (!error && data) {
-      const mapped = {};
-      data.forEach((block) => {
-        mapped[block.slug] = block;
-      });
-      setBlocks(mapped);
-    }
+      const { data, error } = blocksResult;
+      if (!error && data) {
+        const mapped = {};
+        data.forEach((block) => {
+          mapped[block.slug] = block;
+        });
+        setBlocks(mapped);
+      }
 
-    if (!contentResult.error && contentResult.data) {
-      setDashboardContent(contentResult.data);
-    } else if (contentResult.error?.code === 'PGRST116') {
-      setDashboardContent(null);
+      if (!contentResult.error && contentResult.data) {
+        setDashboardContent(contentResult.data);
+      } else if (contentResult.error?.code === 'PGRST116') {
+        setDashboardContent(null);
+      }
+    } catch (err) {
+      console.error("Error fetching content blocks:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
+
 
   // Oppdater én content block
   const updateBlock = async (slug, content, type = 'text') => {
