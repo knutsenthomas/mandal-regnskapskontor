@@ -228,7 +228,7 @@ const FinancialCalendar = () => {
                 </div>
 
                 {/* Main Card */}
-                <Card className="border-none shadow-2xl bg-white overflow-hidden max-w-5xl mx-auto rounded-3xl">
+                <Card className="border-none shadow-2xl bg-card text-card-foreground overflow-hidden max-w-5xl mx-auto rounded-3xl">
                     <div className="grid lg:grid-cols-5">
 
                         {/* Right Side: Image Panel (Visible on Desktop) - MOVED FIRST in DOM for Mobile? No, layout logic. 

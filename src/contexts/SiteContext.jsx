@@ -37,7 +37,7 @@ export const SiteProvider = ({ children }) => {
 
             const themeKeys = [
                 'theme_primary', 'theme_secondary', 'theme_background',
-                'theme_foreground', 'theme_muted', 'theme_accent'
+                'theme_foreground', 'theme_muted', 'theme_accent', 'theme_card'
             ];
 
             const themeSettings = {};

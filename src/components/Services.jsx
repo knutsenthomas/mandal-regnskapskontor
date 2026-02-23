@@ -68,9 +68,9 @@ const Services = () => {
   // Merge DB data with Config. If DB data is missing, use Default.
   const displayServices = dbServices.length > 0
     ? dbServices.map((service, index) => ({
-        ...service,
-        ...(serviceConfig[index] || serviceConfig[0])
-      }))
+      ...service,
+      ...(serviceConfig[index] || serviceConfig[0])
+    }))
     : [];
 
   const container = {
@@ -89,11 +89,11 @@ const Services = () => {
   return (
     <>
       {displayServices.length > 0 && (
-        <section className="py-24 bg-gray-50 relative overflow-hidden">
+        <section className="py-24 bg-muted relative overflow-hidden">
           {/* Subtle background decoration */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
-            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
-            <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#2A6F97] blur-3xl"></div>
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
+            <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-primary blur-3xl"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -104,9 +104,9 @@ const Services = () => {
               transition={{ duration: 0.6 }}
               className="text-center mb-20"
             >
-              <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Våre tjenester</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
+              <span className="text-primary font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight">Våre tjenester</h2>
+              <p className="text-xl text-foreground/70 max-w-3xl mx-auto font-light leading-relaxed">
                 Vi tilbyr omfattende regnskaps- og finansielle tjenester skreddersydd etter dine behov.
               </p>
             </motion.div>

@@ -96,6 +96,7 @@ export const applyThemeColor = (key, value) => {
         'theme_primary': '--primary',
         'theme_secondary': '--secondary',
         'theme_background': '--background',
+        'theme_card': '--card',
         'theme_foreground': '--foreground',
         'theme_muted': '--muted',
         'theme_accent': '--accent'
@@ -112,6 +113,11 @@ export const applyThemeColor = (key, value) => {
 
     if (hsl && typeof hsl === 'string' && hsl.includes(' ')) {
         document.documentElement.style.setProperty(cssVar, hsl);
+
+        // Keep --card in sync with --background if not explicitly set
+        if (key === 'theme_background') {
+            document.documentElement.style.setProperty('--card', hsl);
+        }
 
         // Special handling for foregrounds to ensure readability
         // If we set a primary color, we should also ensure primary-foreground exists
