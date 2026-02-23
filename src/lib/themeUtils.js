@@ -23,6 +23,10 @@ export const hexToHSL = (hex) => {
         g = parseInt(cleanHex.slice(2, 4), 16);
         b = parseInt(cleanHex.slice(4, 6), 16);
     } else {
+        // If it's already an HSL string with commas, convert to space-separated
+        if (hex.includes(',')) {
+            return hex.replace(/,/g, ' ').replace(/hsl\(|\)/g, '').trim();
+        }
         return null;
     }
 
@@ -48,6 +52,7 @@ export const hexToHSL = (hex) => {
     s = +(s * 100).toFixed(1);
     l = +(l * 100).toFixed(1);
 
+    // Return space-separated HSL for Tailwind/Shadcn compatibility
     return `${h} ${s}% ${l}%`;
 };
 
@@ -100,11 +105,28 @@ export const applyThemeColor = (key, value) => {
     if (!cssVar || !value) return;
 
     let hsl = value;
-    if (typeof value === 'string' && value.startsWith('#')) {
+    // If it's a hex, convert to space-separated HSL
+    if (typeof value === 'string' && (value.startsWith('#') || value.length === 3 || value.length === 6)) {
         hsl = hexToHSL(value);
     }
 
     if (hsl && typeof hsl === 'string' && hsl.includes(' ')) {
         document.documentElement.style.setProperty(cssVar, hsl);
+
+        // Special handling for foregrounds to ensure readability
+        // If we set a primary color, we should also ensure primary-foreground exists
+        if (key === 'theme_primary') {
+            // Calculate if the color is dark or light
+            const parts = hsl.replace(/%/g, '').split(' ');
+            const lightness = parseFloat(parts[2]);
+
+            // Set primary-foreground based on lightness
+            // If lightness < 60%, use white-ish, otherwise use dark
+            const foregroundVar = '--primary-foreground';
+            const foregroundVal = lightness < 60 ? '210 40% 98%' : '222.2 47.4% 11.2%';
+            document.documentElement.style.setProperty(foregroundVar, foregroundVal);
+        }
+    } else {
+        console.warn(`Invalid theme color for ${key}:`, value);
     }
 };

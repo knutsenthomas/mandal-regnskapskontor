@@ -111,8 +111,7 @@ const Hero = () => {
               <Button
                 onClick={scrollToContact}
                 size="lg"
-                style={{ backgroundColor: color || primaryColor, color: primaryForeground }}
-                className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30"
+                className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30 bg-primary hover:bg-primary/90"
               >
                 {heroButton}
                 <ArrowRight className="ml-2 h-5 w-5" />
