@@ -17,6 +17,7 @@ const ThemeEditor = () => {
         theme_primary: '#1B4965', // Brand Blue
         theme_secondary: '#f1f5f9', // Slate 100
         theme_background: '#ffffff',
+        theme_card: '#ffffff',
         theme_foreground: '#0f172a', // Slate 900
         theme_muted: '#f1f5f9',
         theme_accent: '#f1f5f9',
@@ -219,6 +220,11 @@ const ThemeEditor = () => {
                         label="Bakgrunnsfarge"
                         description="Hovedbakgrunnen på hele nettsiden."
                         stateKey="theme_background"
+                    />
+                    <ColorInput
+                        label="Kort-bakgrunn (Card)"
+                        description="Bakgrunnsfarge for bokser, kort og kalender."
+                        stateKey="theme_card"
                     />
                     <ColorInput
                         label="Tekstfarge"
