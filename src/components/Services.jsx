@@ -87,47 +87,50 @@ const Services = () => {
   };
 
   return (
-    {displayServices.length > 0 && (
-      <section className="py-24 bg-gray-50 relative overflow-hidden">
-      {/* Subtle background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
-        <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#2A6F97] blur-3xl"></div>
-      </div>
+    <>
+      {displayServices.length > 0 && (
+        <section className="py-24 bg-gray-50 relative overflow-hidden">
+          {/* Subtle background decoration */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
+            <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#2A6F97] blur-3xl"></div>
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
-          <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Våre tjenester</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-            Vi tilbyr omfattende regnskaps- og finansielle tjenester skreddersydd etter dine behov.
-          </p>
-        </motion.div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-20"
+            >
+              <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Våre tjenester</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
+                Vi tilbyr omfattende regnskaps- og finansielle tjenester skreddersydd etter dine behov.
+              </p>
+            </motion.div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-5 px-2 sm:px-4"
-        >
-          {displayServices.map((service, index) => (
-            <ServiceCard
-              key={index}
-              service={service}
-              index={index}
-              variants={item}
-            />
-          ))}
-        </motion.div>
-      </div>
-    </section>
+            <motion.div
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-5 px-2 sm:px-4"
+            >
+              {displayServices.map((service, index) => (
+                <ServiceCard
+                  key={index}
+                  service={service}
+                  index={index}
+                  variants={item}
+                />
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
+    </>
   );
 };
 

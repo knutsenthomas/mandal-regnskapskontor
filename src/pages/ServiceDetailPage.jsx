@@ -2,18 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Helmet } from 'react-helmet';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { 
-  ArrowLeft, Calculator, FileText, Users, ClipboardCheck, TrendingUp
-} from 'lucide-react';
+import { ArrowLeft, Calculator, FileText, Users, ClipboardCheck, TrendingUp } from 'lucide-react';
 import Footer from '@/components/Footer';
-
-// Egne komponenter og kontekster
+import Navigation from '@/components/Navigation';
+import { motion } from 'framer-motion';
 import OfferingsList from '@/components/service-detail/OfferingsList';
 import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
-import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
-import { useContent } from '@/contexts/ContentContext';
 
 const ServiceDetailPage = () => {
   const { id } = useParams();
@@ -102,6 +97,7 @@ const ServiceDetailPage = () => {
     fetchServiceData();
   }, [id]);
 
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -124,7 +120,12 @@ const ServiceDetailPage = () => {
   const Icon = service.icon;
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <Navigation />
       <Helmet>
         <title>{service.title} - Mandal Regnskapskontor</title>
         <meta name="description" content={service.description} />
@@ -238,7 +239,7 @@ const ServiceDetailPage = () => {
         
         <Footer />
       </div>
-    </>
+    </motion.div>
   );
 };
 

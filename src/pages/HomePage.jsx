@@ -1,7 +1,7 @@
-
-import React, { useState, useEffect } from 'react';
-import { Loader } from '@/components/ui/loader';
+import React from 'react';
 import { Helmet } from 'react-helmet';
+import Navigation from '@/components/Navigation';
+import { motion } from 'framer-motion';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import About from '@/components/About';
@@ -10,30 +10,13 @@ import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 
 const HomePage = () => {
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    // Sett body-klasse for lasting
-    if (loading) {
-      document.body.classList.add('page-loading');
-    } else {
-      document.body.classList.remove('page-loading');
-    }
-    // Simulerer lasting, evt. vent på nødvendige data
-    const timer = setTimeout(() => setLoading(false), 1200);
-    return () => {
-      clearTimeout(timer);
-      document.body.classList.remove('page-loading');
-    };
-  }, [loading]);
-
-  if (loading) {
-    return <Loader text="Laster forsiden..." />;
-  }
-
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: 'easeOut' }}
+    >
+      <Navigation />
       <Helmet>
         <title>Mandal regnskapskontor AS - Profesjonell Regnskap og Finansiell Rådgivning</title>
         <meta
@@ -43,34 +26,24 @@ const HomePage = () => {
       </Helmet>
 
       <div className="min-h-screen">
-        {!loading && (
-          <div id="hjem">
-            <Hero />
-          </div>
-        )}
-        {!loading && (
-          <div id="tjenester" className="scroll-mt-16">
-            <Services />
-          </div>
-        )}
-        {!loading && (
-          <div id="om-oss" className="scroll-mt-16">
-            <About />
-          </div>
-        )}
-        {!loading && (
-          <div id="kalender" className="scroll-mt-16">
-            <FinancialCalendar />
-          </div>
-        )}
-        {!loading && (
-          <div id="kontakt" className="scroll-mt-16">
-            <ContactForm />
-          </div>
-        )}
-        {!loading && <Footer />}
+        <div id="hjem">
+          <Hero />
+        </div>
+        <div id="tjenester" className="scroll-mt-16">
+          <Services />
+        </div>
+        <div id="om-oss" className="scroll-mt-16">
+          <About />
+        </div>
+        <div id="kalender" className="scroll-mt-16">
+          <FinancialCalendar />
+        </div>
+        <div id="kontakt" className="scroll-mt-16">
+          <ContactForm />
+        </div>
+        <Footer />
       </div>
-    </>
+    </motion.div>
   );
 };
 

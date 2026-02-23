@@ -31,10 +31,14 @@ const About = () => {
   ];
   let parsedValues = defaultValues;
   if (aboutValues) {
-    try {
-      const arr = JSON.parse(aboutValues);
-      if (Array.isArray(arr) && arr.length > 0) parsedValues = arr;
-    } catch {}
+    if (Array.isArray(aboutValues) && aboutValues.length > 0) {
+      parsedValues = aboutValues;
+    } else if (typeof aboutValues === 'string') {
+      try {
+        const arr = JSON.parse(aboutValues);
+        if (Array.isArray(arr) && arr.length > 0) parsedValues = arr;
+      } catch {}
+    }
   }
   const defaultImage = "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D";
   const displayImage = aboutImage || defaultImage;

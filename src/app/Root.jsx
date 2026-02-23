@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter as Router, useLocation } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
 import ScrollToTop from '../components/ScrollToTop';
-import Navigation from '../components/Navigation';
 import HomePage from '../pages/HomePage';
 import ServiceDetailPage from '../pages/ServiceDetailPage';
 import LoginPageWithBoundary from '../pages/admin/LoginPageFixed';
@@ -14,15 +13,8 @@ import ReactGA from 'react-ga4';
 import { supabase } from '../lib/customSupabaseClient';
 import { Toaster } from '../components/ui/toaster';
 import ErrorBoundary from '../components/ErrorBoundary';
-import { SiteProvider } from '../contexts/SiteContext';
-<<<<<<< HEAD
 import { ContentProvider } from '../contexts/ContentContext';
-import { useState } from 'react';
-import Loader from '../components/ui/loader';
-=======
-import { useState } from 'react';
-import Loader from '../components/ui/loader';
->>>>>>> 4d80209 (Legg til preloader og loading-sikring)
+import { SiteProvider } from '../contexts/SiteContext';
 
 // Component to handle route changes
 const RouteTracker = () => {
@@ -38,13 +30,10 @@ const RouteTracker = () => {
 };
 
 function App() {
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    let cancelled = false;
     const initGA = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('site_settings')
           .select('value')
           .eq('key', 'google_analytics_id')
@@ -58,25 +47,8 @@ function App() {
         console.warn("Failed to init GA:", error);
       }
     };
-    Promise.all([
-      initGA(),
-      // Flere async kall kan legges til her
-    ]).catch(() => {
-      // Feil under lasting, men loader skal ikke henge
-    }).finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-    return () => { cancelled = true; };
+    initGA();
   }, []);
-
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-        <Loader text="Laster innhold... Vennligst vent" />
-        <div style={{marginTop: 24, color: '#1B4965', fontWeight: 'bold', fontSize: 18}}>Siden starter straks alt er klart</div>
-      </div>
-    );
-  }
 
   return (
     <SiteProvider>
@@ -86,7 +58,6 @@ function App() {
             <Router>
               <RouteTracker />
               <ScrollToTop />
-              <Navigation />
               <main className="pt-0">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
