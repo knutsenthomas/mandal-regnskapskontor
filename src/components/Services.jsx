@@ -13,27 +13,27 @@ const Services = () => {
   const serviceConfig = [
     {
       icon: Calculator,
-      gradient: 'from-[#1B4965] to-[#2A6F97]',
+      gradient: 'from-slate-800 to-slate-900',
       image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800' // Accounting 
     },
     {
       icon: FileText,
-      gradient: 'from-[#1B4965] to-[#0F3347]',
+      gradient: 'from-slate-900 to-black',
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800' // Invoicing/Paperwork (New URL)
     },
     {
       icon: Users,
-      gradient: 'from-[#2A6F97] to-[#468FAF]',
+      gradient: 'from-gray-800 to-slate-800',
       image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800' // Team/Meeting
     },
     {
       icon: ClipboardCheck,
-      gradient: 'from-[#0F3347] to-[#1B4965]',
+      gradient: 'from-black to-slate-900',
       image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800' // Audit/Checklist
     },
     {
       icon: TrendingUp,
-      gradient: 'from-[#1B4965] to-[#2C7DA0]',
+      gradient: 'from-slate-800 to-gray-900',
       image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800' // Growth/Stocks
     }
   ];
@@ -68,9 +68,9 @@ const Services = () => {
   // Merge DB data with Config. If DB data is missing, use Default.
   const displayServices = dbServices.length > 0
     ? dbServices.map((service, index) => ({
-        ...service,
-        ...(serviceConfig[index] || serviceConfig[0])
-      }))
+      ...service,
+      ...(serviceConfig[index] || serviceConfig[0])
+    }))
     : [];
 
   const container = {
@@ -92,8 +92,8 @@ const Services = () => {
         <section className="py-24 bg-gray-50 relative overflow-hidden">
           {/* Subtle background decoration */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
-            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#1B4965] blur-3xl"></div>
-            <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-[#2A6F97] blur-3xl"></div>
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
+            <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-primary blur-3xl"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -104,7 +104,7 @@ const Services = () => {
               transition={{ duration: 0.6 }}
               className="text-center mb-20"
             >
-              <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
+              <span className="text-primary font-semibold tracking-wider text-sm uppercase mb-3 block">Hva vi tilbyr</span>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Våre tjenester</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
                 Vi tilbyr omfattende regnskaps- og finansielle tjenester skreddersydd etter dine behov.
