@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
 
 const AboutEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -24,16 +25,20 @@ const AboutEditor = ({ content, onUpdate }) => {
   }, [content]);
 
   const handleValueChange = (index, field, value) => {
-    const updatedValues = [...values];
-    updatedValues[index] = {
-      ...updatedValues[index],
-      [field]: value
-    };
-    setValues(updatedValues);
+    setValues(prev => {
+      const updatedValues = [...prev];
+      if (updatedValues[index]) {
+        updatedValues[index] = {
+          ...updatedValues[index],
+          [field]: value
+        };
+      }
+      return updatedValues;
+    });
   };
 
   const addValue = () => {
-    setValues([...values, { title: '', description: '' }]);
+    setValues(prev => [...prev, { title: '', description: '' }]);
     toast({
       title: "Ny verdi lagt til",
       description: "Et nytt punkt er opprettet nederst.",
@@ -42,7 +47,7 @@ const AboutEditor = ({ content, onUpdate }) => {
   };
 
   const removeValue = (index) => {
-    setValues(values.filter((_, i) => i !== index));
+    setValues(prev => prev.filter((_, i) => i !== index));
     toast({
       title: "Verdi slettet",
       description: "Punktet er fjernet fra listen.",
@@ -55,19 +60,14 @@ const AboutEditor = ({ content, onUpdate }) => {
       setUploading(true);
       const file = e.target.files[0];
       if (!file) return;
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `about-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-      setAboutImage(data.publicUrl);
+      const { publicUrl } = await uploadImageToPublicBucket({
+        file,
+        bucket: 'images',
+        folder: 'about',
+        prefix: 'about',
+        maxBytes: 8 * 1024 * 1024,
+      });
+      setAboutImage(publicUrl);
 
       toast({
         title: "Bilde lastet opp",
@@ -78,11 +78,12 @@ const AboutEditor = ({ content, onUpdate }) => {
     } catch (error) {
       toast({
         title: "Feil ved opplasting",
-        description: error.message,
+        description: getUploadErrorMessage(error),
         variant: "destructive"
       });
     } finally {
       setUploading(false);
+      if (e?.target) e.target.value = '';
     }
   };
 
@@ -115,15 +116,17 @@ const AboutEditor = ({ content, onUpdate }) => {
 
       if (onUpdate) onUpdate();
     } catch (error) {
+      console.error("About save error:", error);
       toast({
         title: "Feil ved lagring",
-        description: error.message,
+        description: error.message || "Kunne ikke lagre om oss-innhold.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">

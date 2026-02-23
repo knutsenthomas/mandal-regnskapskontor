@@ -33,7 +33,14 @@ const ContactEditor = ({ content, onUpdate }) => {
   };
 
   const handleSave = async () => {
-    if (!content?.id) return;
+    if (!content?.id) {
+      toast({
+        title: "Feil",
+        description: "Mangler ID for innhold. Prøv å laste siden på nytt.",
+        variant: "destructive"
+      });
+      return;
+    }
     setLoading(true);
 
     try {
@@ -52,15 +59,17 @@ const ContactEditor = ({ content, onUpdate }) => {
 
       if (onUpdate) onUpdate();
     } catch (error) {
+      console.error("Contact save error:", error);
       toast({
         title: "Feil ved lagring",
-        description: error.message,
+        description: error.message || "Kunne ikke lagre kontaktinformasjon.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100">

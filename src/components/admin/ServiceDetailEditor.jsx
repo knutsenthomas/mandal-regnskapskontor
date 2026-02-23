@@ -31,7 +31,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     if (selectedServiceId) {
       fetchDetails();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedServiceId]);
 
   const normalizeTitle = (title) => (title || '').toLowerCase();
@@ -174,7 +174,9 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     setData(prev => {
       const nextItem = { ...emptyItem };
       if (field === 'offerings' && !nextItem.icon) {
-        nextItem.icon = getDefaultOfferingIcon(serviceTitle, prev[field].length);
+        // Fallback icon generation
+        const sequence = getIconSequenceForService(serviceTitle);
+        nextItem.icon = sequence[prev[field].length % sequence.length] || 'CheckCircle2';
       }
       return { ...prev, [field]: [...prev[field], nextItem] };
     });
@@ -211,22 +213,37 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
   };
 
   const updateItem = (field, index, subField, value) => {
-    const newList = [...data[field]];
-    newList[index] = { ...newList[index], [subField]: value };
-    setData(prev => ({ ...prev, [field]: newList }));
+    setData(prev => {
+      const newList = [...(prev[field] || [])];
+      if (newList[index]) {
+        newList[index] = { ...newList[index], [subField]: value };
+      }
+      return { ...prev, [field]: newList };
+    });
   };
 
   const updateItemFeature = (packageIndex, featureIndex, value) => {
-    const newPackages = [...data.pricing_packages];
-    newPackages[packageIndex].features[featureIndex] = value;
-    setData(prev => ({ ...prev, pricing_packages: newPackages }));
+    setData(prev => {
+      const newPackages = [...(prev.pricing_packages || [])];
+      if (newPackages[packageIndex] && newPackages[packageIndex].features) {
+        const newFeatures = [...newPackages[packageIndex].features];
+        newFeatures[featureIndex] = value;
+        newPackages[packageIndex] = { ...newPackages[packageIndex], features: newFeatures };
+      }
+      return { ...prev, pricing_packages: newPackages };
+    });
   };
 
   const addFeature = (packageIndex) => {
-    const newPackages = [...data.pricing_packages];
-    if (!newPackages[packageIndex].features) newPackages[packageIndex].features = [];
-    newPackages[packageIndex].features.push("");
-    setData(prev => ({ ...prev, pricing_packages: newPackages }));
+    setData(prev => {
+      const newPackages = [...(prev.pricing_packages || [])];
+      if (newPackages[packageIndex]) {
+        const newFeatures = [...(newPackages[packageIndex].features || []), ""];
+        newPackages[packageIndex] = { ...newPackages[packageIndex], features: newFeatures };
+      }
+      return { ...prev, pricing_packages: newPackages };
+    });
+
     toast({
       title: "Ny funksjon lagt til",
       description: "En ny linje for funksjon er lagt til i pakken.",
@@ -235,9 +252,16 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
   };
 
   const removeFeature = (packageIndex, featureIndex) => {
-    const newPackages = [...data.pricing_packages];
-    newPackages[packageIndex].features.splice(featureIndex, 1);
-    setData(prev => ({ ...prev, pricing_packages: newPackages }));
+    setData(prev => {
+      const newPackages = [...(prev.pricing_packages || [])];
+      if (newPackages[packageIndex] && newPackages[packageIndex].features) {
+        const newFeatures = [...newPackages[packageIndex].features];
+        newFeatures.splice(featureIndex, 1);
+        newPackages[packageIndex] = { ...newPackages[packageIndex], features: newFeatures };
+      }
+      return { ...prev, pricing_packages: newPackages };
+    });
+
     toast({
       title: "Funksjon slettet",
       description: "Funksjonen er fjernet fra pakken.",
@@ -246,9 +270,11 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
   };
 
   const removeItem = (field, index) => {
-    const newList = [...data[field]];
-    newList.splice(index, 1);
-    setData(prev => ({ ...prev, [field]: newList }));
+    setData(prev => {
+      const newList = [...(prev[field] || [])];
+      newList.splice(index, 1);
+      return { ...prev, [field]: newList };
+    });
 
     let title = "Element slettet";
 
@@ -275,6 +301,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
       variant: "destructive"
     });
   };
+
 
   if (!selectedServiceId) return <div className="p-8 text-center text-gray-500">Velg en tjeneste for å redigere detaljer.</div>;
 
@@ -303,7 +330,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
             minHeight={220}
           />
         </div>
-        
+
         <div className="space-y-2">
           <RichTextEditor
             label="Målgruppe (Hvem er dette for?)"

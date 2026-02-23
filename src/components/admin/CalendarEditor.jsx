@@ -79,25 +79,28 @@ const CalendarEditor = () => {
 
             if (error) throw error;
 
-            setEvents([...events, data[0]]);
-            setNewEvent({ title: '', date: '', type: 'manual' });
+            if (data && data[0]) {
+                setEvents(prev => [...prev, data[0]]);
+                setNewEvent({ title: '', date: '', type: 'manual' });
 
-            toast({
-                title: "Suksess",
-                description: "Hendelse lagt til i kalenderen."
-            });
+                toast({
+                    title: "Suksess",
+                    description: "Hendelse lagt til i kalenderen."
+                });
+            }
 
         } catch (error) {
             console.error('Error adding event:', error);
             toast({
                 title: "Feil",
-                description: "Kunne ikke legge til hendelse.",
+                description: error.message || "Kunne ikke legge til hendelse.",
                 variant: "destructive"
             });
         }
     };
 
     const handleDeleteEvent = async (id) => {
+        if (!window.confirm("Er du sikker på at du vil slette denne hendelsen?")) return;
         try {
             const { error } = await supabase
                 .from('calendar_events')
@@ -106,7 +109,7 @@ const CalendarEditor = () => {
 
             if (error) throw error;
 
-            setEvents(events.filter(event => event.id !== id));
+            setEvents(prev => prev.filter(event => event.id !== id));
             toast({
                 title: "Slettet",
                 description: "Hendelsen er slettet."
@@ -115,7 +118,7 @@ const CalendarEditor = () => {
             console.error('Error deleting event:', error);
             toast({
                 title: "Feil",
-                description: "Kunne ikke slette hendelse.",
+                description: error.message || "Kunne ikke slette hendelse.",
                 variant: "destructive"
             });
         }
@@ -125,26 +128,34 @@ const CalendarEditor = () => {
         try {
             setSavingSettings(true);
 
-            // Check if settings row exists, if not insert, else update
-            const { data: existing } = await supabase
-                .from('site_settings')
-                .select('*')
-                .eq('key', 'ical_feed_url')
-                .single();
+            // Use the upsert function if available, or stay consistent with existing logic but made more robust
+            const { error } = await supabase.rpc('upsert_site_setting', {
+                p_key: 'ical_feed_url',
+                p_value: icalUrl
+            });
 
-            let result;
-            if (existing) {
-                result = await supabase
+            if (error) {
+                // Fallback to manual if RPC fails
+                console.warn("RPC upsert failed, falling back to manual logic:", error);
+                const { data: existing } = await supabase
                     .from('site_settings')
-                    .update({ value: icalUrl })
-                    .eq('key', 'ical_feed_url');
-            } else {
-                result = await supabase
-                    .from('site_settings')
-                    .insert({ key: 'ical_feed_url', value: icalUrl });
+                    .select('*')
+                    .eq('key', 'ical_feed_url')
+                    .single();
+
+                let result;
+                if (existing) {
+                    result = await supabase
+                        .from('site_settings')
+                        .update({ value: icalUrl })
+                        .eq('key', 'ical_feed_url');
+                } else {
+                    result = await supabase
+                        .from('site_settings')
+                        .insert({ key: 'ical_feed_url', value: icalUrl });
+                }
+                if (result.error) throw result.error;
             }
-
-            if (result.error) throw result.error;
 
             toast({
                 title: "Lagret",
@@ -155,13 +166,14 @@ const CalendarEditor = () => {
             console.error('Error saving settings:', error);
             toast({
                 title: "Feil",
-                description: "Kunne ikke lagre innstillinger.",
+                description: error.message || "Kunne ikke lagre innstillinger.",
                 variant: "destructive"
             });
         } finally {
             setSavingSettings(false);
         }
     };
+
 
     if (loading) {
         return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;

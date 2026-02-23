@@ -248,81 +248,88 @@ const AdminDashboard = () => {
     }
 
     // 2. ROUTING LOGIC
-    switch (activeTab) {
-      case 'dashboard':
-        return renderDashboardHome();
-      case 'messages':
-        return <MessagesView />;
-      case 'calendar':
-        return <CalendarEditor />;
-      case 'services':
-        return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-      case 'service-details': {
-        if (!content) return <p>Laster...</p>;
-        // Velg automatisk første tjeneste hvis ingen valgt
-        if (!selectedServiceId && servicesList.length > 0) {
-          setSelectedServiceId(servicesList[0].id);
-          return null; // Venter på state update
-        }
-        const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
-        const effectiveServiceName = servicesList.find(s => s.id === effectiveServiceId)?.name || '';
-        return (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
-              <div>
-                <h3 className="font-semibold text-gray-800">Rediger detaljer</h3>
-                <p className="text-sm text-gray-500">Velg hvilken tjeneste du vil endre innholdet på</p>
+    const tabContent = (() => {
+      switch (activeTab) {
+        case 'dashboard':
+          return renderDashboardHome();
+        case 'messages':
+          return <MessagesView />;
+        case 'calendar':
+          return <CalendarEditor />;
+        case 'services':
+          return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+        case 'service-details': {
+          if (!content) return <p>Laster...</p>;
+          // Velg automatisk første tjeneste hvis ingen valgt
+          if (!selectedServiceId && servicesList.length > 0) {
+            setSelectedServiceId(servicesList[0].id);
+            return null; // Venter på state update
+          }
+          const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
+          const effectiveServiceName = servicesList.find(s => s.id === effectiveServiceId)?.name || '';
+          return (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Rediger detaljer</h3>
+                  <p className="text-sm text-gray-500">Velg hvilken tjeneste du vil endre innholdet på</p>
+                </div>
+                <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+                  <SelectTrigger className="w-[280px] bg-gray-50 border-gray-200">
+                    <SelectValue placeholder="Velg tjeneste..." />
+                  </SelectTrigger>
+                  <SelectContent className="z-[60] bg-white border border-gray-200 shadow-xl">
+                    {servicesList.length > 0 ? (
+                      servicesList.map(s => <SelectItem key={s.id} value={s.id} className="cursor-pointer hover:bg-gray-50">{s.name}</SelectItem>)
+                    ) : (
+                      <SelectItem value="none" disabled>Ingen tjenester funnet</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
-              <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
-                <SelectTrigger className="w-[280px] bg-gray-50 border-gray-200">
-                  <SelectValue placeholder="Velg tjeneste..." />
-                </SelectTrigger>
-                <SelectContent className="z-[60] bg-white border border-gray-200 shadow-xl">
-                  {servicesList.length > 0 ? (
-                    servicesList.map(s => <SelectItem key={s.id} value={s.id} className="cursor-pointer hover:bg-gray-50">{s.name}</SelectItem>)
-                  ) : (
-                    <SelectItem value="none" disabled>Ingen tjenester funnet</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+              <ServiceDetailEditor
+                selectedServiceId={effectiveServiceId}
+                serviceTitle={effectiveServiceName}
+              />
             </div>
-            <ServiceDetailEditor
-              selectedServiceId={effectiveServiceId}
-              serviceTitle={effectiveServiceName}
-            />
-          </div>
-        );
+          );
+        }
+        case 'hero':
+          return content ? <HeroEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+        case 'about':
+          return content ? <AboutEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+        case 'contact-settings':
+        case 'contact':
+          return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+        case 'footer':
+          return (
+            <div className="space-y-8">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Generelle Innstillinger</h3>
+                {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Footer Informasjon</h3>
+                {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
+              </div>
+            </div>
+          );
+        case 'theme':
+          return <ThemeEditor />;
+        case 'seo':
+          return <SEOEditor />;
+        default:
+          return renderDashboardHome();
       }
-      case 'hero':
-        return content ? <HeroEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-      case 'about':
-        return content ? <AboutEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-      case 'contact-settings':
-      case 'contact':
-        return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-      case 'footer':
-        return (
-          <div className="space-y-8">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Generelle Innstillinger</h3>
-              {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Footer Informasjon</h3>
-              {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
-            </div>
-          </div>
-        );
-      case 'theme':
-        return <ThemeEditor />;
-      case 'seo':
-        return <SEOEditor />;
-      // case 'content-blocks':
-      //   return <ContentBlocksEditor />;
-      default:
-        return renderDashboardHome();
-    }
+    })();
+
+    return (
+      <ErrorBoundary key={activeTab}>
+        {tabContent}
+      </ErrorBoundary>
+    );
   };
+
 
   return (
     <DashboardLayout

@@ -4,6 +4,16 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Upload, Image as ImageIcon, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
+
+const LOGO_ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'image/gif'];
+const FAVICON_ALLOWED_TYPES = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml', 'image/webp'];
+
+const clearFileInput = (event) => {
+    if (event?.target) {
+        event.target.value = '';
+    }
+};
 
 const GeneralEditor = ({ content, onUpdate }) => {
     const { toast } = useToast();
@@ -47,21 +57,15 @@ const GeneralEditor = ({ content, onUpdate }) => {
             setUploading(true);
             const file = e.target.files[0];
             if (!file) return;
-
-            const fileExt = file.name.split('.').pop();
-            const fileName = `logo-${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // Last opp til Supabase Storage
-            const { error: uploadError } = await supabase.storage
-                .from('images')
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            // Hent offentlig URL
-            const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-            setLogoUrl(data.publicUrl);
+            const { publicUrl } = await uploadImageToPublicBucket({
+                file,
+                bucket: 'images',
+                folder: 'branding',
+                prefix: 'logo',
+                allowedTypes: LOGO_ALLOWED_TYPES,
+                maxBytes: 5 * 1024 * 1024,
+            });
+            setLogoUrl(publicUrl);
 
             toast({
                 title: "Bilde lastet opp",
@@ -70,14 +74,15 @@ const GeneralEditor = ({ content, onUpdate }) => {
             });
 
         } catch (error) {
-            console.error('Upload error:', error);
+            console.error('Logo upload error:', error);
             toast({
                 title: "Feil ved opplasting",
-                description: "Kunne ikke laste opp bilde.",
+                description: getUploadErrorMessage(error, "Kunne ikke laste opp bilde."),
                 variant: "destructive"
             });
         } finally {
             setUploading(false);
+            clearFileInput(e);
         }
     };
 
@@ -86,21 +91,15 @@ const GeneralEditor = ({ content, onUpdate }) => {
             setUploading(true);
             const file = e.target.files[0];
             if (!file) return;
-
-            const fileExt = file.name.split('.').pop();
-            const fileName = `favicon-${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // Last opp til Supabase Storage
-            const { error: uploadError } = await supabase.storage
-                .from('images') // Use same bucket for simplicity
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            // Hent offentlig URL
-            const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-            setFaviconUrl(data.publicUrl);
+            const { publicUrl } = await uploadImageToPublicBucket({
+                file,
+                bucket: 'images',
+                folder: 'branding',
+                prefix: 'favicon',
+                allowedTypes: FAVICON_ALLOWED_TYPES,
+                maxBytes: 2 * 1024 * 1024,
+            });
+            setFaviconUrl(publicUrl);
 
             toast({
                 title: "Favicon lastet opp",
@@ -109,14 +108,15 @@ const GeneralEditor = ({ content, onUpdate }) => {
             });
 
         } catch (error) {
-            console.error('Upload error:', error);
+            console.error('Favicon upload error:', error);
             toast({
                 title: "Feil ved opplasting",
-                description: "Kunne ikke laste opp favicon.",
+                description: getUploadErrorMessage(error, "Kunne ikke laste opp favicon."),
                 variant: "destructive"
             });
         } finally {
             setUploading(false);
+            clearFileInput(e);
         }
     };
 

@@ -101,10 +101,26 @@ const configWindowFetchMonkeyPatch = `
 const originalFetch = window.fetch;
 
 window.fetch = function(...args) {
-	const url = args[0] instanceof Request ? args[0].url : args[0];
+	let url = '';
+
+	try {
+		const requestTarget = args[0];
+
+		if (requestTarget instanceof Request) {
+			url = requestTarget.url || '';
+		} else if (typeof requestTarget === 'string') {
+			url = requestTarget;
+		} else if (requestTarget && typeof requestTarget === 'object' && 'href' in requestTarget) {
+			url = String(requestTarget.href || '');
+		} else if (requestTarget != null) {
+			url = String(requestTarget);
+		}
+	} catch (error) {
+		url = '';
+	}
 
 	// Skip WebSocket URLs
-	if (url.startsWith('ws:') || url.startsWith('wss:')) {
+	if (typeof url === 'string' && (url.startsWith('ws:') || url.startsWith('wss:'))) {
 		return originalFetch.apply(this, args);
 	}
 
@@ -127,7 +143,7 @@ window.fetch = function(...args) {
 			return response;
 		})
 		.catch(error => {
-			if (!url.match(/\.html?$/i)) {
+			if (!(typeof url === 'string' && url.match(/\\.html?$/i))) {
 				console.error(error);
 			}
 
@@ -164,38 +180,45 @@ if (window.navigation && window.self !== window.top) {
 const addTransformIndexHtml = {
 	name: 'add-transform-index-html',
 	transformIndexHtml(html) {
-		const tags = [
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configHorizonsRuntimeErrorHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configHorizonsViteErrorHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configHorizonsConsoleErrroHandler,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configWindowFetchMonkeyPatch,
-				injectTo: 'head',
-			},
-			{
-				tag: 'script',
-				attrs: { type: 'module' },
-				children: configNavigationHandler,
-				injectTo: 'head',
-			},
-		];
+		const tags = [];
+
+		// Keep Horizons debug/runtime monkey patches out of production builds.
+		// They are helpful in local editing, but can interfere with live requests
+		// (especially fetch/upload flows) on hosted environments.
+		if (isDev) {
+			tags.push(
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configHorizonsRuntimeErrorHandler,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configHorizonsViteErrorHandler,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configHorizonsConsoleErrroHandler,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configWindowFetchMonkeyPatch,
+					injectTo: 'head',
+				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					children: configNavigationHandler,
+					injectTo: 'head',
+				},
+			);
+		}
 
 		if (!isDev && process.env.TEMPLATE_BANNER_SCRIPT_URL && process.env.TEMPLATE_REDIRECT_URL) {
 			tags.push(

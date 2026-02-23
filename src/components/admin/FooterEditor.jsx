@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2 } from 'lucide-react';
@@ -29,16 +29,35 @@ const fields = [
 const FooterEditor = () => {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
-  // Lokal state for alle felter
-  const [values, setValues] = useState(() => Object.fromEntries(fields.map(f => [f.slug, ''])));
-
-  // Hent eksisterende verdier fra content_blocks
-  fields.forEach(f => {
-    const { content } = useContent(f.slug);
-    if (content && values[f.slug] === '') {
-      values[f.slug] = content;
-    }
+  const fieldModels = fields.map((field) => {
+    const contentApi = useContent(field.slug);
+    return { ...field, ...contentApi };
   });
+  const [values, setValues] = useState(() => Object.fromEntries(fields.map((f) => [f.slug, ''])));
+  const [hydrated, setHydrated] = useState(false);
+  const isLoading = fieldModels.some((field) => field.loading);
+
+  useEffect(() => {
+    if (hydrated || isLoading) {
+      return;
+    }
+
+    setValues((prev) => {
+      let changed = false;
+      const next = { ...prev };
+
+      for (const field of fieldModels) {
+        if (typeof field.content === 'string' && field.content !== '' && prev[field.slug] === '') {
+          next[field.slug] = field.content;
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+
+    setHydrated(true);
+  }, [hydrated, isLoading, fieldModels]);
 
   const handleChange = (slug, value) => {
     setValues(v => ({ ...v, [slug]: value }));
@@ -47,9 +66,8 @@ const FooterEditor = () => {
   const handleSave = async () => {
     setSaving(true);
     let error = null;
-    for (const f of fields) {
-      const { update } = useContent(f.slug);
-      const res = await update(values[f.slug]);
+    for (const field of fieldModels) {
+      const res = await field.update(values[field.slug]);
       if (res) error = res;
     }
     setSaving(false);
@@ -63,7 +81,7 @@ const FooterEditor = () => {
   return (
     <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100 w-full">
       <h2 className="text-xl font-bold mb-4">Rediger footer-innhold</h2>
-      {fields.map(f => (
+      {fieldModels.map((f) => (
         <div key={f.slug} className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
           {f.rich ? (

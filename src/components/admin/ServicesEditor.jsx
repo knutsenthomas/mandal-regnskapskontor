@@ -3,6 +3,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Plus, Trash2, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
+import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
 
 const ServicesEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -18,16 +19,20 @@ const ServicesEditor = ({ content, onUpdate }) => {
   }, [content]);
 
   const handleServiceChange = (index, field, value) => {
-    const updatedServices = [...services];
-    updatedServices[index] = {
-      ...updatedServices[index],
-      [field]: value
-    };
-    setServices(updatedServices);
+    setServices(prev => {
+      const updatedServices = [...prev];
+      if (updatedServices[index]) {
+        updatedServices[index] = {
+          ...updatedServices[index],
+          [field]: value
+        };
+      }
+      return updatedServices;
+    });
   };
 
   const addService = () => {
-    setServices([...services, { title: '', description: '' }]);
+    setServices(prev => [...prev, { title: '', description: '' }]);
     toast({
       title: "Ny tjeneste lagt til",
       description: "Et nytt kort er opprettet nederst i listen.",
@@ -36,8 +41,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
   };
 
   const removeService = (index) => {
-    const updatedServices = services.filter((_, i) => i !== index);
-    setServices(updatedServices);
+    setServices(prev => prev.filter((_, i) => i !== index));
     toast({
       title: "Tjeneste slettet",
       description: "Tjenesten er fjernet fra listen.",
@@ -51,18 +55,14 @@ const ServicesEditor = ({ content, onUpdate }) => {
       if (!file) return;
 
       setUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `service-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-      handleServiceChange(index, 'image', data.publicUrl);
+      const { publicUrl } = await uploadImageToPublicBucket({
+        file,
+        bucket: 'images',
+        folder: 'services',
+        prefix: 'service',
+        maxBytes: 8 * 1024 * 1024,
+      });
+      handleServiceChange(index, 'image', publicUrl);
 
       toast({
         title: "Bilde lastet opp",
@@ -73,11 +73,12 @@ const ServicesEditor = ({ content, onUpdate }) => {
       console.error('Upload error:', error);
       toast({
         title: "Feil ved opplasting",
-        description: "Kunne ikke laste opp bilde.",
+        description: getUploadErrorMessage(error, "Kunne ikke laste opp bilde."),
         variant: "destructive"
       });
     } finally {
       setUploading(false);
+      if (e?.target) e.target.value = '';
     }
   };
 
@@ -93,8 +94,6 @@ const ServicesEditor = ({ content, onUpdate }) => {
     setLoading(true);
 
     try {
-      // PLAN B: RPC Function (Bypasses RLS)
-      // Note: p_services expects JSONB, so we send the array directly
       const { error } = await supabase.rpc('update_services_content', {
         p_id: content.id,
         p_services: services
@@ -113,13 +112,14 @@ const ServicesEditor = ({ content, onUpdate }) => {
       console.error("Save error details:", error);
       toast({
         title: "Feil ved lagring",
-        description: error.message,
+        description: error.message || "Kunne ikke lagre endringer i tjenester.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
+
 
   // Default images from Services.jsx to show in preview if no custom image is set
   const defaultImages = [

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Upload } from 'lucide-react';
+import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
 
 const HeroEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -21,7 +22,8 @@ const HeroEditor = ({ content, onUpdate }) => {
   }, [content]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleLineChange = (idx, value) => {
@@ -34,14 +36,14 @@ const HeroEditor = ({ content, onUpdate }) => {
   const handleAddLine = () => {
     setFormData(prev => ({
       ...prev,
-      hero_lines: [...prev.hero_lines, '']
+      hero_lines: [...(prev.hero_lines || []), '']
     }));
   };
 
   const handleRemoveLine = (idx) => {
     setFormData(prev => ({
       ...prev,
-      hero_lines: prev.hero_lines.filter((_, i) => i !== idx)
+      hero_lines: (prev.hero_lines || []).filter((_, i) => i !== idx)
     }));
   };
 
@@ -50,19 +52,14 @@ const HeroEditor = ({ content, onUpdate }) => {
       setUploading(true);
       const file = e.target.files[0];
       if (!file) return;
-
-      const fileExt = file.name.split('.').pop();
-      const fileName = `hero-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-      setFormData(prev => ({ ...prev, hero_image: data.publicUrl }));
+      const { publicUrl } = await uploadImageToPublicBucket({
+        file,
+        bucket: 'images',
+        folder: 'hero',
+        prefix: 'hero',
+        maxBytes: 8 * 1024 * 1024,
+      });
+      setFormData(prev => ({ ...prev, hero_image: publicUrl }));
 
       toast({
         title: "Bilde lastet opp",
@@ -72,11 +69,12 @@ const HeroEditor = ({ content, onUpdate }) => {
     } catch (error) {
       toast({
         title: "Feil ved opplasting",
-        description: error.message,
+        description: getUploadErrorMessage(error),
         variant: "destructive"
       });
     } finally {
       setUploading(false);
+      if (e?.target) e.target.value = '';
     }
   };
 
@@ -91,29 +89,34 @@ const HeroEditor = ({ content, onUpdate }) => {
     }
 
     setLoading(true);
-    const { error } = await supabase.rpc('update_hero_content', {
-      p_id: content.id,
-      p_title: formData.hero_title,
-      p_lines: formData.hero_lines,
-      p_image: formData.hero_image
-    });
-
-    if (error) {
-      toast({
-        title: "Feil ved lagring",
-        description: error.message,
-        variant: "destructive"
+    try {
+      const { error } = await supabase.rpc('update_hero_content', {
+        p_id: content.id,
+        p_title: formData.hero_title,
+        p_lines: formData.hero_lines,
+        p_image: formData.hero_image
       });
-    } else {
+
+      if (error) throw error;
+
       toast({
         title: "Hero oppdatert",
         description: "Endringene er lagret.",
         className: "bg-green-50 border-green-200"
       });
       if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error("Hero save error:", error);
+      toast({
+        title: "Feil ved lagring",
+        description: error.message || "Kunne ikke lagre hero-innhold.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
 
   if (!formData) {
     return (
