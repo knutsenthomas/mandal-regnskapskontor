@@ -1,4 +1,5 @@
 import React from 'react';
+import { Activity } from 'lucide-react';
 
 // Dummy/testdata for visning før API-integrasjon
 const dummyData = {
