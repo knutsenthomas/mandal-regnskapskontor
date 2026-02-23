@@ -82,7 +82,7 @@ const Hero = () => {
         >
           {resolvedHeroTitle && (
             <h1
-              className="text-3xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
               style={{ textWrap: 'balance' }}
             >
               {resolvedHeroTitle}

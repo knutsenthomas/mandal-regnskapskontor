@@ -99,7 +99,7 @@ const Navigation = () => {
             */}
             <div
               onClick={handleLogoClick}
-              className={`cursor-pointer flex items-center h-full min-w-[200px] transition-opacity duration-200 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
+              className={`cursor-pointer flex items-center h-full w-[180px] transition-opacity duration-200 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
             >
               <Logo color={isTransparent ? 'light' : 'dark'} />
             </div>
@@ -157,7 +157,7 @@ const Navigation = () => {
           >
             {/* Topp-bar meny */}
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">
-              <div onClick={handleLogoClick} className="cursor-pointer min-w-[200px]">
+              <div onClick={handleLogoClick} className="cursor-pointer w-[180px]">
                 <Logo color="light" isMobileMenu={true} />
               </div>
 
