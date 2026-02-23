@@ -2,6 +2,29 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { supabase } from '../lib/customSupabaseClient';
 
 const ContentContext = createContext();
+const DASHBOARD_MANAGED_SLUGS = new Set([
+  'hero.title',
+  'hero.lines',
+  'hero.image',
+  'about.text',
+  'about.image',
+  'about.values',
+  'contact.phone',
+  'contact.email',
+  'contact.address',
+  'footer.phone',
+  'footer.email',
+  'footer.address',
+  'footer.hoursWeek',
+]);
+
+const hasValue = (value) => (
+  Array.isArray(value)
+    ? value.length > 0
+    : typeof value === 'string'
+      ? value !== ''
+      : Boolean(value)
+);
 
 export function ContentProvider({ children }) {
   const [blocks, setBlocks] = useState({});
@@ -88,6 +111,20 @@ export function ContentProvider({ children }) {
 
   useEffect(() => {
     fetchBlocks();
+
+    const channel = supabase
+      .channel('public:content_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'content_blocks' }, () => {
+        fetchBlocks();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
+        fetchBlocks();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [fetchBlocks]);
 
   return (
@@ -102,10 +139,15 @@ export function useContent(slug) {
   const block = blocks[slug];
   const dashboardFallback = getDashboardFallback ? getDashboardFallback(slug) : '';
   const content = block?.content;
-  const hasBlockValue = Array.isArray(content) || (typeof content === 'string' ? content !== '' : Boolean(content));
+  const hasBlockValue = hasValue(content);
+  const hasDashboardValue = hasValue(dashboardFallback);
+  const prefersDashboard = DASHBOARD_MANAGED_SLUGS.has(slug);
+  const resolvedContent = prefersDashboard
+    ? (hasDashboardValue ? dashboardFallback : (hasBlockValue ? content : ''))
+    : (hasBlockValue ? content : dashboardFallback);
 
   return {
-    content: hasBlockValue ? content : dashboardFallback,
+    content: resolvedContent,
     type: block?.type || 'text',
     loading,
     update: (content, type) => updateBlock(slug, content, type),
