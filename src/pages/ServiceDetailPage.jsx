@@ -9,6 +9,8 @@ import Navigation from '@/components/Navigation';
 import { motion } from 'framer-motion';
 import OfferingsList from '@/components/service-detail/OfferingsList';
 import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
+import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
+import { useContent } from '@/contexts/ContentContext';
 
 const ServiceDetailPage = () => {
   const { id } = useParams();
