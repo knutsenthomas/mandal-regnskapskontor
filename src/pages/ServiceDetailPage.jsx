@@ -12,6 +12,8 @@ import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
 import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
 import { useContent } from '@/contexts/ContentContext';
 
+const containsHtml = (value) => /<\/?[a-z][\s\S]*>/i.test(value || '');
+
 const ServiceDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -120,6 +122,7 @@ const ServiceDetailPage = () => {
   }
 
   const Icon = service.icon;
+  const extendedDescription = details?.extended_description || service.description || '';
 
   return (
     <motion.div
@@ -171,13 +174,13 @@ const ServiceDetailPage = () => {
 
                 {/* Description */}
                 <div className="prose prose-lg text-gray-600 mb-10 leading-relaxed max-w-none font-light">
-                   {details?.extended_description ? (
-                      details.extended_description.split('\n').map((paragraph, idx) => (
-                        <p key={idx} className="mb-6">{paragraph}</p>
-                      ))
-                    ) : (
-                      <p className="mb-6">{service.description}</p>
-                    )}
+                  {containsHtml(extendedDescription) ? (
+                    <div dangerouslySetInnerHTML={{ __html: extendedDescription }} />
+                  ) : (
+                    extendedDescription.split('\n').filter(Boolean).map((paragraph, idx) => (
+                      <p key={idx} className="mb-6">{paragraph}</p>
+                    ))
+                  )}
                 </div>
 
                 {/* CTA Button */}

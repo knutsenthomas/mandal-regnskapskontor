@@ -6,6 +6,16 @@ import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useContent } from '@/contexts/ContentContext';
 
+const containsHtml = (value) => /<\/?[a-z][\s\S]*>/i.test(value || '');
+
+const RichText = ({ value, className = '' }) => {
+  if (!value) return null;
+  if (containsHtml(value)) {
+    return <div className={className} dangerouslySetInnerHTML={{ __html: value }} />;
+  }
+  return <div className={className}>{value}</div>;
+};
+
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -132,9 +142,10 @@ const ContactForm = () => {
         >
           <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">{sectionLabel || 'Ta kontakt'}</span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{title || 'Kontakt oss'}</h2>
-          <p className="text-xl text-gray-600 font-light">
-            {subtitle || 'Vi er her for å hjelpe deg med dine behov.'}
-          </p>
+          <RichText
+            className="text-xl text-gray-600 font-light"
+            value={subtitle || 'Vi er her for å hjelpe deg med dine behov.'}
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -160,7 +171,10 @@ const ContactForm = () => {
                 </div>
                 <div className="flex items-start space-x-6">
                   <MapPin className="w-6 h-6 mt-1" />
-                  <div><p className="text-xs font-bold text-blue-200">{addressLabel || 'Adresse'}</p><p className="text-xl">{address || 'Bryggegata 1, 4514 Mandal'}</p></div>
+                  <div>
+                    <p className="text-xs font-bold text-blue-200">{addressLabel || 'Adresse'}</p>
+                    <RichText className="text-xl" value={address || 'Bryggegata 1, 4514 Mandal'} />
+                  </div>
                 </div>
               </div>
             </div>

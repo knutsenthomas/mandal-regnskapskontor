@@ -4,6 +4,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Phone, Mail, MapPin, Clock } from 'lucide-react';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const ContactEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -99,13 +100,11 @@ const ContactEditor = ({ content, onUpdate }) => {
             <MapPin className="w-4 h-4 mr-2 text-gray-400" />
             Adresse
           </label>
-          <textarea
-            name="contact_address"
+          <RichTextEditor
             value={formData.contact_address}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] resize-none"
+            onChange={(value) => setFormData(prev => ({ ...prev, contact_address: value }))}
             placeholder="Gateadresse, Postnummer Sted"
+            minHeight={140}
           />
         </div>
 
@@ -114,13 +113,11 @@ const ContactEditor = ({ content, onUpdate }) => {
             <Clock className="w-4 h-4 mr-2 text-gray-400" />
             Åpningstider
           </label>
-          <textarea
-            name="opening_hours"
+          <RichTextEditor
             value={formData.opening_hours}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] resize-none"
+            onChange={(value) => setFormData(prev => ({ ...prev, opening_hours: value }))}
             placeholder="Mandag - Fredag: 08:00 - 16:00"
+            minHeight={140}
           />
         </div>
       </div>

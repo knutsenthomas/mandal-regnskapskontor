@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Plus, Trash2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const AVAILABLE_ICONS = [
   "BookOpen", "FileSpreadsheet", "FileCheck", "UploadCloud",
@@ -294,24 +295,22 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
       {/* Innledning og Målgruppe */}
       <div className="space-y-6">
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-gray-700">Utvidet beskrivelse (Innledning)</label>
-          <textarea
+          <RichTextEditor
+            label="Utvidet beskrivelse (Innledning)"
             value={data.extended_description}
-            onChange={(e) => setData({ ...data, extended_description: e.target.value })}
-            rows={6}
-            className="w-full p-3 border rounded-md"
+            onChange={(value) => setData({ ...data, extended_description: value })}
             placeholder="Skriv innledningen til tjenestesiden her..."
+            minHeight={220}
           />
         </div>
         
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-gray-700">Målgruppe (Hvem er dette for?)</label>
-          <textarea
+          <RichTextEditor
+            label="Målgruppe (Hvem er dette for?)"
             value={data.target_audience}
-            onChange={(e) => setData({ ...data, target_audience: e.target.value })}
-            rows={6}
-            className="w-full p-3 border rounded-md"
+            onChange={(value) => setData({ ...data, target_audience: value })}
             placeholder="Beskriv hvem tjenesten passer for..."
+            minHeight={180}
           />
         </div>
       </div>
@@ -375,12 +374,12 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
                   className="w-full p-2 border rounded font-medium"
                   placeholder="Steg tittel"
                 />
-                <textarea
+                <RichTextEditor
+                  label={null}
                   value={step.description}
-                  onChange={(e) => updateItem('process_steps', index, 'description', e.target.value)}
-                  className="w-full p-2 border rounded text-sm"
+                  onChange={(value) => updateItem('process_steps', index, 'description', value)}
                   placeholder="Beskrivelse av steget..."
-                  rows={2}
+                  minHeight={120}
                 />
               </div>
               <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => removeItem('process_steps', index)}>
@@ -410,7 +409,13 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
               </div>
               <input type="text" value={pkg.name} onChange={(e) => updateItem('pricing_packages', index, 'name', e.target.value)} className="p-2 border rounded" placeholder="Pakkenavn (f.eks Basis)" />
               <input type="text" value={pkg.price} onChange={(e) => updateItem('pricing_packages', index, 'price', e.target.value)} className="p-2 border rounded" placeholder="Pris (f.eks 2500,-/mnd)" />
-              <textarea value={pkg.description} onChange={(e) => updateItem('pricing_packages', index, 'description', e.target.value)} className="p-2 border rounded text-sm" placeholder="Kort beskrivelse..." rows={2} />
+              <RichTextEditor
+                label={null}
+                value={pkg.description}
+                onChange={(value) => updateItem('pricing_packages', index, 'description', value)}
+                placeholder="Kort beskrivelse..."
+                minHeight={120}
+              />
 
               <div className="mt-2 space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase">Inkludert</label>
@@ -451,12 +456,12 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
                   className="w-full p-2 border rounded font-medium"
                   placeholder="Spørsmål..."
                 />
-                <textarea
+                <RichTextEditor
+                  label={null}
                   value={faq.answer}
-                  onChange={(e) => updateItem('faqs', index, 'answer', e.target.value)}
-                  className="w-full p-2 border rounded text-sm"
+                  onChange={(value) => updateItem('faqs', index, 'answer', value)}
                   placeholder="Svar..."
-                  rows={2}
+                  minHeight={120}
                 />
               </div>
               <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => removeItem('faqs', index)}>

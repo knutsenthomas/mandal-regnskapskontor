@@ -3,6 +3,16 @@ import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Lock } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
+const containsHtml = (value) => /<\/?[a-z][\s\S]*>/i.test(value || '');
+
+const RichText = ({ value, className = '' }) => {
+  if (!value) return null;
+  if (containsHtml(value)) {
+    return <div className={className} dangerouslySetInnerHTML={{ __html: value }} />;
+  }
+  return <div className={className}>{value}</div>;
+};
+
 const Footer = () => {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -32,9 +42,10 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <p className="text-2xl font-bold text-white">{companyName || 'Mandal Regnskapskontor AS'}</p>
-            <p className="text-sm leading-relaxed">
-              {companyDesc || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.'}
-            </p>
+            <RichText
+              className="text-sm leading-relaxed"
+              value={companyDesc || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.'}
+            />
           </div>
 
           {/* Quick Links */}
@@ -90,7 +101,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-teal-400 flex-shrink-0 mt-1" />
-                <span className="text-sm">{address || 'Bryggegata 1, 4514 Mandal'}</span>
+                <RichText className="text-sm" value={address || 'Bryggegata 1, 4514 Mandal'} />
               </li>
             </ul>
           </div>
@@ -101,20 +112,18 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between">
                 <span>{useContent('footer.hours.weeklabel').content || 'Mandag - Fredag:'}</span>
-                <span className="text-white">{hoursWeek || '08:00 - 16:00'}</span>
+                <RichText className="text-white text-right" value={hoursWeek || '08:00 - 16:00'} />
               </li>
               <li className="flex justify-between">
                 <span>{useContent('footer.hours.weekendlabel').content || 'Lørdag - Søndag:'}</span>
-                <span className="text-white">{hoursWeekend || 'Stengt'}</span>
+                <RichText className="text-white text-right" value={hoursWeekend || 'Stengt'} />
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>
-            {copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor AS. Alle rettigheter reservert.`}
-          </p>
+          <RichText value={copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor AS. Alle rettigheter reservert.`} />
           <div className="mt-4 md:mt-0">
             <Link to="/admin/login" className="flex items-center hover:text-white transition-colors">
               <Lock className="w-3 h-3 mr-1" />

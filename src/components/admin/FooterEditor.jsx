@@ -3,18 +3,19 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2 } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const fields = [
   { slug: 'footer.companyName', label: 'Firmanavn' },
-  { slug: 'footer.companyDesc', label: 'Beskrivelse' },
+  { slug: 'footer.companyDesc', label: 'Beskrivelse', rich: true },
   { slug: 'footer.quicklinksLabel', label: 'Hurtiglenker label' },
   { slug: 'footer.contactLabel', label: 'Kontakt label' },
   { slug: 'footer.phone', label: 'Telefon' },
   { slug: 'footer.email', label: 'E-post' },
-  { slug: 'footer.address', label: 'Adresse' },
+  { slug: 'footer.address', label: 'Adresse', rich: true },
   { slug: 'footer.hoursLabel', label: 'Åpningstider label' },
-  { slug: 'footer.hoursWeek', label: 'Åpningstider ukedager' },
-  { slug: 'footer.hoursWeekend', label: 'Åpningstider helg' },
+  { slug: 'footer.hoursWeek', label: 'Åpningstider ukedager', rich: true },
+  { slug: 'footer.hoursWeekend', label: 'Åpningstider helg', rich: true },
   { slug: 'footer.link.home', label: 'Lenke: Hjem' },
   { slug: 'footer.link.services', label: 'Lenke: Tjenester' },
   { slug: 'footer.link.about', label: 'Lenke: Om oss' },
@@ -22,7 +23,7 @@ const fields = [
   { slug: 'footer.adminlink', label: 'Adminlenke' },
   { slug: 'footer.hours.weeklabel', label: 'Label ukedager' },
   { slug: 'footer.hours.weekendlabel', label: 'Label helg' },
-  { slug: 'footer.copyright', label: 'Copyright' },
+  { slug: 'footer.copyright', label: 'Copyright', rich: true },
 ];
 
 const FooterEditor = () => {
@@ -65,12 +66,21 @@ const FooterEditor = () => {
       {fields.map(f => (
         <div key={f.slug} className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-          <input
-            type="text"
-            value={values[f.slug]}
-            onChange={e => handleChange(f.slug, e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
-          />
+          {f.rich ? (
+            <RichTextEditor
+              value={values[f.slug]}
+              onChange={(value) => handleChange(f.slug, value)}
+              placeholder={f.label}
+              minHeight={120}
+            />
+          ) : (
+            <input
+              type="text"
+              value={values[f.slug]}
+              onChange={e => handleChange(f.slug, e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+            />
+          )}
         </div>
       ))}
       <div className="flex justify-end pt-4">

@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Award, Users, Target, Lightbulb } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
+const containsHtml = (value) => /<\/?[a-z][\s\S]*>/i.test(value || '');
+
 const About = () => {
   const icons = [Award, Users, Target, Lightbulb];
   // Hent tekst, bilde og verdier fra content_blocks
@@ -85,9 +87,16 @@ const About = () => {
             className="order-1 lg:order-2"
           >
             <h3 className="text-2xl font-semibold text-[#1B4965] mb-6">{useContent('about.subtitle').content || 'Din lokale partner for økonomisk vekst'}</h3>
-            <div className="text-lg text-gray-700 leading-relaxed font-light whitespace-pre-line">
-              {displayText}
-            </div>
+            {containsHtml(displayText) ? (
+              <div
+                className="prose prose-lg max-w-none text-gray-700 font-light"
+                dangerouslySetInnerHTML={{ __html: displayText }}
+              />
+            ) : (
+              <div className="text-lg text-gray-700 leading-relaxed font-light whitespace-pre-line">
+                {displayText}
+              </div>
+            )}
           </motion.div>
         </div>
 

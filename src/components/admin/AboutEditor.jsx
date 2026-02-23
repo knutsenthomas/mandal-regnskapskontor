@@ -4,6 +4,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 const AboutEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -129,12 +130,11 @@ const AboutEditor = ({ content, onUpdate }) => {
       {/* Main Text Section */}
       <div>
         <h3 className="text-lg font-medium text-gray-900 mb-4">Hovedtekst</h3>
-        <textarea
+        <RichTextEditor
           value={aboutText}
-          onChange={(e) => setAboutText(e.target.value)}
-          rows={6}
-          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+          onChange={setAboutText}
           placeholder="Skriv om bedriften..."
+          minHeight={220}
         />
       </div>
 
