@@ -58,6 +58,32 @@ const ThemeEditor = () => {
         return `${h} ${s}% ${l}%`;
     };
 
+    // Helper: Convert HSL back to Hex for color picker
+    const hslToHex = (hslStr) => {
+        if (!hslStr || hslStr.startsWith('#')) return hslStr;
+        try {
+            const parts = hslStr.replace(/%/g, '').split(' ');
+            if (parts.length < 3) return '#000000';
+
+            const h = parseFloat(parts[0]);
+            const s = parseFloat(parts[1]) / 100;
+            const l = parseFloat(parts[2]) / 100;
+
+            const a = s * Math.min(l, 1 - l);
+            const f = n => {
+                const k = (n + h / 30) % 12;
+                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        } catch (e) {
+            console.error('HSL conversion error:', e);
+            return '#000000';
+        }
+    };
+
+    const isHSL = (val) => val && typeof val === 'string' && val.includes(' ') && !val.startsWith('#');
+
     useEffect(() => {
         if (theme && Object.keys(theme).length > 0) {
             setColors(prev => ({ ...prev, ...theme }));
@@ -154,23 +180,28 @@ const ThemeEditor = () => {
         }
     };
 
-    const ColorInput = ({ label, description, stateKey }) => (
-        <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
-            <div>
-                <h4 className="font-medium text-sm text-gray-900">{label}</h4>
-                <p className="text-xs text-gray-500">{description}</p>
+    const ColorInput = ({ label, description, stateKey }) => {
+        const value = colors[stateKey];
+        const displayHex = isHSL(value) ? hslToHex(value) : value;
+
+        return (
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
+                <div>
+                    <h4 className="font-medium text-sm text-gray-900">{label}</h4>
+                    <p className="text-xs text-gray-500">{description}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-xs font-mono text-gray-500 uppercase">{typeof value === 'string' ? value.replace(/%/g, '') : value}</span>
+                    <input
+                        type="color"
+                        value={displayHex || '#000000'}
+                        onChange={(e) => handleColorChange(stateKey, e.target.value)}
+                        className="h-10 w-10 cursor-pointer rounded-md border-0 p-0"
+                    />
+                </div>
             </div>
-            <div className="flex items-center gap-3">
-                <span className="text-xs font-mono text-gray-500 uppercase">{colors[stateKey]}</span>
-                <input
-                    type="color"
-                    value={colors[stateKey]}
-                    onChange={(e) => handleColorChange(stateKey, e.target.value)}
-                    className="h-10 w-10 cursor-pointer rounded-md border-0 p-0"
-                />
-            </div>
-        </div>
-    );
+        );
+    };
 
     // Legg til typografi-innstillinger
     const fontFamilies = [

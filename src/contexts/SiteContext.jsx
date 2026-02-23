@@ -89,11 +89,18 @@ export const SiteProvider = ({ children }) => {
 
             themeKeys.forEach(key => {
                 if (settingsMap[key]) {
-                    themeSettings[key] = settingsMap[key];
-                    const hsl = hexToHSL(settingsMap[key]);
-                    if (hsl) {
+                    const rawValue = settingsMap[key];
+                    themeSettings[key] = rawValue;
+
+                    let hsl = rawValue;
+                    // If it's a HEX, convert to HSL for CSS variable
+                    if (typeof rawValue === 'string' && rawValue.startsWith('#')) {
+                        hsl = hexToHSL(rawValue);
+                    }
+
+                    // Only apply if we have a valid HSL (either pre-stored or converted)
+                    if (hsl && typeof hsl === 'string' && hsl.includes(' ')) {
                         // Bare påfør tema-variabler hvis vi IKKE er i admin-panelet
-                        // Dette hindrer at admin-UI (som bruker f.eks. bg-background) blir ødelagt av brukerens fargevalg
                         if (!window.location.pathname.startsWith('/admin')) {
                             document.documentElement.style.setProperty(cssVarMap[key], hsl);
                         }
