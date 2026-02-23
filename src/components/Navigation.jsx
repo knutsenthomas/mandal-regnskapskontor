@@ -39,12 +39,7 @@ const Navigation = () => {
 
   const handleLogoClick = () => {
     setIsOpen(false);
-    if (isHome) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      navigate('/');
-      window.scrollTo(0, 0);
-    }
+    window.location.href = '/';
   };
 
   const handleLinkClick = (id) => {
