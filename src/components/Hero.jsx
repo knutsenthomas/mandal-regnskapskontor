@@ -35,6 +35,8 @@ const Hero = () => {
   const scrollToContact = () => {
     document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+  const primaryColor = 'hsl(var(--primary))';
+  const primaryForeground = 'hsl(var(--primary-foreground))';
 
   const hasHeroContent = Boolean(resolvedHeroTitle || resolvedHeroImage || heroLines.length > 0 || heroButton);
 
@@ -48,7 +50,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0F3347]"
+      className="relative w-full flex items-center justify-center overflow-hidden"
       style={{ minHeight: '100vh', height: '100dvh' }}
     >
       <div className="absolute inset-0 z-0">
@@ -61,7 +63,12 @@ const Hero = () => {
             style={{ opacity: imageLoaded ? 1 : 0 }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0F3347]/95 via-[#1B4965]/90 to-[#2A6F97]/85" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(90deg, hsl(var(--foreground) / 0.92), hsl(var(--primary) / 0.88), hsl(var(--primary) / 0.78))`,
+          }}
+        />
       </div>
 
       <div
@@ -104,7 +111,7 @@ const Hero = () => {
               <Button
                 onClick={scrollToContact}
                 size="lg"
-                style={{ backgroundColor: color || '#1B4965' }}
+                style={{ backgroundColor: color || primaryColor, color: primaryForeground }}
                 className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30"
               >
                 {heroButton}

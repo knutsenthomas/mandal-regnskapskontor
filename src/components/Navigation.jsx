@@ -62,6 +62,9 @@ const Navigation = () => {
     }
   };
 
+  const primaryColor = 'hsl(var(--primary))';
+  const primaryForeground = 'hsl(var(--primary-foreground))';
+
   return (
     <>
       {/* --- GLOBAL CSS FIX ---
@@ -107,8 +110,9 @@ const Navigation = () => {
                   onClick={() => item === 'hjem' ? handleLogoClick() : handleLinkClick(item)}
                   className={`font-bold text-sm tracking-widest uppercase whitespace-nowrap transition-colors duration-300 ${isTransparent
                     ? 'text-white hover:text-gray-200'
-                    : 'text-[#1B4965] hover:text-[#0F3347]'
+                    : 'hover:opacity-80'
                     }`}
+                  style={!isTransparent ? { color: primaryColor } : undefined}
                 >
                   {item.replace('-', ' ')}
                 </button>
@@ -116,9 +120,10 @@ const Navigation = () => {
               <Button
                 onClick={() => handleLinkClick('kontakt')}
                 className={`font-bold rounded-full whitespace-nowrap transition-all duration-300 ${isTransparent
-                  ? 'bg-white text-[#1B4965] hover:bg-gray-100'
-                  : 'bg-[#1B4965] text-white hover:bg-[#0F3347]'
+                  ? 'bg-white hover:bg-gray-100'
+                  : 'text-white hover:brightness-90'
                   }`}
+                style={isTransparent ? { color: primaryColor } : { backgroundColor: primaryColor, color: primaryForeground }}
               >
                 KONTAKT OSS
               </Button>
@@ -128,8 +133,9 @@ const Navigation = () => {
             <div className={`lg:hidden ${isOpen ? 'hidden' : 'block'}`}>
               <button
                 onClick={() => setIsOpen(true)}
-                className={`flex items-center justify-center p-2 transition-colors duration-300 focus:outline-none ${isTransparent ? 'text-white' : 'text-[#1B4965]'
+                className={`flex items-center justify-center p-2 transition-colors duration-300 focus:outline-none ${isTransparent ? 'text-white' : ''
                   }`}
+                style={!isTransparent ? { color: primaryColor } : undefined}
               >
                 <Menu size={32} />
               </button>
@@ -148,7 +154,8 @@ const Navigation = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             // 'fixed inset-0' + 'w-full' sikrer at menyen dekker alt og ikke flyter
-            className="fixed inset-0 z-[100] bg-[#1B4965] flex flex-col w-full h-[100dvh]"
+            className="fixed inset-0 z-[100] flex flex-col w-full h-[100dvh]"
+            style={{ backgroundColor: primaryColor }}
           >
             {/* Topp-bar meny */}
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">

@@ -14,6 +14,7 @@ const RichText = ({ value, className = '' }) => {
 };
 
 const Footer = () => {
+  const primaryColor = 'hsl(var(--primary))';
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -55,7 +56,10 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection('home')}
-                  className="hover:text-teal-400 transition-colors duration-200 text-left"
+                  className="transition-colors duration-200 text-left hover:opacity-80"
+                  style={{ '--hover-color': primaryColor }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
                 >
                   {useContent('footer.link.home').content || 'Hjem'}
                 </button>
@@ -63,7 +67,9 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection('services')}
-                  className="hover:text-teal-400 transition-colors duration-200 text-left"
+                  className="transition-colors duration-200 text-left hover:opacity-80"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
                 >
                   {useContent('footer.link.services').content || 'Tjenester'}
                 </button>
@@ -71,7 +77,9 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection('about')}
-                  className="hover:text-teal-400 transition-colors duration-200 text-left"
+                  className="transition-colors duration-200 text-left hover:opacity-80"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
                 >
                   {useContent('footer.link.about').content || 'Om oss'}
                 </button>
@@ -79,7 +87,9 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection('contact')}
-                  className="hover:text-teal-400 transition-colors duration-200 text-left"
+                  className="transition-colors duration-200 text-left hover:opacity-80"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
                 >
                   {useContent('footer.link.contact').content || 'Kontakt'}
                 </button>
@@ -92,15 +102,15 @@ const Footer = () => {
             <p className="text-lg font-semibold text-white mb-4">{contactLabel || 'Kontakt'}</p>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-teal-400 flex-shrink-0" />
+                <Phone className="w-5 h-5 flex-shrink-0" style={{ color: primaryColor }} />
                 <span className="text-sm">{phone || '91 75 98 55'}</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-teal-400 flex-shrink-0" />
+                <Mail className="w-5 h-5 flex-shrink-0" style={{ color: primaryColor }} />
                 <span className="text-sm break-all">{email || 'jan@mandalregnskapskontor.no'}</span>
               </li>
               <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-teal-400 flex-shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 flex-shrink-0 mt-1" style={{ color: primaryColor }} />
                 <RichText className="text-sm" value={address || 'Bryggegata 1, 4514 Mandal'} />
               </li>
             </ul>

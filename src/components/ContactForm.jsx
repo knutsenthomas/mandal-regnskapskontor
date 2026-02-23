@@ -127,6 +127,8 @@ const ContactForm = () => {
   const { content: formCompany } = useContent('contact.form.company');
   const { content: formMessage } = useContent('contact.form.message');
   const { content: formButton } = useContent('contact.form.button');
+  const primaryColor = 'hsl(var(--primary))';
+  const primaryForeground = 'hsl(var(--primary-foreground))';
 
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
@@ -140,7 +142,7 @@ const ContactForm = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">{sectionLabel || 'Ta kontakt'}</span>
+          <span className="font-semibold tracking-wider text-sm uppercase mb-3 block" style={{ color: primaryColor }}>{sectionLabel || 'Ta kontakt'}</span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{title || 'Kontakt oss'}</h2>
           <RichText
             className="text-xl text-gray-600 font-light"
@@ -157,22 +159,22 @@ const ContactForm = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-[#1B4965] rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden">
-              <h2 className="text-2xl font-bold text-[#1B4965] mb-2">{title || 'Kontakt oss'}</h2>
+            <div className="rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden" style={{ backgroundColor: primaryColor }}>
+              <h2 className="text-2xl font-bold mb-2 text-white/90">{title || 'Kontakt oss'}</h2>
               <h3 className="text-2xl font-bold mb-10 relative z-10">{useContent('contact.infolabel').content || 'Kontaktinformasjon'}</h3>
               <div className="space-y-8 relative z-10">
                 <div className="flex items-start space-x-6">
                   <Phone className="w-6 h-6 mt-1" />
-                  <div><p className="text-xs font-bold text-blue-200">{phoneLabel || 'Telefon'}</p><p className="text-xl">{phone || '91 75 98 55'}</p></div>
+                  <div><p className="text-xs font-bold text-white/70">{phoneLabel || 'Telefon'}</p><p className="text-xl">{phone || '91 75 98 55'}</p></div>
                 </div>
                 <div className="flex items-start space-x-6">
                   <Mail className="w-6 h-6 mt-1" />
-                  <div><p className="text-xs font-bold text-blue-200">{emailLabel || 'E-post'}</p><p className="text-xl break-all">{email || 'jan@mandalregnskapskontor.no'}</p></div>
+                  <div><p className="text-xs font-bold text-white/70">{emailLabel || 'E-post'}</p><p className="text-xl break-all">{email || 'jan@mandalregnskapskontor.no'}</p></div>
                 </div>
                 <div className="flex items-start space-x-6">
                   <MapPin className="w-6 h-6 mt-1" />
                   <div>
-                    <p className="text-xs font-bold text-blue-200">{addressLabel || 'Adresse'}</p>
+                    <p className="text-xs font-bold text-white/70">{addressLabel || 'Adresse'}</p>
                     <RichText className="text-xl" value={address || 'Bryggegata 1, 4514 Mandal'} />
                   </div>
                 </div>
@@ -219,7 +221,12 @@ const ContactForm = () => {
                 {errors.melding && <p className="text-red-500 text-xs mt-1">{errors.melding}</p>}
               </div>
 
-              <Button type="submit" disabled={isSubmitting} className="w-full bg-[#1B4965] hover:bg-[#0F3347] text-white py-6 text-lg rounded-lg shadow-lg">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full hover:brightness-90 py-6 text-lg rounded-lg shadow-lg"
+                style={{ backgroundColor: primaryColor, color: primaryForeground }}
+              >
                 {isSubmitting ? 'Sender...' : <span className="flex items-center justify-center">{formButton || 'Send henvendelse'} <Send className="ml-2 h-5 w-5" /></span>}
               </Button>
 

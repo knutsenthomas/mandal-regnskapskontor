@@ -34,6 +34,8 @@ const ServiceDetailPage = () => {
   const customPlanCta = useContent('custom_plan_cta');
   const customPlanTitle = useContent('custom_plan_title');
   const customPlanSubtitle = useContent('custom_plan_subtitle');
+  const primaryColor = 'hsl(var(--primary))';
+  const primaryForeground = 'hsl(var(--primary-foreground))';
 
   const handleBack = () => {
     navigate('/');
@@ -120,7 +122,7 @@ const ServiceDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B4965]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: primaryColor }}></div>
       </div>
     );
   }
@@ -129,7 +131,7 @@ const ServiceDetailPage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Tjenesten finnes ikke'}</h2>
-        <Button onClick={handleBack} className="bg-[#1B4965] hover:bg-[#0F3347]">
+        <Button onClick={handleBack} className="hover:brightness-90" style={{ backgroundColor: primaryColor, color: primaryForeground }}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til forsiden
         </Button>
       </div>
@@ -159,11 +161,13 @@ const ServiceDetailPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-10"
           >
-            <Button
-              onClick={handleBack}
-              variant="ghost"
-              className="text-gray-500 hover:text-[#1B4965] pl-0 group font-medium"
-            >
+              <Button
+                onClick={handleBack}
+                variant="ghost"
+                className="text-gray-500 pl-0 group font-medium"
+                onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+              >
               <ArrowLeft className="mr-2 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
               Tilbake til oversikten
             </Button>
@@ -176,7 +180,7 @@ const ServiceDetailPage = () => {
               className="lg:col-span-7"
             >
               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm border border-blue-50">
-                <Icon className="w-8 h-8 text-[#1B4965]" />
+                <Icon className="w-8 h-8" style={{ color: primaryColor }} />
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-blue-950 mb-8 tracking-tight leading-tight">
@@ -202,7 +206,8 @@ const ServiceDetailPage = () => {
                 <Button
                   size="lg"
                   onClick={() => navigate('/?section=kontakt')}
-                  className="bg-[#1B4965] hover:bg-[#0F3347] text-white px-8 h-14 rounded-xl shadow-lg transition-transform hover:scale-[1.02]"
+                  className="px-8 h-14 rounded-xl shadow-lg transition-transform hover:scale-[1.02] hover:brightness-90"
+                  style={{ backgroundColor: primaryColor, color: primaryForeground }}
                 >
                   {customPlanCta?.content || `Kom i gang med ${service.title}`}
                 </Button>
@@ -218,7 +223,7 @@ const ServiceDetailPage = () => {
             >
               <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-blue-900/5 border border-gray-100">
                 <h2 className="text-2xl font-bold text-blue-950 mb-8 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#1B4965] rounded-full inline-block"></span>
+                  <span className="w-1.5 h-6 rounded-full inline-block" style={{ backgroundColor: primaryColor }}></span>
                   Hva vi tilbyr
                 </h2>
 
@@ -228,7 +233,7 @@ const ServiceDetailPage = () => {
                   <p className="text-gray-400 italic text-sm">Ingen spesifikke punkter spesifisert ennå.</p>
                 )}
 
-                <div className="mt-12 bg-[#1B4965] rounded-2xl p-8 text-white relative overflow-hidden group">
+                <div className="mt-12 rounded-2xl p-8 text-white relative overflow-hidden group" style={{ backgroundColor: primaryColor }}>
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                     <Icon className="w-24 h-24" />
                   </div>
@@ -254,7 +259,7 @@ const ServiceDetailPage = () => {
                 className="p-6 md:p-14 bg-white/80 backdrop-blur-md rounded-[2.5rem] md:rounded-[3rem] border border-white shadow-2xl shadow-blue-900/5"
               >
                 <div className="flex flex-col mb-8">
-                  <span className="text-[#1B4965] font-bold text-xs uppercase tracking-widest mb-2">Målgruppe</span>
+                  <span className="font-bold text-xs uppercase tracking-widest mb-2" style={{ color: primaryColor }}>Målgruppe</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 lg:gap-16 items-start">
