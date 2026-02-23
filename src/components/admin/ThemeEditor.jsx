@@ -13,10 +13,10 @@ const ThemeEditor = () => {
 
     // Default colors matching index.css (approximate Hex for inputs)
     const defaults = {
-        theme_primary: '#1B4965', // Original brand blue restored
-        theme_secondary: '#f8fafc', // Slate 50
+        theme_primary: '#1B4965', // Brand Blue
+        theme_secondary: '#f1f5f9', // Slate 100
         theme_background: '#ffffff',
-        theme_foreground: '#0f172a',
+        theme_foreground: '#0f172a', // Slate 900
         theme_muted: '#f1f5f9',
         theme_accent: '#f1f5f9',
     };

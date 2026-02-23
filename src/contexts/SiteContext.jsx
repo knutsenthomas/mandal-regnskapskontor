@@ -21,18 +21,15 @@ export const SiteProvider = ({ children }) => {
     // Helper: Convert Hex to HSL (Tailwind format: "H S% L%")
     const hexToHSL = (hex) => {
         if (!hex) return null;
-        let r, g, b;
-        if (hex.startsWith('#')) hex = hex.slice(1);
-        if (hex.length === 3) {
-            r = "0x" + hex[0] + hex[0];
-            g = "0x" + hex[1] + hex[1];
-            b = "0x" + hex[2] + hex[2];
-        } else if (hex.length === 6) {
-            r = "0x" + hex[0] + hex[1];
-            g = "0x" + hex[2] + hex[3];
-            b = "0x" + hex[4] + hex[5];
-        } else {
-            return null;
+        let r = 0, g = 0, b = 0;
+        if (hex.length === 4) {
+            r = "0x" + hex[1] + hex[1];
+            g = "0x" + hex[2] + hex[2];
+            b = "0x" + hex[3] + hex[3];
+        } else if (hex.length === 7) {
+            r = "0x" + hex[1] + hex[2];
+            g = "0x" + hex[3] + hex[4];
+            b = "0x" + hex[5] + hex[6];
         }
         r /= 255;
         g /= 255;

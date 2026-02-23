@@ -49,11 +49,11 @@ const ServiceDetailPage = () => {
   };
 
   const serviceConfig = [
-    { icon: Calculator, gradient: 'from-slate-800 to-slate-900', label: 'Regnskap' },
-    { icon: FileText, gradient: 'from-slate-900 to-black', label: 'Fakturering' },
-    { icon: Users, gradient: 'from-gray-800 to-slate-800', label: 'Lønn' },
-    { icon: ClipboardCheck, gradient: 'from-black to-slate-900', label: 'Revisjon' },
-    { icon: TrendingUp, gradient: 'from-slate-800 to-gray-900', label: 'Rådgivning' }
+    { icon: Calculator, gradient: 'from-[#1B4965] to-[#2A6F97]', label: 'Regnskap' },
+    { icon: FileText, gradient: 'from-[#1B4965] to-[#0F3347]', label: 'Fakturering' },
+    { icon: Users, gradient: 'from-[#2A6F97] to-[#468FAF]', label: 'Lønn' },
+    { icon: ClipboardCheck, gradient: 'from-[#0F3347] to-[#1B4965]', label: 'Revisjon' },
+    { icon: TrendingUp, gradient: 'from-[#1B4965] to-[#2C7DA0]', label: 'Rådgivning' }
   ];
 
   const fetchServiceData = useCallback(async (options = {}) => {
@@ -120,7 +120,7 @@ const ServiceDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B4965]"></div>
       </div>
     );
   }
@@ -129,7 +129,7 @@ const ServiceDetailPage = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Tjenesten finnes ikke'}</h2>
-        <Button onClick={handleBack} className="bg-primary hover:opacity-90">
+        <Button onClick={handleBack} className="bg-[#1B4965] hover:bg-[#0F3347]">
           <ArrowLeft className="mr-2 h-4 w-4" /> Tilbake til forsiden
         </Button>
       </div>
@@ -150,8 +150,8 @@ const ServiceDetailPage = () => {
 
       {/* HERO SECTION */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-gray-50 z-0"></div>
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-100/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50/30 to-gray-50 z-0"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-100/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
@@ -162,7 +162,7 @@ const ServiceDetailPage = () => {
             <Button
               onClick={handleBack}
               variant="ghost"
-              className="text-gray-500 hover:text-primary pl-0 group font-medium"
+              className="text-gray-500 hover:text-[#1B4965] pl-0 group font-medium"
             >
               <ArrowLeft className="mr-2 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
               Tilbake til oversikten
@@ -175,8 +175,8 @@ const ServiceDetailPage = () => {
               animate={{ opacity: 1, x: 0 }}
               className="lg:col-span-7"
             >
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm border border-slate-50">
-                <Icon className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm border border-blue-50">
+                <Icon className="w-8 h-8 text-[#1B4965]" />
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-blue-950 mb-8 tracking-tight leading-tight">
@@ -202,7 +202,7 @@ const ServiceDetailPage = () => {
                 <Button
                   size="lg"
                   onClick={() => navigate('/?section=kontakt')}
-                  className="bg-primary hover:opacity-90 text-white px-8 h-14 rounded-xl shadow-lg transition-transform hover:scale-[1.02]"
+                  className="bg-[#1B4965] hover:bg-[#0F3347] text-white px-8 h-14 rounded-xl shadow-lg transition-transform hover:scale-[1.02]"
                 >
                   {customPlanCta?.content || `Kom i gang med ${service.title}`}
                 </Button>
@@ -217,8 +217,8 @@ const ServiceDetailPage = () => {
               className="lg:col-span-5 lg:sticky lg:top-32 self-start"
             >
               <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-blue-900/5 border border-gray-100">
-                <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-primary rounded-full inline-block"></span>
+                <h2 className="text-2xl font-bold text-blue-950 mb-8 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-[#1B4965] rounded-full inline-block"></span>
                   Hva vi tilbyr
                 </h2>
 
@@ -228,14 +228,14 @@ const ServiceDetailPage = () => {
                   <p className="text-gray-400 italic text-sm">Ingen spesifikke punkter spesifisert ennå.</p>
                 )}
 
-                <div className="mt-12 bg-primary rounded-2xl p-8 text-white relative overflow-hidden group">
+                <div className="mt-12 bg-[#1B4965] rounded-2xl p-8 text-white relative overflow-hidden group">
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                     <Icon className="w-24 h-24" />
                   </div>
                   <h3 className="text-xl font-bold mb-3 relative z-10">
                     {customPlanTitle?.content || 'Trenger du noe mer?'}
                   </h3>
-                  <p className="text-slate-100 text-sm mb-6 relative z-10 opacity-90 leading-relaxed font-light">
+                  <p className="text-blue-100 text-sm mb-6 relative z-10 opacity-90 leading-relaxed font-light">
                     {customPlanSubtitle?.content || 'Vi skreddersyr en løsning som passer din bedrift perfekt.'}
                   </p>
                   {isAdmin && <CustomPlanEditor />}
@@ -254,7 +254,7 @@ const ServiceDetailPage = () => {
                 className="p-6 md:p-14 bg-white/80 backdrop-blur-md rounded-[2.5rem] md:rounded-[3rem] border border-white shadow-2xl shadow-blue-900/5"
               >
                 <div className="flex flex-col mb-8">
-                  <span className="text-primary font-bold text-xs uppercase tracking-widest mb-2">Målgruppe</span>
+                  <span className="text-[#1B4965] font-bold text-xs uppercase tracking-widest mb-2">Målgruppe</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 lg:gap-16 items-start">

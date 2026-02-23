@@ -39,7 +39,7 @@ const About = () => {
       try {
         const arr = JSON.parse(aboutValues);
         if (Array.isArray(arr) && arr.length > 0) parsedValues = arr;
-      } catch { }
+      } catch {}
     }
   }
   const defaultImage = "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D";
@@ -57,7 +57,7 @@ const About = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <span className="text-primary font-semibold tracking-wider text-sm uppercase mb-3 block">{useContent('about.sectionlabel').content || 'Hvem er vi'}</span>
+          <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">{useContent('about.sectionlabel').content || 'Hvem er vi'}</span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{useContent('about.title').content || 'Om oss'}</h2>
         </motion.div>
 
@@ -70,7 +70,7 @@ const About = () => {
             className="order-2 lg:order-1"
           >
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-full h-full border-2 border-primary/10 rounded-2xl z-0 transform translate-x-4 translate-y-4"></div>
+              <div className="absolute -top-4 -left-4 w-full h-full border-2 border-[#1B4965]/20 rounded-2xl z-0 transform translate-x-4 translate-y-4"></div>
               <img
                 src={displayImage}
                 alt="Mandal Regnskapskontor"
@@ -86,7 +86,7 @@ const About = () => {
             transition={{ duration: 0.6 }}
             className="order-1 lg:order-2"
           >
-            <h3 className="text-2xl font-semibold text-primary mb-6">{useContent('about.subtitle').content || 'Din lokale partner for økonomisk vekst'}</h3>
+            <h3 className="text-2xl font-semibold text-[#1B4965] mb-6">{useContent('about.subtitle').content || 'Din lokale partner for økonomisk vekst'}</h3>
             {containsHtml(displayText) ? (
               <div
                 className="prose prose-lg max-w-none text-gray-700 font-light"
@@ -116,10 +116,10 @@ const About = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center p-8 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/20 group"
+                className="text-center p-8 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#1B4965]/20 group"
               >
                 <div className="w-16 h-16 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                  <Icon className="w-8 h-8 text-primary" />
+                  <Icon className="w-8 h-8 text-[#1B4965]" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
                 <p className="text-gray-600 font-light text-sm">{value.description}</p>

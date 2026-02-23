@@ -132,22 +132,22 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
   return (
     <div className="space-y-6">
-      {/* Remove legacy blue overrides */}
+      {/* SLEGGE-LØSNINGEN: Vi tvinger fargene med CSS !important */}
       <style>{`
         .super-custom-save-btn {
-          background-color: var(--primary) !important;
+          background-color: #1B4965 !important;
           color: white !important;
           border: none !important;
         }
         .super-custom-save-btn:hover {
-          opacity: 0.9 !important;
+          background-color: #0F3347 !important;
           color: white !important;
         }
       `}</style>
 
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium text-gray-900">Administrer Tjenester</h3>
-        <Button onClick={addService} variant="outline" size="sm" className="border-primary text-primary hover:bg-slate-50">
+        <Button onClick={addService} variant="outline" size="sm" className="border-[#1B4965] text-[#1B4965] hover:bg-blue-50">
           <Plus className="w-4 h-4 mr-2" />
           Legg til tjeneste
         </Button>
@@ -162,7 +162,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
             {/* Image Section */}
             <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-2">
-              <div className="aspect-video bg-gray-200 rounded-md overflow-hidden relative border border-gray-300 flex items-center justify-center group-hover/image:border-primary transition-colors">
+              <div className="aspect-video bg-gray-200 rounded-md overflow-hidden relative border border-gray-300 flex items-center justify-center group-hover/image:border-[#1B4965] transition-colors">
                 {/* Use modulo to cycle through default images if we have more services than images */}
                 {service.image || defaultImages[index % defaultImages.length] ? (
                   <img
@@ -202,7 +202,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
                   type="text"
                   value={service.title || ''}
                   onChange={(e) => handleServiceChange(index, 'title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white"
                   placeholder="Navn på tjeneste"
                 />
               </div>

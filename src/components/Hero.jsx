@@ -48,7 +48,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full flex items-center justify-center overflow-hidden bg-primary"
+      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0F3347]"
       style={{ minHeight: '100vh', height: '100dvh' }}
     >
       <div className="absolute inset-0 z-0">
@@ -61,7 +61,7 @@ const Hero = () => {
             style={{ opacity: imageLoaded ? 1 : 0 }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/90 to-primary/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0F3347]/95 via-[#1B4965]/90 to-[#2A6F97]/85" />
       </div>
 
       <div
@@ -92,7 +92,7 @@ const Hero = () => {
           {heroLines.map((line, idx) => (
             <p
               key={idx}
-              className="text-xl sm:text-2xl text-slate-100 max-w-3xl mx-auto font-light"
+              className="text-xl sm:text-2xl text-blue-50 max-w-3xl mx-auto font-light"
               style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
             >
               {line}
@@ -104,7 +104,7 @@ const Hero = () => {
               <Button
                 onClick={scrollToContact}
                 size="lg"
-                style={{ backgroundColor: color || 'hsl(var(--primary))' }}
+                style={{ backgroundColor: color || '#1B4965' }}
                 className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30"
               >
                 {heroButton}

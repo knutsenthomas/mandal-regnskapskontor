@@ -18,10 +18,10 @@ const FAQSection = ({ faqs }) => {
                             onClick={() => setOpenIndex(isOpen ? null : index)}
                             className="w-full px-6 py-5 text-left flex justify-between items-center gap-4 group"
                         >
-                            <span className="font-bold text-lg text-slate-900 group-hover:text-primary transition-colors">
+                            <span className="font-bold text-lg text-blue-950 group-hover:text-[#1B4965] transition-colors">
                                 {faq.question}
                             </span>
-                            <div className="shrink-0 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-slate-900 group-hover:bg-primary/5 transition-colors">
+                            <div className="shrink-0 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-blue-950 group-hover:bg-[#1B4965]/5 transition-colors">
                                 {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                             </div>
                         </button>

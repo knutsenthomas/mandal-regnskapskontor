@@ -78,7 +78,7 @@ const FooterEditor = () => {
               type="text"
               value={values[f.slug]}
               onChange={e => handleChange(f.slug, e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
             />
           )}
         </div>
@@ -87,7 +87,7 @@ const FooterEditor = () => {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
+          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

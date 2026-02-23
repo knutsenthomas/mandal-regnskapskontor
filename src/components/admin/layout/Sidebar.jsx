@@ -23,13 +23,13 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
 
     return (
         <div className={cn(
-            "flex flex-col h-full w-64 bg-primary text-white shadow-xl z-50 transition-transform duration-300 ease-in-out",
+            "flex flex-col h-full w-64 bg-[#1B4965] text-white shadow-xl z-50 transition-transform duration-300 ease-in-out",
             "fixed inset-y-0 left-0 md:relative md:translate-x-0", // Mobile: Fixed & Sidebar logic. Desktop: Relative & Always visible
             isOpen ? "translate-x-0" : "-translate-x-full" // Toggle logic for mobile
         )}>
 
             {/* HEADER / LOGO AREA */}
-            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
+            <div className="h-16 flex items-center justify-between px-6 border-b border-[#2C5D7C]">
                 <div className="flex items-center gap-2 overflow-hidden">
                     {logoUrl ? (
                         <div className="flex items-center gap-2">
@@ -79,10 +79,10 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
             </nav>
 
             {/* BOTTOM ACTION */}
-            <div className="p-4 border-t border-white/10 space-y-1">
+            <div className="p-4 border-t border-[#2C5D7C] space-y-1">
                 <button
                     onClick={() => window.location.href = '/'}
-                    className="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-md transition-colors"
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-blue-200 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                 >
                     <Home className="w-5 h-5 shrink-0" />
                     <span className="truncate">Tilbake til nettsiden</span>

@@ -217,11 +217,11 @@ const FinancialCalendar = () => {
         <section className="py-20 bg-slate-50">
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16">
-                    <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
-                        <Calendar className="w-5 h-5 text-primary mr-2" />
-                        <span className="text-primary font-medium">Viktige datoer</span>
+                    <div className="inline-flex items-center justify-center p-2 bg-[#1B4965]/10 rounded-full mb-4">
+                        <Calendar className="w-5 h-5 text-[#1B4965] mr-2" />
+                        <span className="text-[#1B4965] font-medium">Viktige datoer</span>
                     </div>
-                    <h2 className="text-4xl font-bold text-primary mb-4">Økonomisk Kalender</h2>
+                    <h2 className="text-4xl font-bold text-[#1B4965] mb-4">Økonomisk Kalender</h2>
                     <p className="text-xl text-gray-600">
                         Hold oversikt over de viktigste fristene. Vi henter automatisk inn offentlige frister slik at du alltid er oppdatert.
                     </p>
@@ -234,21 +234,21 @@ const FinancialCalendar = () => {
                         {/* Right Side: Image Panel (Visible on Desktop) - MOVED FIRST in DOM for Mobile? No, layout logic. 
                             Let's keep standard reading order: Content Left, Image Right using order-last on desktop.
                         */}
-                        <div className="lg:col-span-2 bg-primary relative overflow-hidden order-first lg:order-last min-h-[200px] lg:min-h-full">
+                        <div className="lg:col-span-2 bg-[#1B4965] relative overflow-hidden order-first lg:order-last min-h-[200px] lg:min-h-full">
                             <img
                                 src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=1000"
                                 alt="Financial planning"
-                                className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
+                                className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-primary opacity-90"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#1B4965] to-[#0F3347] opacity-90"></div>
 
                             <div className="relative z-10 p-8 h-full flex flex-col justify-between text-white">
                                 <div>
                                     <h3 className="text-2xl font-bold mb-2">Trenger du hjelp med fristene?</h3>
-                                    <p className="text-slate-100 mb-6">Vi passer på at du leverer i tide, hver gang.</p>
+                                    <p className="text-blue-100 mb-6">Vi passer på at du leverer i tide, hver gang.</p>
                                 </div>
                                 <Button
-                                    className="bg-white text-primary hover:bg-slate-50 border-none w-full shadow-lg"
+                                    className="bg-white text-[#1B4965] hover:bg-blue-50 border-none w-full"
                                     onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
                                 >
                                     Få hjelp av oss
@@ -271,7 +271,7 @@ const FinancialCalendar = () => {
                                 </Button>
 
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold text-primary">
+                                    <h3 className="text-2xl font-bold text-[#1B4965]">
                                         {monthNames[currentIndex]}
                                     </h3>
                                     <span className="text-sm font-medium text-gray-400">
@@ -306,13 +306,13 @@ const FinancialCalendar = () => {
                                     >
                                         {loading ? (
                                             <div className="flex justify-center py-10">
-                                                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                                <Loader2 className="w-8 h-8 animate-spin text-[#1B4965]" />
                                             </div>
                                         ) : currentMonthEvents.length > 0 ? (
                                             currentMonthEvents.map((item, idx) => (
                                                 <div key={idx} className={`relative flex items-center p-4 rounded-xl transition-all border ${item.highlight ? 'bg-amber-50 border-amber-200 shadow-sm' : 'bg-white border-gray-100 hover:border-gray-200 hover:shadow-sm'}`}>
                                                     <div className="flex-shrink-0 w-14 text-center mr-4">
-                                                        <span className="block text-xl font-bold text-primary leading-none">
+                                                        <span className="block text-xl font-bold text-[#62B6CB] leading-none">
                                                             {item.date.split('.')[0]}
                                                         </span>
                                                         <span className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mt-1">dag</span>
@@ -323,7 +323,7 @@ const FinancialCalendar = () => {
                                                             <p className={`text-sm font-medium leading-snug ${item.highlight ? 'text-gray-900' : 'text-gray-600'}`}>
                                                                 {item.task}
                                                             </p>
-                                                            {item.type === 'external' && <span className="text-[10px] bg-slate-100 text-primary px-1.5 py-0.5 rounded whitespace-nowrap">Ext</span>}
+                                                            {item.type === 'external' && <span className="text-[10px] bg-blue-100 text-[#1B4965] px-1.5 py-0.5 rounded whitespace-nowrap">Ext</span>}
                                                         </div>
 
                                                         {item.highlight && (

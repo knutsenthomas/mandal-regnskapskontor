@@ -27,7 +27,7 @@ const Logo = ({
 				</motion.div>
 			) : (
 				<motion.div
-					className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-primary"
+					className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-[#1B4965]"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 				>
@@ -39,7 +39,7 @@ const Logo = ({
 			<div className="flex flex-col justify-center">
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? 'hsl(var(--primary))' : '#ffffff' }}
+					animate={{ color: isDarkText ? '#1e3a8a' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
 					className={`font-bold leading-tight tracking-wide uppercase whitespace-nowrap ${isMobileMenu ? 'text-base' : 'text-base sm:text-lg md:text-xl'}`}
 				>
@@ -48,7 +48,7 @@ const Logo = ({
 
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? '#475569' : 'rgba(255, 255, 255, 0.75)' }}
+					animate={{ color: isDarkText ? '#64748B' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
 					className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mt-0.5 hidden sm:block whitespace-nowrap"
 				>
@@ -57,7 +57,7 @@ const Logo = ({
 
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? '#475569' : 'rgba(255, 255, 255, 0.75)' }}
+					animate={{ color: isDarkText ? '#64748B' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
 					className="text-[9px] font-bold tracking-[0.1em] uppercase mt-0.5 sm:hidden whitespace-nowrap"
 				>

@@ -18,24 +18,24 @@ const dummyData = {
 const AnalyticsOverview = () => (
   <div className="mt-8">
     <div className="flex items-center gap-2 mb-4">
-      <Activity className="w-5 h-5 text-primary" />
+      <Activity className="w-5 h-5 text-[#1B4965]" />
       <h3 className="text-lg font-semibold text-gray-800">Besøksstatistikk (Google Analytics)</h3>
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {/* Aktive besøkende */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
-        <div className="text-3xl font-bold text-primary mb-2">{dummyData.activeUsers}</div>
+        <div className="text-3xl font-bold text-[#1B4965] mb-2">{dummyData.activeUsers}</div>
         <div className="text-sm text-gray-500 font-medium">Aktive besøkende (7 dager)</div>
       </div>
       {/* Antall hendelser */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
-        <div className="text-3xl font-bold text-primary mb-2">{dummyData.events}</div>
+        <div className="text-3xl font-bold text-[#1B4965] mb-2">{dummyData.events}</div>
         <div className="text-sm text-gray-500 font-medium">Antall klikk/hendelser</div>
       </div>
       {/* Nye besøkende */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
-        <div className="text-3xl font-bold text-primary mb-2">{dummyData.newUsers}</div>
+        <div className="text-3xl font-bold text-[#1B4965] mb-2">{dummyData.newUsers}</div>
         <div className="text-sm text-gray-500 font-medium">Nye besøkende</div>
       </div>
       {/* Trafikkilder */}
