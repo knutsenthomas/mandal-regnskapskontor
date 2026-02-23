@@ -13,7 +13,7 @@ const ThemeEditor = () => {
 
     // Default colors matching index.css (approximate Hex for inputs)
     const defaults = {
-        theme_primary: '#0f172a', // Neutral Dark Slate instead of blue
+        theme_primary: '#1e293b', // Balanced Dark Slate instead of pure black-slate
         theme_secondary: '#f8fafc', // Slate 50
         theme_background: '#ffffff',
         theme_foreground: '#0f172a',

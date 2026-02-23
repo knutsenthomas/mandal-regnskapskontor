@@ -286,7 +286,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5 text-[#1B4965]" />
+                        <BarChart3 className="w-5 h-5 text-primary" />
                         Google Analytics
                     </CardTitle>
                     <CardDescription>Koble nettsiden til Google Analytics 4 for å spore besøkende.</CardDescription>
@@ -312,7 +312,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
                 <Button
                     onClick={handleSave}
                     disabled={loading || uploading}
-                    className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+                    className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
                 >
                     {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                     Lagre endringer

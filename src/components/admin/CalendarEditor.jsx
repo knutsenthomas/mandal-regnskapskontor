@@ -196,7 +196,7 @@ const CalendarEditor = () => {
                                 <Button
                                     onClick={handleSaveIcal}
                                     disabled={savingSettings}
-                                    className="bg-[#1B4965] hover:bg-[#153a51] text-white w-full md:w-auto"
+                                    className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
                                 >
                                     {savingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                                     Lagre
@@ -240,7 +240,7 @@ const CalendarEditor = () => {
                             />
                         </div>
                         <div className="flex items-end">
-                            <Button type="submit" className="bg-[#1B4965] hover:bg-[#153a51] text-white">
+                            <Button type="submit" className="bg-primary hover:opacity-90 text-white">
                                 <Plus className="w-4 h-4 mr-2" />
                                 Legg til
                             </Button>
@@ -259,7 +259,7 @@ const CalendarEditor = () => {
                                             <span className="block text-xs uppercase font-bold text-gray-500">
                                                 {new Date(event.date).toLocaleDateString('no-NO', { month: 'short' })}
                                             </span>
-                                            <span className="block text-lg font-bold text-[#1B4965]">
+                                            <span className="block text-lg font-bold text-primary">
                                                 {new Date(event.date).getDate()}
                                             </span>
                                         </div>

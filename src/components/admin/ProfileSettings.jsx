@@ -129,7 +129,7 @@ const ProfileSettings = ({ open, onOpenChange }) => {
                     {/* Read-only User Info */}
                     <div className="bg-gray-50 p-4 rounded-lg flex items-center gap-4">
                         <div className="bg-white p-2 rounded-full shadow-sm">
-                            <User className="w-6 h-6 text-[#1B4965]" />
+                            <User className="w-6 h-6 text-primary" />
                         </div>
                         <div>
                             <label className="text-xs font-bold text-gray-500 uppercase">E-postadresse</label>
@@ -141,7 +141,7 @@ const ProfileSettings = ({ open, onOpenChange }) => {
 
                         {/* PERSONAL DETAILS */}
                         <div className="space-y-4 border-t pt-4">
-                            <h3 className="text-sm font-semibold text-gray-900 border-l-4 border-[#1B4965] pl-2">
+                            <h3 className="text-sm font-semibold text-gray-900 border-l-4 border-primary pl-2">
                                 Personlig Informasjon
                             </h3>
 
@@ -231,7 +231,7 @@ const ProfileSettings = ({ open, onOpenChange }) => {
                             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                                 Avbryt
                             </Button>
-                            <Button type="submit" disabled={loading} className="bg-[#1B4965] hover:bg-[#0F3347]">
+                            <Button type="submit" disabled={loading} className="bg-primary hover:opacity-90">
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : 'Lagre endringer'}
                             </Button>
                         </DialogFooter>

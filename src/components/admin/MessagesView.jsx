@@ -167,7 +167,7 @@ const MessagesView = () => {
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900">Innboks</h2>
                     <p className="text-gray-500">
-                        Du har <span className="font-semibold text-[#1B4965]">{unreadCount}</span> uleste meldinger
+                        Du har <span className="font-semibold text-primary">{unreadCount}</span> uleste meldinger
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -201,7 +201,7 @@ const MessagesView = () => {
                     filteredMessages.map((msg) => (
                         <Card
                             key={msg.id}
-                            className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${msg.read ? 'border-l-gray-200 bg-white opacity-80' : 'border-l-[#1B4965] bg-blue-50/30'}`}
+                            className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${msg.read ? 'border-l-gray-200 bg-white opacity-80' : 'border-l-primary bg-slate-50'}`}
                             onClick={() => {
                                 setSelectedMessage(msg);
                                 markAsRead(msg.id, msg.read);
@@ -210,7 +210,7 @@ const MessagesView = () => {
                             <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 
                                 <div className="flex items-start gap-4 flex-1 min-w-0">
-                                    <div className={`p-2 rounded-full shrink-0 ${msg.read ? 'bg-gray-100 text-gray-400' : 'bg-[#1B4965]/10 text-[#1B4965]'}`}>
+                                    <div className={`p-2 rounded-full shrink-0 ${msg.read ? 'bg-gray-100 text-gray-400' : 'bg-primary/10 text-primary'}`}>
                                         {msg.read ? <MailOpen className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
                                     </div>
 

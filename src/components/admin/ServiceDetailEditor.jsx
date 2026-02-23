@@ -31,7 +31,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     if (selectedServiceId) {
       fetchDetails();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedServiceId]);
 
   const normalizeTitle = (title) => (title || '').toLowerCase();
@@ -206,7 +206,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     toast({
       title: title,
       description: description,
-      className: "bg-blue-50 border-blue-200"
+      className: "bg-slate-50 border-slate-200"
     });
   };
 
@@ -230,7 +230,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     toast({
       title: "Ny funksjon lagt til",
       description: "En ny linje for funksjon er lagt til i pakken.",
-      className: "bg-blue-50 border-blue-200"
+      className: "bg-slate-50 border-slate-200"
     });
   };
 
@@ -280,14 +280,6 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
 
   return (
     <div className="space-y-12 pb-12">
-      <style>{`
-        .super-custom-save-btn {
-          background-color: #1B4965 !important;
-          color: white !important;
-          border: none !important;
-        }
-      `}</style>
-
       <div className="flex justify-between items-center mb-8 pt-2">
         <h2 className="text-lg font-semibold text-gray-700">Innhold</h2>
       </div>
@@ -303,7 +295,7 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
             minHeight={220}
           />
         </div>
-        
+
         <div className="space-y-2">
           <RichTextEditor
             label="Målgruppe (Hvem er dette for?)"

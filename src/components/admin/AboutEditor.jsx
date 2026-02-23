@@ -37,7 +37,7 @@ const AboutEditor = ({ content, onUpdate }) => {
     toast({
       title: "Ny verdi lagt til",
       description: "Et nytt punkt er opprettet nederst.",
-      className: "bg-blue-50 border-blue-200"
+      className: "bg-slate-50 border-slate-200"
     });
   };
 
@@ -179,7 +179,7 @@ const AboutEditor = ({ content, onUpdate }) => {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">Kjerneverdier / Nøkkelpunkter</h3>
-          <Button onClick={addValue} variant="outline" size="sm" className="border-[#1B4965] text-[#1B4965] hover:bg-blue-50">
+          <Button onClick={addValue} variant="outline" size="sm" className="border-primary text-primary hover:bg-slate-50">
             <Plus className="w-4 h-4 mr-2" />
             Legg til verdi
           </Button>
@@ -200,14 +200,14 @@ const AboutEditor = ({ content, onUpdate }) => {
                   type="text"
                   value={val.title || ''}
                   onChange={(e) => handleValueChange(index, 'title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white text-sm font-semibold"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white text-sm font-semibold"
                   placeholder="Tittel (f.eks. Erfaring)"
                 />
                 <textarea
                   value={val.description || ''}
                   onChange={(e) => handleValueChange(index, 'description', e.target.value)}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white text-sm resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white text-sm resize-none"
                   placeholder="Beskrivelse..."
                 />
               </div>
@@ -220,7 +220,7 @@ const AboutEditor = ({ content, onUpdate }) => {
         <Button
           onClick={handleSave}
           disabled={loading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+          className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

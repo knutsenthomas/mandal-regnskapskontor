@@ -75,7 +75,7 @@ const ContactEditor = ({ content, onUpdate }) => {
             name="contact_phone"
             value={formData.contact_phone}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
             placeholder="F.eks. 91 75 98 55"
           />
         </div>
@@ -90,7 +90,7 @@ const ContactEditor = ({ content, onUpdate }) => {
             name="contact_email"
             value={formData.contact_email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
             placeholder="post@example.com"
           />
         </div>
@@ -126,7 +126,7 @@ const ContactEditor = ({ content, onUpdate }) => {
         <Button
           onClick={handleSave}
           disabled={loading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+          className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

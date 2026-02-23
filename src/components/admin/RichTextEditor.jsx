@@ -166,7 +166,7 @@ const RichTextEditor = ({
             font-weight: 700;
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
-            color: #1B4965;
+            color: var(--primary);
           }
           .rte-content p {
             margin-top: 0.75rem;
@@ -174,7 +174,7 @@ const RichTextEditor = ({
             font-size: 1.125rem;
           }
           .rte-content a {
-            color: #1B4965;
+            color: var(--primary);
             text-decoration: underline;
           }
           .rte-content:empty:before {

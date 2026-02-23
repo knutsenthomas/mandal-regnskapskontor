@@ -133,7 +133,7 @@ const HeroEditor = ({ content, onUpdate }) => {
           name="hero_title"
           value={formData.hero_title}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] mb-2"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary mb-2"
           placeholder="Hovedtittel på forsiden"
         />
       </div>
@@ -146,7 +146,7 @@ const HeroEditor = ({ content, onUpdate }) => {
                 type="text"
                 value={line}
                 onChange={e => handleLineChange(idx, e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                 placeholder={`Linje ${idx + 1}`}
               />
               {formData.hero_lines.length > 1 && (
@@ -154,7 +154,7 @@ const HeroEditor = ({ content, onUpdate }) => {
               )}
             </div>
           ))}
-          <button type="button" onClick={handleAddLine} className="text-[#1B4965] text-xs mt-2 px-2 py-1 border border-[#1B4965] rounded">+ Legg til linje</button>
+          <button type="button" onClick={handleAddLine} className="text-primary text-xs mt-2 px-2 py-1 border border-primary rounded">+ Legg til linje</button>
         </div>
       </div>
       <div className="mb-6">
@@ -179,7 +179,7 @@ const HeroEditor = ({ content, onUpdate }) => {
         <Button
           onClick={handleSave}
           disabled={loading || uploading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+          className="bg-primary hover:opacity-90 text-white w-full md:w-auto"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

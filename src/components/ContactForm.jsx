@@ -140,7 +140,7 @@ const ContactForm = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <span className="text-[#1B4965] font-semibold tracking-wider text-sm uppercase mb-3 block">{sectionLabel || 'Ta kontakt'}</span>
+          <span className="text-primary font-semibold tracking-wider text-sm uppercase mb-3 block">{sectionLabel || 'Ta kontakt'}</span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{title || 'Kontakt oss'}</h2>
           <RichText
             className="text-xl text-gray-600 font-light"
@@ -157,22 +157,21 @@ const ContactForm = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-[#1B4965] rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden">
-              <h2 className="text-2xl font-bold text-[#1B4965] mb-2">{title || 'Kontakt oss'}</h2>
+            <div className="bg-primary rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden">
               <h3 className="text-2xl font-bold mb-10 relative z-10">{useContent('contact.infolabel').content || 'Kontaktinformasjon'}</h3>
               <div className="space-y-8 relative z-10">
                 <div className="flex items-start space-x-6">
                   <Phone className="w-6 h-6 mt-1" />
-                  <div><p className="text-xs font-bold text-blue-200">{phoneLabel || 'Telefon'}</p><p className="text-xl">{phone || '91 75 98 55'}</p></div>
+                  <div><p className="text-xs font-bold opacity-70">{phoneLabel || 'Telefon'}</p><p className="text-xl">{phone || '91 75 98 55'}</p></div>
                 </div>
                 <div className="flex items-start space-x-6">
                   <Mail className="w-6 h-6 mt-1" />
-                  <div><p className="text-xs font-bold text-blue-200">{emailLabel || 'E-post'}</p><p className="text-xl break-all">{email || 'jan@mandalregnskapskontor.no'}</p></div>
+                  <div><p className="text-xs font-bold opacity-70">{emailLabel || 'E-post'}</p><p className="text-xl break-all">{email || 'jan@mandalregnskapskontor.no'}</p></div>
                 </div>
                 <div className="flex items-start space-x-6">
                   <MapPin className="w-6 h-6 mt-1" />
                   <div>
-                    <p className="text-xs font-bold text-blue-200">{addressLabel || 'Adresse'}</p>
+                    <p className="text-xs font-bold opacity-70">{addressLabel || 'Adresse'}</p>
                     <RichText className="text-xl" value={address || 'Bryggegata 1, 4514 Mandal'} />
                   </div>
                 </div>
@@ -192,34 +191,34 @@ const ContactForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">{formName || 'Navn *'}</label>
-                  <input type="text" name="navn" value={formData.navn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formName || 'Ditt navn'} />
+                  <input type="text" name="navn" value={formData.navn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all" placeholder={formName || 'Ditt navn'} />
                   {errors.navn && <p className="text-red-500 text-xs mt-1">{errors.navn}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">{formPhone || 'Telefon *'}</label>
-                  <input type="tel" name="telefon" value={formData.telefon} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formPhone || 'Mobilnummer'} />
+                  <input type="tel" name="telefon" value={formData.telefon} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all" placeholder={formPhone || 'Mobilnummer'} />
                   {errors.telefon && <p className="text-red-500 text-xs mt-1">{errors.telefon}</p>}
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">{formEmail || 'E-post *'}</label>
-                <input type="email" name="epost" value={formData.epost} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formEmail || 'din@epost.no'} />
+                <input type="email" name="epost" value={formData.epost} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all" placeholder={formEmail || 'din@epost.no'} />
                 {errors.epost && <p className="text-red-500 text-xs mt-1">{errors.epost}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">{formCompany || 'Bedriftsnavn'}</label>
-                <input type="text" name="bedriftsnavn" value={formData.bedriftsnavn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formCompany || 'Valgfritt'} />
+                <input type="text" name="bedriftsnavn" value={formData.bedriftsnavn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all" placeholder={formCompany || 'Valgfritt'} />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">{formMessage || 'Melding *'}</label>
-                <textarea name="melding" rows={5} value={formData.melding} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none resize-none" placeholder={formMessage || 'Hva gjelder det?'} />
+                <textarea name="melding" rows={5} value={formData.melding} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none" placeholder={formMessage || 'Hva gjelder det?'} />
                 {errors.melding && <p className="text-red-500 text-xs mt-1">{errors.melding}</p>}
               </div>
 
-              <Button type="submit" disabled={isSubmitting} className="w-full bg-[#1B4965] hover:bg-[#0F3347] text-white py-6 text-lg rounded-lg shadow-lg">
+              <Button type="submit" disabled={isSubmitting} className="w-full bg-primary hover:opacity-90 text-white py-6 text-lg rounded-lg shadow-lg">
                 {isSubmitting ? 'Sender...' : <span className="flex items-center justify-center">{formButton || 'Send henvendelse'} <Send className="ml-2 h-5 w-5" /></span>}
               </Button>
 

@@ -49,7 +49,7 @@ const TopBar = ({ title, onMenuClick, onOpenSearch, onOpenProfile }) => {
             <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                 <button
                     onClick={onMenuClick}
-                    className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B4965]/20"
+                    className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20"
                     aria-label="Åpne meny"
                 >
                     <Menu className="w-6 h-6" />
@@ -62,9 +62,9 @@ const TopBar = ({ title, onMenuClick, onOpenSearch, onOpenProfile }) => {
 
                 {/* Placeholder Actions */}
                 <div className="flex items-center gap-4 text-gray-400">
-                    <button onClick={onOpenSearch} className="hover:text-[#1B4965] transition-colors"><Search className="w-5 h-5" /></button>
+                    <button onClick={onOpenSearch} className="hover:text-primary transition-colors"><Search className="w-5 h-5" /></button>
                     <button
-                        className="hover:text-[#1B4965] transition-colors relative"
+                        className="hover:text-primary transition-colors relative"
                         onClick={() => navigate('/admin/dashboard?tab=messages')}
                     >
                         <Bell className="w-5 h-5" />
@@ -82,7 +82,7 @@ const TopBar = ({ title, onMenuClick, onOpenSearch, onOpenProfile }) => {
                         <p className="text-sm font-medium text-gray-900 leading-tight">{displayName}</p>
                         <p className="text-xs text-gray-500 leading-tight">Administrator</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-[#1B4965]/10 flex items-center justify-center text-[#1B4965] border border-[#1B4965]/20">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                         <User className="w-5 h-5" />
                     </div>
                 </div>
