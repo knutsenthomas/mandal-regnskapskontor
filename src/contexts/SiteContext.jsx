@@ -100,10 +100,8 @@ export const SiteProvider = ({ children }) => {
 
                     // Only apply if we have a valid HSL (either pre-stored or converted)
                     if (hsl && typeof hsl === 'string' && hsl.includes(' ')) {
-                        // Bare påfør tema-variabler hvis vi IKKE er i admin-panelet
-                        if (!window.location.pathname.startsWith('/admin')) {
-                            document.documentElement.style.setProperty(cssVarMap[key], hsl);
-                        }
+                        // Apply everywhere, including admin, so theme preview works while editing
+                        document.documentElement.style.setProperty(cssVarMap[key], hsl);
                     }
                 }
             });

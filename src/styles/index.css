@@ -78,7 +78,9 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    @apply antialiased;
     font-family: var(--site-font-family, 'DM Sans'), sans-serif;
   }
 }
@@ -94,7 +96,7 @@ html {
   color: inherit;
 }
 .prose h1, .prose h2, .prose h3 {
-  color: #111827;
+  color: hsl(var(--foreground));
   font-weight: 700;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
@@ -123,13 +125,13 @@ html {
   margin-bottom: 0.5em;
 }
 .prose a {
-  color: #1B4965;
+  color: hsl(var(--primary));
   text-decoration: underline;
   font-weight: 500;
 }
 .prose strong {
   font-weight: 700;
-  color: #111827;
+  color: hsl(var(--foreground));
 }
 .prose blockquote {
   border-left: 4px solid #e5e7eb;

@@ -92,10 +92,22 @@ const ThemeEditor = () => {
 
     const handleColorChange = (key, value) => {
         setColors(prev => ({ ...prev, [key]: value }));
-
-        // Live preview (optional, but nice)
-        // We can rely on save for full effect, or try to inject styles here.
-        // For now, reliance on save is safer to ensure persistence.
+        // Live preview in dashboard + site (CSS variables)
+        const cssVarMap = {
+            theme_primary: '--primary',
+            theme_secondary: '--secondary',
+            theme_background: '--background',
+            theme_foreground: '--foreground',
+            theme_muted: '--muted',
+            theme_accent: '--accent'
+        };
+        const cssVar = cssVarMap[key];
+        if (cssVar) {
+            const hsl = value?.startsWith('#') ? hexToHSL(value) : value;
+            if (hsl) {
+                document.documentElement.style.setProperty(cssVar, hsl);
+            }
+        }
     };
 
     const handleSave = async () => {
