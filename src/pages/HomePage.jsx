@@ -9,12 +9,35 @@ import FinancialCalendar from '@/components/FinancialCalendar';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 
+import { useSite } from '@/contexts/SiteContext';
+import { useContent } from '@/contexts/ContentContext';
+import { Loader2 } from 'lucide-react';
+
 const HomePage = () => {
+  const { loading: siteLoading } = useSite();
+  const { loading: contentLoading } = useContent();
+  const isLoading = siteLoading || contentLoading;
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-[9999]">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <Loader2 className="w-10 h-10 animate-spin text-[#1B4965]" />
+          <p className="text-[#1B4965] font-medium tracking-widest uppercase text-xs">Laster innhold...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: 'easeOut' }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       <Navigation />
       <Helmet>
@@ -46,5 +69,6 @@ const HomePage = () => {
     </motion.div>
   );
 };
+
 
 export default HomePage;
