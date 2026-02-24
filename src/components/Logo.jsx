@@ -11,7 +11,7 @@ const Logo = ({
 	const isDarkText = color === 'dark';
 
 	return (
-		<motion.div initial={false} className="flex items-center gap-2 sm:gap-3 cursor-pointer select-none min-w-0 w-full">
+		<motion.div initial={false} className="flex items-center gap-2 sm:gap-3 cursor-pointer select-none min-w-0 w-full lg:w-auto">
 			{/* Icon Container */}
 			{logoUrl ? (
 				<motion.div
@@ -36,12 +36,12 @@ const Logo = ({
 			)}
 
 			{/* Text Container */}
-			<div className="flex flex-col justify-center min-w-0 overflow-hidden">
+			<div className="flex flex-col justify-center min-w-0 overflow-hidden lg:overflow-visible">
 				<motion.span
 					initial={false}
 					animate={{ color: isDarkText ? '#1e3a8a' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
-					className={`font-bold leading-tight tracking-wide uppercase truncate ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
+					className={`font-bold leading-tight tracking-wide uppercase truncate lg:overflow-visible lg:text-clip ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
 				>
 					{logoText || "MANDAL REGNSKAPSKONTOR"}
 				</motion.span>
