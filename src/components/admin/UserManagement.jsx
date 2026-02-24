@@ -129,23 +129,32 @@ const UserManagement = () => {
     };
 
     const handleDeleteAdmin = async (email) => {
-        if (!window.confirm(`Er du sikker på at du vil fjerne ${email} fra admin-listen? Vedkommende vil miste tilgang til dette panelet.`)) return;
+        if (!window.confirm(`Er du sikker på at du vil fjerne ${email}? Brukeren vil bli slettet helt fra systemet og miste all tilgang.`)) return;
 
         try {
-            const { error } = await supabase
-                .from('admin_users')
-                .delete()
-                .eq('email', email);
+            const response = await fetch('/api/remove-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
 
-            if (error) throw error;
+            const result = await response.json();
 
-            toast({ title: 'Fjernet', description: 'Brukeren er fjernet fra admin-listen.' });
+            if (!response.ok) {
+                throw new Error(result.error || 'Kunne ikke fjerne bruker.');
+            }
+
+            toast({
+                title: 'Bruker slettet',
+                description: result.message || 'Brukeren er fjernet fra systemet.'
+            });
+
             fetchAdmins();
         } catch (error) {
             console.error('Error deleting admin:', error);
             toast({
                 title: 'Kunne ikke fjerne',
-                description: 'Noe gikk galt ved sletting.',
+                description: error.message,
                 variant: 'destructive'
             });
         }
