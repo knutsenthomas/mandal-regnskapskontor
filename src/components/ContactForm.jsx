@@ -145,8 +145,7 @@ const ContactForm = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="rounded-3xl p-10 text-white h-full shadow-2xl relative overflow-hidden" style={{ backgroundColor: primaryColor }}>
-              <h2 className="text-2xl font-bold mb-2 text-white/90">{title || 'Kontakt oss'}</h2>
-              <h3 className="text-2xl font-bold mb-10 relative z-10">{useContent('contact.infolabel').content || 'Kontaktinformasjon'}</h3>
+              <h2 className="text-2xl font-bold mb-10 relative z-10">{useContent('contact.infolabel').content || 'Kontaktinformasjon'}</h2>
               <div className="space-y-8 relative z-10">
                 <div className="flex items-start space-x-6">
                   <Phone className="w-6 h-6 mt-1" />
