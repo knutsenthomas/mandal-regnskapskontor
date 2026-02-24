@@ -94,7 +94,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const propertyId = String(process.env.GA4_PROPERTY_ID || '').trim();
+  const propertyId = String(process.env.GA4_PROPERTY_ID || '479163398').trim();
   const clientEmail = String(process.env.GA_SERVICE_ACCOUNT_EMAIL || '').trim();
   const privateKeyRaw = String(process.env.GA_SERVICE_ACCOUNT_PRIVATE_KEY || '');
   const privateKey = privateKeyRaw.replace(/\\n/g, '\n').trim();
