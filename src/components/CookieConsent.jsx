@@ -41,88 +41,85 @@ const CookieConsent = () => {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="fixed inset-x-0 bottom-0 z-[9999] flex items-end justify-center p-0 sm:p-4 pointer-events-none">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-white rounded-[24px] shadow-2xl max-w-[600px] w-full p-8 md:p-10 pointer-events-auto"
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 100 }}
+                    className="bg-white rounded-t-[24px] sm:rounded-[24px] shadow-[0_-10px_40px_rgba(0,0,0,0.15)] max-w-[650px] w-full p-6 md:p-10 pointer-events-auto max-h-[95dvh] overflow-y-auto"
                 >
-                    <div className="text-center">
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                            Vi bryr oss om ditt personvern
-                        </h2>
-                        <p className="text-gray-600 leading-relaxed mb-4">
-                            Vi bruker informasjonskapsler (cookies) for at nettsiden skal fungere, for å analysere trafikken vår og for å tilby deg en bedre brukeropplevelse. Du kan velge hvilke kategorier du vil tillate.
-                        </p>
-                        <Link
-                            to="/personvern"
-                            className="text-primary font-medium hover:underline mb-8 inline-block"
-                            onClick={() => setIsVisible(false)}
-                        >
-                            Les vår personvernerklæring
-                        </Link>
+                    <div className="flex flex-col">
+                        <div className="flex items-start justify-between mb-2">
+                            <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                                Cookies & Personvern
+                            </h2>
+                        </div>
 
-                        {/* Preferences area */}
-                        <div className="bg-muted/50 rounded-[16px] p-6 mb-8 mt-2 border border-border/50">
-                            <div className="flex flex-wrap justify-center gap-x-8 gap-y-6">
+                        <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
+                            Vi bruker informasjonskapsler for å sikre at nettsiden fungerer og for å analysere trafikken vår.
+                            <Link
+                                to="/personvern"
+                                className="text-primary font-medium hover:underline ml-1 inline-block"
+                                onClick={() => setIsVisible(false)}
+                            >
+                                Les mer her
+                            </Link>
+                        </p>
+
+                        {/* Preferences area - more compact */}
+                        <div className="bg-gray-50 rounded-[16px] p-4 mb-6 border border-gray-100">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 {/* Necessary */}
-                                <div className="flex items-center gap-3">
-                                    <label className="relative inline-flex items-center cursor-not-allowed">
-                                        <div className="w-12 h-6 bg-primary/30 rounded-full p-1 transition-colors">
-                                            <div className="w-4 h-4 bg-white rounded-full translate-x-6"></div>
-                                        </div>
-                                    </label>
-                                    <span className="text-sm font-semibold text-foreground/80">Nødvendige (Alltid på)</span>
+                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Nødvendige</span>
+                                    <div className="w-8 h-4 bg-primary/20 rounded-full p-0.5 ml-auto sm:ml-0">
+                                        <div className="w-3 h-3 bg-white rounded-full translate-x-4"></div>
+                                    </div>
                                 </div>
 
                                 {/* Statistics */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
+                                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Statistikk</span>
                                     <button
                                         onClick={() => setPrefs(prev => ({ ...prev, statistics: !prev.statistics }))}
-                                        className="relative inline-flex items-center"
+                                        className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.statistics ? 'bg-primary' : 'bg-gray-300'}`}
                                     >
-                                        <div className={`w-12 h-6 rounded-full p-1 transition-colors ${prefs.statistics ? 'bg-primary' : 'bg-muted-foreground/30'}`}>
-                                            <div className={`w-4 h-4 bg-white rounded-full transition-transform ${prefs.statistics ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                        </div>
+                                        <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.statistics ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                     </button>
-                                    <span className="text-sm font-semibold text-foreground/80">Statistikk</span>
                                 </div>
 
                                 {/* Marketing */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
+                                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Markedsføring</span>
                                     <button
                                         onClick={() => setPrefs(prev => ({ ...prev, marketing: !prev.marketing }))}
-                                        className="relative inline-flex items-center"
+                                        className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.marketing ? 'bg-primary' : 'bg-gray-300'}`}
                                     >
-                                        <div className={`w-12 h-6 rounded-full p-1 transition-colors ${prefs.marketing ? 'bg-primary' : 'bg-muted-foreground/30'}`}>
-                                            <div className={`w-4 h-4 bg-white rounded-full transition-transform ${prefs.marketing ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                        </div>
+                                        <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.marketing ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                     </button>
-                                    <span className="text-sm font-semibold text-foreground/80">Markedsføring</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Buttons */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Buttons - Stack on mobile, grid on desktop */}
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <button
                                 onClick={handleAcceptAll}
-                                className="bg-primary hover:opacity-90 text-primary-foreground font-bold py-4 px-6 rounded-[12px] transition-all shadow-md active:scale-[0.98]"
+                                className="flex-1 bg-primary text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm active:scale-[0.98] text-sm"
                             >
                                 Tillat alle
                             </button>
                             <button
                                 onClick={handleAcceptSelected}
-                                className="border-2 border-primary text-primary hover:bg-primary/5 font-bold py-4 px-6 rounded-[12px] transition-all active:scale-[0.98]"
+                                className="flex-1 border-2 border-primary text-primary font-bold py-3 px-6 rounded-xl transition-all active:scale-[0.98] text-sm"
                             >
-                                Tillat utvalgte
+                                Lagre utvalg
                             </button>
                             <button
                                 onClick={handleDeclineAll}
-                                className="bg-muted hover:bg-muted/80 text-muted-foreground font-bold py-4 px-6 rounded-[12px] transition-all active:scale-[0.98]"
+                                className="sm:flex-none text-gray-400 hover:text-gray-600 font-medium py-3 px-4 text-xs transition-colors"
                             >
-                                Avvis alle
+                                Kun nødvendige
                             </button>
                         </div>
                     </div>

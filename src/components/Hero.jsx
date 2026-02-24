@@ -42,6 +42,12 @@ const Hero = () => {
   const { content: heroLinesRaw } = useContent('hero.lines');
   const { content: heroImage } = useContent('hero.image');
   const { content: heroButton } = useContent('hero.button');
+  const { content: heroButtonUrl } = useContent('hero.buttonUrl');
+  const { content: loc1Name } = useContent('hero.loc1Name');
+  const { content: loc1Addr } = useContent('hero.loc1Addr');
+  const { content: loc2Name } = useContent('hero.loc2Name');
+  const { content: loc2Addr } = useContent('hero.loc2Addr');
+  const { content: showLocations } = useContent('hero.showLocations');
   const { content: color } = useContent('hero.primaryColor');
   const [imageLoaded, setImageLoaded] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -78,8 +84,13 @@ const Hero = () => {
     }
   }
 
-  const scrollToContact = () => {
-    document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const handleButtonClick = () => {
+    const url = heroButtonUrl || '#kontakt';
+    if (url.startsWith('#')) {
+      document.getElementById(url.replace('#', ''))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.location.href = url;
+    }
   };
   const heroOverlayMid = toOverlayColor(color, 0.88, 'hsl(var(--primary) / 0.88)');
   const heroOverlayEnd = toOverlayColor(color, 0.78, 'hsl(var(--primary) / 0.78)');
@@ -156,7 +167,7 @@ const Hero = () => {
           <div className="pt-10 flex flex-col items-center gap-6">
             {heroButton && (
               <Button
-                onClick={scrollToContact}
+                onClick={handleButtonClick}
                 size="lg"
                 className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30 bg-primary hover:bg-primary/90"
               >
@@ -166,48 +177,50 @@ const Hero = () => {
             )}
 
             {/* Location Section */}
-            <div ref={locationRef} className="flex flex-col items-center">
-              <div className="flex gap-4 mb-4">
-                {[
-                  { name: 'Mandal', address: 'Bryggegata 1, 4514 Mandal' },
-                  { name: 'Grimstad', address: 'Storgata 1, 4876 Grimstad' }
-                ].map((loc) => (
-                  <button
-                    key={loc.name}
-                    onClick={() => setSelectedLocation(selectedLocation === loc.name ? null : loc.name)}
-                    className={`
-                      flex items-center gap-2 px-6 py-2 rounded-full border-2 transition-all font-medium
-                      ${selectedLocation === loc.name
-                        ? 'bg-white text-primary border-white'
-                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'}
-                    `}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${selectedLocation === loc.name ? 'bg-primary' : 'bg-green-400'}`}></span>
-                    {loc.name}
-                  </button>
-                ))}
-              </div>
+            {showLocations === 'true' && (
+              <div ref={locationRef} className="flex flex-col items-center">
+                <div className="flex gap-4 mb-4">
+                  {[
+                    { id: 'loc1', name: loc1Name || 'Mandal', address: loc1Addr || 'Bryggegata 1, 4514 Mandal' },
+                    { id: 'loc2', name: loc2Name || 'Grimstad', address: loc2Addr || 'Storgata 1, 4876 Grimstad' }
+                  ].map((loc) => (
+                    <button
+                      key={loc.id}
+                      onClick={() => setSelectedLocation(selectedLocation === loc.id ? null : loc.id)}
+                      className={`
+                        flex items-center gap-2 px-6 py-2 rounded-full border-2 transition-all font-medium
+                        ${selectedLocation === loc.id
+                          ? 'bg-white text-primary border-white'
+                          : 'bg-white/10 text-white border-white/20 hover:bg-white/20'}
+                      `}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${selectedLocation === loc.id ? 'bg-primary' : 'bg-green-400'}`}></span>
+                      {loc.name}
+                    </button>
+                  ))}
+                </div>
 
-              <motion.div
-                initial={false}
-                animate={{ height: selectedLocation ? 'auto' : 0, opacity: selectedLocation ? 1 : 0 }}
-                className="overflow-hidden"
-              >
-                {selectedLocation && (
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-white flex items-center gap-3 shadow-lg">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                      <ArrowRight className="w-4 h-4 text-white rotate-90" />
+                <motion.div
+                  initial={false}
+                  animate={{ height: selectedLocation ? 'auto' : 0, opacity: selectedLocation ? 1 : 0 }}
+                  className="overflow-hidden"
+                >
+                  {selectedLocation && (
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-white flex items-center gap-3 shadow-lg">
+                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <ArrowRight className="w-4 h-4 text-white rotate-90" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-xs font-bold uppercase tracking-wider text-white/60">Adresse {selectedLocation === 'loc1' ? (loc1Name || 'Mandal') : (loc2Name || 'Grimstad')}</p>
+                        <p className="font-medium">
+                          {selectedLocation === 'loc1' ? (loc1Addr || 'Bryggegata 1, 4514 Mandal') : (loc2Addr || 'Storgata 1, 4876 Grimstad')}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold uppercase tracking-wider text-white/60">Adresse {selectedLocation}</p>
-                      <p className="font-medium">
-                        {selectedLocation === 'Mandal' ? 'Bryggegata 1, 4514 Mandal' : 'Storgata 1, 4876 Grimstad'}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            </div>
+                  )}
+                </motion.div>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

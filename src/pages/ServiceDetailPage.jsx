@@ -34,6 +34,7 @@ const ServiceDetailPage = () => {
   const customPlanCta = useContent('custom_plan_cta');
   const customPlanTitle = useContent('custom_plan_title');
   const customPlanSubtitle = useContent('custom_plan_subtitle');
+  const customPlanCtaUrl = useContent('custom_plan_cta_url');
   const primaryColor = 'hsl(var(--primary))';
   const primaryForeground = 'hsl(var(--primary-foreground))';
 
@@ -42,7 +43,14 @@ const ServiceDetailPage = () => {
   };
 
   const handleContactClick = () => {
-    navigate('/#kontakt');
+    const url = customPlanCtaUrl?.content || '/#kontakt';
+    if (url.startsWith('/#')) {
+      navigate(url);
+    } else if (url.startsWith('#')) {
+      document.getElementById(url.replace('#', ''))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.location.href = url;
+    }
   };
 
   const serviceConfig = [
