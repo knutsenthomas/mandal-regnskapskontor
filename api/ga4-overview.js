@@ -127,7 +127,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           metrics: [{ name: 'activeUsers' }, { name: 'eventCount' }, { name: 'newUsers' }],
           limit: 1,
         },
@@ -136,7 +136,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'sessionDefaultChannelGroup' }],
           metrics: [{ name: 'sessions' }],
           orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
@@ -147,7 +147,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'country' }],
           metrics: [{ name: 'activeUsers' }],
           orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'landingPage' }],
           metrics: [{ name: 'sessions' }],
           orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
@@ -169,7 +169,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'deviceCategory' }],
           metrics: [{ name: 'activeUsers' }],
           orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
@@ -180,7 +180,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'pagePath' }],
           metrics: [{ name: 'screenPageViews' }],
           orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
@@ -191,7 +191,7 @@ export default async function handler(req, res) {
         path: `/properties/${propertyId}:runReport`,
         accessToken,
         body: {
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
           dimensions: [{ name: 'browser' }],
           metrics: [{ name: 'activeUsers' }],
           orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
@@ -241,9 +241,9 @@ export default async function handler(req, res) {
 
     const payload = {
       activeUsersRealtime: realtimeReport ? metricValue(realtimeReport, 0, 0) : null,
-      activeUsers7d: metricValue(summaryReport, 0, 0),
-      events7d: metricValue(summaryReport, 0, 1),
-      newUsers7d: metricValue(summaryReport, 0, 2),
+      activeUsers30d: metricValue(summaryReport, 0, 0),
+      events30d: metricValue(summaryReport, 0, 1),
+      newUsers30d: metricValue(summaryReport, 0, 2),
       trafficSources,
       usersByCountry,
       landingPages,

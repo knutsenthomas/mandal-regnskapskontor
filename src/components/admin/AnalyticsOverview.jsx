@@ -5,9 +5,9 @@ const REFRESH_MS = 60_000;
 
 const emptyState = {
   activeUsersRealtime: null,
-  activeUsers7d: 0,
-  events7d: 0,
-  newUsers7d: 0,
+  activeUsers30d: 0,
+  events30d: 0,
+  newUsers30d: 0,
   trafficSources: [],
   usersByCountry: [],
   landingPages: [],
@@ -53,9 +53,9 @@ const AnalyticsOverview = () => {
         if (!mounted) return;
         setStats({
           activeUsersRealtime: json.activeUsersRealtime ?? null,
-          activeUsers7d: json.activeUsers7d ?? 0,
-          events7d: json.events7d ?? 0,
-          newUsers7d: json.newUsers7d ?? 0,
+          activeUsers30d: json.activeUsers30d ?? 0,
+          events30d: json.events30d ?? 0,
+          newUsers30d: json.newUsers30d ?? 0,
           trafficSources: Array.isArray(json.trafficSources) ? json.trafficSources : [],
           usersByCountry: Array.isArray(json.usersByCountry) ? json.usersByCountry : [],
           landingPages: Array.isArray(json.landingPages) ? json.landingPages : [],
@@ -144,25 +144,25 @@ const AnalyticsOverview = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <MetricCard
-          value={stats.activeUsersRealtime ?? stats.activeUsers7d}
+          value={stats.activeUsersRealtime ?? stats.activeUsers30d}
           label={realtimeLabel}
           loading={loading}
         />
         <MetricCard
-          value={stats.events7d}
-          label="Antall hendelser (7 dager)"
+          value={stats.events30d}
+          label="Antall hendelser (30 dager)"
           loading={loading}
         />
         <MetricCard
-          value={stats.newUsers7d}
-          label="Nye besøkende (7 dager)"
+          value={stats.newUsers30d}
+          label="Nye besøkende (30 dager)"
           loading={loading}
         />
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4 text-gray-400" />
-            Hvor kommer de fra? (7 dager)
+            Hvor kommer de fra? (30 dager)
           </div>
           <ul className="space-y-3">
             {trafficSources.map((src, i) => (
@@ -175,7 +175,7 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Mest populære inngangssider (7 dager)</div>
+          <div className="font-semibold text-gray-800 mb-4">Mest populære inngangssider (30 dager)</div>
           <ul className="space-y-3">
             {landingPages.map((lp, i) => (
               <li key={`${lp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
@@ -189,7 +189,7 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Mest besøkte sider (7 dager)</div>
+          <div className="font-semibold text-gray-800 mb-4">Mest besøkte sider (30 dager)</div>
           <ul className="space-y-3">
             {topPages.map((tp, i) => (
               <li key={`${tp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
@@ -203,7 +203,7 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Enhetstyper (7 dager)</div>
+          <div className="font-semibold text-gray-800 mb-4">Enhetstyper (30 dager)</div>
           <ul className="space-y-3">
             {devices.map((d, i) => (
               <li key={`${d.category}-${i}`} className="flex justify-between items-center text-sm gap-3">
@@ -215,7 +215,7 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Nettlesere (7 dager)</div>
+          <div className="font-semibold text-gray-800 mb-4">Nettlesere (30 dager)</div>
           <ul className="space-y-3">
             {browsers.map((b, i) => (
               <li key={`${b.browser}-${i}`} className="flex justify-between items-center text-sm gap-3">
@@ -227,7 +227,7 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Geografi (7 dager)</div>
+          <div className="font-semibold text-gray-800 mb-4">Geografi (30 dager)</div>
           <ul className="space-y-3">
             {usersByCountry.map((c, i) => (
               <li key={`${c.country}-${i}`} className="flex justify-between items-center text-sm gap-3">
