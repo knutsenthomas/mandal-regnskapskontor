@@ -10,6 +10,7 @@ const emptyState = {
   newUsers7d: 0,
   trafficSources: [],
   usersByCountry: [],
+  landingPages: [],
   updatedAt: null,
 };
 
@@ -54,6 +55,7 @@ const AnalyticsOverview = () => {
           newUsers7d: json.newUsers7d ?? 0,
           trafficSources: Array.isArray(json.trafficSources) ? json.trafficSources : [],
           usersByCountry: Array.isArray(json.usersByCountry) ? json.usersByCountry : [],
+          landingPages: Array.isArray(json.landingPages) ? json.landingPages : [],
           updatedAt: json.updatedAt || null,
         });
         setError('');
@@ -83,6 +85,10 @@ const AnalyticsOverview = () => {
   const usersByCountry = stats.usersByCountry.length > 0
     ? stats.usersByCountry
     : [{ country: 'Ingen data ennå', users: 0 }];
+
+  const landingPages = stats.landingPages.length > 0
+    ? stats.landingPages
+    : [{ page: 'Ingen data ennå', sessions: 0 }];
 
   const realtimeLabel = stats.activeUsersRealtime === null
     ? 'Aktive besøkende (realtime utilgjengelig)'
@@ -145,6 +151,20 @@ const AnalyticsOverview = () => {
               <li key={`${src.source}-${i}`} className="flex justify-between items-center text-sm gap-3">
                 <span className="text-gray-600 truncate">{src.source}</span>
                 <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{src.sessions}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+          <div className="font-semibold text-gray-800 mb-4">Mest populære inngangssider (7 dager)</div>
+          <ul className="space-y-3">
+            {landingPages.map((lp, i) => (
+              <li key={`${lp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
+                <span className="text-gray-600 truncate" title={lp.page}>
+                  {lp.page === '/' ? 'Forsiden' : lp.page}
+                </span>
+                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{lp.sessions}</span>
               </li>
             ))}
           </ul>

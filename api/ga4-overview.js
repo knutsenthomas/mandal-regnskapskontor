@@ -113,7 +113,7 @@ export default async function handler(req, res) {
   try {
     const accessToken = await getAccessToken({ clientEmail, privateKey });
 
-    const [summaryReport, trafficReport, countryReport, realtimeReport] = await Promise.all([
+    const [summaryReport, trafficReport, countryReport, landingPagesReport, realtimeReport] = await Promise.all([
       googlePost({
         path: `/properties/${propertyId}:runReport`,
         accessToken,
@@ -146,6 +146,17 @@ export default async function handler(req, res) {
         },
       }),
       googlePost({
+        path: `/properties/${propertyId}:runReport`,
+        accessToken,
+        body: {
+          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'landingPage' }],
+          metrics: [{ name: 'sessions' }],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+          limit: 5,
+        },
+      }),
+      googlePost({
         path: `/properties/${propertyId}:runRealtimeReport`,
         accessToken,
         body: {
@@ -166,6 +177,11 @@ export default async function handler(req, res) {
       users: row.metric,
     }));
 
+    const landingPages = mapDimensionMetricRows(landingPagesReport).map((row) => ({
+      page: row.dimension,
+      sessions: row.metric,
+    }));
+
     const payload = {
       activeUsersRealtime: realtimeReport ? metricValue(realtimeReport, 0, 0) : null,
       activeUsers7d: metricValue(summaryReport, 0, 0),
@@ -173,6 +189,7 @@ export default async function handler(req, res) {
       newUsers7d: metricValue(summaryReport, 0, 2),
       trafficSources,
       usersByCountry,
+      landingPages,
       updatedAt: new Date().toISOString(),
     };
 
