@@ -5,6 +5,9 @@ import { ArrowRight } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
 const ServiceCard = ({ service, index, variants }) => {
+  const primaryColor = 'hsl(var(--primary))';
+  const primaryForeground = 'hsl(var(--primary-foreground))';
+
   return (
     <motion.div
       variants={variants}
@@ -33,7 +36,7 @@ const ServiceCard = ({ service, index, variants }) => {
         <div className="relative z-10 flex flex-col justify-end h-full p-6 xl:p-5 text-white">
 
           {/* Title */}
-          <h3 className="text-xl xl:text-lg font-bold mb-2 tracking-tight leading-tight group-hover:text-blue-200 transition-colors">
+          <h3 className="text-xl xl:text-lg font-bold mb-2 tracking-tight leading-tight group-hover:text-white/85 transition-colors">
             {service.title || useContent('servicecard.title').content || 'Tittel'}
           </h3>
 
@@ -43,14 +46,20 @@ const ServiceCard = ({ service, index, variants }) => {
           </p>
 
           {/* Action Button */}
-          <div className="inline-flex items-center justify-center bg-[#1B4965] hover:bg-[#0F3347] text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-300 w-fit group-hover:gap-2 shadow-lg">
+          <div
+            className="inline-flex items-center justify-center font-medium py-2.5 px-5 rounded-lg transition-all duration-300 w-fit group-hover:gap-2 shadow-lg hover:brightness-90"
+            style={{ backgroundColor: primaryColor, color: primaryForeground }}
+          >
             <span>{useContent('servicecard.button').content || 'Les mer'}</span>
             <ArrowRight className="w-0 h-4 opacity-0 -ml-2 group-hover:w-4 group-hover:ml-2 group-hover:opacity-100 transition-all duration-300" />
           </div>
         </div>
 
-        {/* Bottom Accent Line (using gradient from config or primary) */}
-        <div className={`absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r ${service.gradient || 'from-[#1B4965] to-[#0F3347]'}`}></div>
+        {/* Bottom Accent Line matches primary button color */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-1.5"
+          style={{ backgroundColor: primaryColor }}
+        />
       </Link>
     </motion.div>
   );

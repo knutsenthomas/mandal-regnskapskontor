@@ -10,12 +10,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
+  const isSetPasswordRoute = () => (
+    typeof window !== 'undefined' && window.location.pathname === '/set-password'
+  );
+
   useEffect(() => {
     // Check initial session
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
+          if (isSetPasswordRoute()) {
+            setUser(session.user);
+            setIsAdmin(false);
+            setLoading(false);
+            return;
+          }
           await verifyAdminStatus(session.user);
         } else {
           setLoading(false);
@@ -31,6 +41,12 @@ export const AuthProvider = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
+        if (isSetPasswordRoute()) {
+          setUser(session.user);
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
         await verifyAdminStatus(session.user);
       } else {
         setUser(null);

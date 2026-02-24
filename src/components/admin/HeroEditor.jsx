@@ -4,9 +4,24 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Save, Loader2, Upload } from 'lucide-react';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
+import { useContent } from '@/contexts/ContentContext';
+
+const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+const normalizeHexColor = (value) => {
+  if (typeof value !== 'string') return '';
+  const raw = value.trim();
+  if (!raw) return '';
+  if (!HEX_COLOR_REGEX.test(raw)) return '';
+  if (raw.length === 4) {
+    return `#${raw[1]}${raw[1]}${raw[2]}${raw[2]}${raw[3]}${raw[3]}`.toUpperCase();
+  }
+  return raw.toUpperCase();
+};
 
 const HeroEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
+  const heroPrimaryColor = useContent('hero.primaryColor');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState(null);
@@ -16,10 +31,11 @@ const HeroEditor = ({ content, onUpdate }) => {
       setFormData({
         hero_title: content.hero_title ?? '',
         hero_lines: Array.isArray(content.hero_lines) ? content.hero_lines : [''],
-        hero_image: content.hero_image ?? ''
+        hero_image: content.hero_image ?? '',
+        hero_primary_color: normalizeHexColor(heroPrimaryColor.content),
       });
     }
-  }, [content]);
+  }, [content, heroPrimaryColor.content]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,6 +104,16 @@ const HeroEditor = ({ content, onUpdate }) => {
       return;
     }
 
+    const heroOverlayColor = normalizeHexColor(formData.hero_primary_color);
+    if (formData.hero_primary_color?.trim() && !heroOverlayColor) {
+      toast({
+        title: "Ugyldig farge",
+        description: "Bruk hex-format, for eksempel #1B4965, eller la feltet være tomt for å bruke temaets hovedfarge.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase.rpc('update_hero_content', {
@@ -98,6 +124,8 @@ const HeroEditor = ({ content, onUpdate }) => {
       });
 
       if (error) throw error;
+      const heroColorError = await heroPrimaryColor.update(heroOverlayColor, 'text');
+      if (heroColorError) throw heroColorError;
 
       toast({
         title: "Hero oppdatert",
@@ -164,7 +192,9 @@ const HeroEditor = ({ content, onUpdate }) => {
         <label className="block text-sm font-medium text-gray-700 mb-1">Forsidebilde</label>
         <div className="flex items-center space-x-4">
           {formData.hero_image && (
-            <img src={formData.hero_image} alt="Hero" className="h-16 rounded shadow border" />
+            <div className="rounded-lg overflow-hidden shadow border border-gray-200 bg-white">
+              <img src={formData.hero_image} alt="Hero" className="h-16 object-cover" />
+            </div>
           )}
           <label className="flex items-center px-3 py-2 bg-gray-100 rounded cursor-pointer border border-gray-200 hover:bg-gray-200">
             <Upload className="w-4 h-4 mr-2" />
@@ -176,6 +206,36 @@ const HeroEditor = ({ content, onUpdate }) => {
               className="hidden"
             />
           </label>
+        </div>
+      </div>
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Hero-farge (valgfritt)</label>
+        <p className="text-xs text-gray-500 mb-3">
+          Farge på overlay i hero-seksjonen. La stå tom for å bruke hovedfargen fra fargetema.
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            type="color"
+            value={normalizeHexColor(formData.hero_primary_color) || '#1B4965'}
+            onInput={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+            className="h-10 w-14 cursor-pointer rounded border border-gray-300 bg-white p-1"
+            aria-label="Velg hero-farge"
+          />
+          <input
+            type="text"
+            value={formData.hero_primary_color}
+            onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+            className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
+            placeholder="#1B4965"
+          />
+          <button
+            type="button"
+            onClick={() => setFormData((prev) => ({ ...prev, hero_primary_color: '' }))}
+            className="text-xs px-3 py-2 border border-gray-300 rounded hover:bg-gray-50"
+          >
+            Bruk temaets hovedfarge
+          </button>
         </div>
       </div>
       <div className="flex justify-end pt-4">

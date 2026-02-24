@@ -183,7 +183,9 @@ const GeneralEditor = ({ content, onUpdate }) => {
                     <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50">
                         {logoUrl ? (
                             <div className="relative group">
-                                <img src={logoUrl} alt="Logo Preview" className="h-20 object-contain mb-4" />
+                                <div className="mb-4 rounded-xl overflow-hidden border border-gray-200 bg-white p-2 shadow-sm">
+                                    <img src={logoUrl} alt="Logo Preview" className="h-20 object-contain rounded-lg" />
+                                </div>
                             </div>
                         ) : (
                             <div className="text-gray-400 flex flex-col items-center mb-4">
@@ -259,7 +261,9 @@ const GeneralEditor = ({ content, onUpdate }) => {
                     <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50">
                         {faviconUrl ? (
                             <div className="relative group">
-                                <img src={faviconUrl} alt="Favicon Preview" className="h-12 w-12 object-contain mb-4" />
+                                <div className="mb-4 rounded-lg overflow-hidden border border-gray-200 bg-white p-1 shadow-sm">
+                                    <img src={faviconUrl} alt="Favicon Preview" className="h-12 w-12 object-contain rounded-md" />
+                                </div>
                             </div>
                         ) : (
                             <div className="text-gray-400 flex flex-col items-center mb-4">

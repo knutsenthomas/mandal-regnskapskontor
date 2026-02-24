@@ -15,19 +15,19 @@ const Logo = ({
 			{/* Icon Container */}
 			{logoUrl ? (
 				<motion.div
-					className="flex-shrink-0"
+					className="flex-shrink-0 rounded-lg overflow-hidden"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 				>
 					<img
 						src={logoUrl}
 						alt="Logo"
-						className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+						className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg"
 					/>
 				</motion.div>
 			) : (
 				<motion.div
-					className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-[#1B4965]"
+					className="flex-shrink-0 p-2 sm:p-2.5 rounded-lg bg-primary"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 				>
@@ -39,7 +39,7 @@ const Logo = ({
 			<div className="flex flex-col justify-center min-w-0 overflow-hidden lg:overflow-visible">
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? '#1e3a8a' : '#ffffff' }}
+					animate={{ color: isDarkText ? 'hsl(var(--primary))' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
 					className={`font-bold leading-tight tracking-wide uppercase truncate lg:overflow-visible lg:text-clip ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
 				>
@@ -48,7 +48,7 @@ const Logo = ({
 
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? '#64748B' : 'rgba(255, 255, 255, 0.75)' }}
+					animate={{ color: isDarkText ? 'hsl(var(--muted-foreground))' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
 					className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mt-0.5 hidden sm:block whitespace-nowrap"
 				>
@@ -57,7 +57,7 @@ const Logo = ({
 
 				<motion.span
 					initial={false}
-					animate={{ color: isDarkText ? '#64748B' : 'rgba(255, 255, 255, 0.75)' }}
+					animate={{ color: isDarkText ? 'hsl(var(--muted-foreground))' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
 					className="text-[9px] font-bold tracking-[0.08em] uppercase mt-0.5 sm:hidden truncate"
 				>

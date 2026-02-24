@@ -13,27 +13,22 @@ const Services = () => {
   const serviceConfig = [
     {
       icon: Calculator,
-      gradient: 'from-[#1B4965] to-[#2A6F97]',
       image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800' // Accounting 
     },
     {
       icon: FileText,
-      gradient: 'from-[#1B4965] to-[#0F3347]',
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800' // Invoicing/Paperwork (New URL)
     },
     {
       icon: Users,
-      gradient: 'from-[#2A6F97] to-[#468FAF]',
       image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800' // Team/Meeting
     },
     {
       icon: ClipboardCheck,
-      gradient: 'from-[#0F3347] to-[#1B4965]',
       image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800' // Audit/Checklist
     },
     {
       icon: TrendingUp,
-      gradient: 'from-[#1B4965] to-[#2C7DA0]',
       image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800' // Growth/Stocks
     }
   ];
@@ -55,22 +50,43 @@ const Services = () => {
           .select('services_data')
           .single();
 
+        if (error) throw error;
+
         if (data && data.services_data && Array.isArray(data.services_data) && data.services_data.length > 0) {
           setDbServices(data.services_data);
+        } else {
+          setDbServices([]);
         }
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     };
+
     fetchServices();
+
+    const channel = supabase
+      .channel('public:services_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
+        fetchServices();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Merge DB data with Config. If DB data is missing, use Default.
   const displayServices = dbServices.length > 0
-    ? dbServices.map((service, index) => ({
-      ...service,
-      ...(serviceConfig[index] || serviceConfig[0])
-    }))
+    ? dbServices.map((service, index) => {
+      const config = serviceConfig[index] || serviceConfig[0];
+      return {
+        ...config,
+        ...service,
+        // Keep uploaded/admin image if set, otherwise use static fallback image.
+        image: service?.image || config?.image,
+      };
+    })
     : [];
 
   const container = {

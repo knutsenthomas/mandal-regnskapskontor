@@ -69,11 +69,13 @@ const About = () => {
           >
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-full h-full border-2 border-primary/20 rounded-2xl z-0 transform translate-x-4 translate-y-4"></div>
-              <img
-                src={displayImage}
-                alt="Mandal Regnskapskontor"
-                className="w-full h-[400px] lg:h-[500px] object-cover"
-              />
+              <div className="relative z-10 overflow-hidden rounded-2xl">
+                <img
+                  src={displayImage}
+                  alt="Mandal Regnskapskontor"
+                  className="w-full h-[400px] lg:h-[500px] object-cover rounded-2xl"
+                />
+              </div>
             </div>
           </motion.div>
 
@@ -116,11 +118,11 @@ const About = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="text-center p-8 bg-card text-card-foreground rounded-2xl hover:shadow-xl transition-all duration-300 border border-border hover:border-primary/20 group"
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                  <Icon className="w-8 h-8 text-[#1B4965]" />
+                <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center shadow-md border border-primary/10 bg-primary/10 group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                <p className="text-gray-600 font-light text-sm">{value.description}</p>
+                <h3 className="text-xl font-bold text-card-foreground mb-3">{value.title}</h3>
+                <p className="text-muted-foreground font-light text-sm">{value.description}</p>
               </motion.div>
             );
           })}
