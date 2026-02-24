@@ -56,15 +56,42 @@ export function ContentProvider({ children }) {
       case 'contact.address':
         return dashboardContent.contact_address || '';
 
-      // Keep footer contact details aligned with dashboard ContactEditor
+      case 'footer.companyName':
+        return dashboardContent.company_name || 'Mandal Regnskapskontor AS';
+      case 'footer.companyDesc':
+        return dashboardContent.footer_text || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.';
+      case 'footer.quicklinksLabel':
+        return 'Hurtiglenker';
+      case 'footer.contactLabel':
+        return 'Kontakt';
       case 'footer.phone':
-        return dashboardContent.contact_phone || '';
+        return dashboardContent.contact_phone || dashboardContent.phone || '91 75 98 55';
       case 'footer.email':
-        return dashboardContent.contact_email || '';
+        return dashboardContent.contact_email || dashboardContent.email || 'jan@mandalregnskapskontor.no';
       case 'footer.address':
-        return dashboardContent.contact_address || '';
+        return dashboardContent.contact_address || dashboardContent.address || 'Bryggegata 1, 4514 Mandal';
+      case 'footer.hoursLabel':
+        return 'Åpningstider';
+      case 'footer.hours.weeklabel':
+        return 'Mandag - Fredag:';
       case 'footer.hoursWeek':
-        return dashboardContent.opening_hours || '';
+        return dashboardContent.opening_hours || '08:00 - 16:00';
+      case 'footer.hours.weekendlabel':
+        return 'Lørdag - Søndag:';
+      case 'footer.hoursWeekend':
+        return 'Stengt';
+      case 'footer.copyright':
+        return `© ${new Date().getFullYear()} Mandal Regnskapskontor AS. Alle rettigheter reservert.`;
+      case 'footer.adminlink':
+        return 'Admin';
+      case 'footer.link.home':
+        return 'Hjem';
+      case 'footer.link.services':
+        return 'Tjenester';
+      case 'footer.link.about':
+        return 'Om oss';
+      case 'footer.link.contact':
+        return 'Kontakt';
 
       default:
         return '';
