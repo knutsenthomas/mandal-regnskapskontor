@@ -31,14 +31,12 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
             {/* HEADER / LOGO AREA */}
             <div className="h-16 flex items-center justify-between px-6 border-b border-[#2C5D7C]">
                 <div className="flex items-center gap-2 overflow-hidden">
-                    {logoUrl ? (
-                        <div className="flex items-center gap-2">
-                            <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
-                            <span className="font-bold text-lg truncate">{logoText || 'Admin'}</span>
-                        </div>
-                    ) : (
-                        <h1 className="text-xl font-bold tracking-tight truncate">Mandal <span className="font-light opacity-70">Admin</span></h1>
-                    )}
+                    <div className="p-2 rounded-lg bg-white/10">
+                        <Layers className="w-5 h-5 text-white" />
+                    </div>
+                    <h1 className="text-xl font-bold tracking-tight truncate text-white">
+                        Mandal <span className="font-light opacity-70">Admin</span>
+                    </h1>
                 </div>
                 {/* Close button for mobile */}
                 <button
