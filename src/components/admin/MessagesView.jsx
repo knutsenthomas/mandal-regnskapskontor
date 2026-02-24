@@ -260,7 +260,7 @@ const MessagesView = () => {
                             )}
                         </DialogTitle>
                         <DialogDescription>
-                            Mottatt: {selectedMessage && format(new Date(selectedMessage.created_at), 'd. MMMM yyyy kl. HH:mm', { locale: nb })}
+                            Mottatt: {selectedMessage && format(new Date(selectedMessage.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
                         </DialogDescription>
                     </DialogHeader>
 
