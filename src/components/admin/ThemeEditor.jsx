@@ -298,11 +298,49 @@ const ThemeEditor = () => {
                         </label>
                     </div>
                     {/* Live preview */}
-                    <div className="bg-gray-100 rounded p-4 mt-6 border">
-                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h1_size, fontWeight: 700 }}>Live H1: Mandal Regnskapskontor</div>
-                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h2_size, fontWeight: 600, marginTop: '1rem' }}>Live H2: Regnskapstjenester for alle</div>
-                        <div style={{ fontFamily: typography.font_family, fontSize: typography.h3_size, fontWeight: 500, marginTop: '1rem' }}>Live H3: Personlig rådgivning</div>
-                        <div style={{ fontFamily: typography.font_family, fontSize: typography.body_size, marginTop: '1rem' }}>Live brødtekst: Her ser du hvordan font og størrelse vil se ut på nettsiden din.</div>
+                    <div className="bg-gray-100 rounded p-4 mt-6 border overflow-hidden w-full">
+                        <div style={{
+                            fontFamily: typography.font_family,
+                            fontSize: typography.h1_size,
+                            fontWeight: 700,
+                            lineHeight: 1.2,
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                        }}>
+                            Live H1: Mandal Regnskapskontor
+                        </div>
+                        <div style={{
+                            fontFamily: typography.font_family,
+                            fontSize: typography.h2_size,
+                            fontWeight: 600,
+                            marginTop: '1rem',
+                            lineHeight: 1.2,
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                        }}>
+                            Live H2: Regnskapstjenester for alle
+                        </div>
+                        <div style={{
+                            fontFamily: typography.font_family,
+                            fontSize: typography.h3_size,
+                            fontWeight: 500,
+                            marginTop: '1rem',
+                            lineHeight: 1.2,
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                        }}>
+                            Live H3: Personlig rådgivning
+                        </div>
+                        <div style={{
+                            fontFamily: typography.font_family,
+                            fontSize: typography.body_size,
+                            marginTop: '1rem',
+                            lineHeight: 1.5,
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                        }}>
+                            Live brødtekst: Her ser du hvordan font og størrelse vil se ut på nettsiden din.
+                        </div>
                     </div>
                     <Button type="button" onClick={handleSaveTypography} disabled={loading} className="bg-[#1B4965] hover:bg-[#0F3347] text-white mt-4">
                         {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
