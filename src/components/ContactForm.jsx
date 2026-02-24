@@ -51,6 +51,8 @@ const ContactForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (!validateForm()) {
       toast({ title: 'Feil i skjema', description: 'Sjekk feltene.', variant: 'destructive' });
       return;
@@ -73,8 +75,14 @@ const ContactForm = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Kunne ikke sende melding');
+        let errorMessage = 'Kunne ikke sende melding';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // Response was not JSON (e.g. 404 or 500 HTML page)
+        }
+        throw new Error(errorMessage);
       }
 
       // Suksess!
