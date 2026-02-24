@@ -41,15 +41,15 @@ const CookieConsent = () => {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-x-0 bottom-0 z-[9999] flex items-end justify-center p-0 sm:p-4 pointer-events-none">
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm pointer-events-none">
                 <motion.div
-                    initial={{ opacity: 0, y: 100 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 100 }}
-                    className="bg-white rounded-t-[24px] sm:rounded-[24px] shadow-[0_-10px_40px_rgba(0,0,0,0.15)] max-w-[650px] w-full p-6 md:p-10 pointer-events-auto max-h-[95dvh] overflow-y-auto"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-white rounded-[24px] shadow-2xl max-w-[600px] w-full p-6 md:p-10 pointer-events-auto max-h-[90dvh] overflow-y-auto"
                 >
-                    <div className="flex flex-col">
-                        <div className="flex items-start justify-between mb-2">
+                    <div className="flex flex-col text-center sm:text-left">
+                        <div className="flex items-center justify-center sm:justify-start mb-2">
                             <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                                 Cookies & Personvern
                             </h2>
