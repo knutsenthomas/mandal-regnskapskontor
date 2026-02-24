@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Phone, Mail, MapPin, Lock } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
@@ -15,12 +15,30 @@ const RichText = ({ value, className = '' }) => {
 
 const Footer = () => {
   const primaryColor = 'hsl(var(--primary))';
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    } else if (sectionId === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
+  const scrollToSection = (id) => {
+    if (!isHome) {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          const headerOffset = 65;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        const headerOffset = 65;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+      }
     }
   };
 
@@ -66,7 +84,7 @@ const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('services')}
+                  onClick={() => scrollToSection('tjenester')}
                   className="transition-colors duration-200 text-left hover:opacity-80"
                   onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
@@ -76,7 +94,7 @@ const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('about')}
+                  onClick={() => scrollToSection('om-oss')}
                   className="transition-colors duration-200 text-left hover:opacity-80"
                   onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
@@ -86,7 +104,17 @@ const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('contact')}
+                  onClick={() => scrollToSection('kalender')}
+                  className="transition-colors duration-200 text-left hover:opacity-80"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+                >
+                  {useContent('footer.link.calendar').content || 'Kalender'}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection('kontakt')}
                   className="transition-colors duration-200 text-left hover:opacity-80"
                   onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
