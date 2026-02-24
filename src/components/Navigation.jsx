@@ -5,6 +5,13 @@ import { Menu, X, Phone, Mail, MapPin } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import { cn } from '@/lib/utils';
+import { useContent } from '@/contexts/ContentContext';
+
+const stripHtml = (value) => String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+const toTelHref = (value) => {
+  const cleaned = stripHtml(value).replace(/[^\d+]/g, '');
+  return cleaned ? `tel:${cleaned}` : 'tel:+4791759855';
+};
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,9 +25,15 @@ const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const safeAreaTop = 'env(safe-area-inset-top, 0px)';
+  const { content: footerPhone } = useContent('footer.phone');
+  const { content: footerEmail } = useContent('footer.email');
+  const { content: footerAddress } = useContent('footer.address');
 
   const isHome = location.pathname === '/' || location.pathname === '';
   const isTransparent = isHome && !scrolled;
+  const mobilePhone = stripHtml(footerPhone) || '91 75 98 55';
+  const mobileEmail = stripHtml(footerEmail) || 'jan@mandalregnskapskontor.no';
+  const mobileAddress = stripHtml(footerAddress) || 'Bryggegata 1, 4514 Mandal';
 
   // Håndter scroll
   useEffect(() => {
@@ -254,19 +267,19 @@ const Navigation = () => {
               className="pb-12 pt-6 px-6 border-t border-white/10 flex-shrink-0 w-full"
             >
               <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-white/80">
-                <a href="mailto:post@mandalregnskap.no" className="flex items-center gap-3 hover:text-white transition-colors group">
+                <a href={`mailto:${mobileEmail}`} className="flex items-center gap-3 hover:text-white transition-colors group">
                   <Mail size={20} className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm md:text-base font-medium">post@mandalregnskap.no</span>
+                  <span className="text-sm md:text-base font-medium">{mobileEmail}</span>
                 </a>
 
-                <a href="tel:+4712345678" className="flex items-center gap-3 hover:text-white transition-colors group">
+                <a href={toTelHref(mobilePhone)} className="flex items-center gap-3 hover:text-white transition-colors group">
                   <Phone size={20} className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm md:text-base font-medium">+47 12 34 56 78</span>
+                  <span className="text-sm md:text-base font-medium">{mobilePhone}</span>
                 </a>
 
                 <div className="flex items-center gap-3">
                   <MapPin size={20} />
-                  <span className="text-sm md:text-base font-medium">Mandal Sentrum</span>
+                  <span className="text-sm md:text-base font-medium">{mobileAddress}</span>
                 </div>
               </div>
             </motion.div>
