@@ -11,6 +11,7 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const safeAreaTop = 'env(safe-area-inset-top, 0px)';
 
   const isHome = location.pathname === '/' || location.pathname === '';
   const isTransparent = isHome && !scrolled;
@@ -76,12 +77,13 @@ const Navigation = () => {
       {/* --- HEADER --- */}
       <header
         className={cn(
-          "fixed top-0 left-0 w-full h-20 z-50 transition-all duration-300",
+          "fixed top-0 left-0 w-full z-50 transition-all duration-300",
           isTransparent ? "bg-transparent" : "bg-white shadow-sm"
         )}
+        style={{ paddingTop: safeAreaTop }}
       >
-        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-full">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
 
             {/* LOGO CONTAINER 
                VIKTIG: Vi setter en fast bredde (w-[180px]) for å hindre at headeren
@@ -147,7 +149,7 @@ const Navigation = () => {
             transition={{ duration: 0.2 }}
             // 'fixed inset-0' + 'w-full' sikrer at menyen dekker alt og ikke flyter
             className="fixed inset-0 z-[100] flex flex-col w-full h-[100dvh]"
-            style={{ backgroundColor: primaryColor }}
+            style={{ backgroundColor: primaryColor, paddingTop: safeAreaTop }}
           >
             {/* Topp-bar meny */}
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">
