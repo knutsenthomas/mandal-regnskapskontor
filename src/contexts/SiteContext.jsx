@@ -102,7 +102,10 @@ export const SiteProvider = ({ children }) => {
             if (siteData) {
                 // Font Family
                 if (siteData.font_family) {
-                    document.documentElement.style.setProperty('--site-font-family', siteData.font_family + ', sans-serif');
+                    const fontFamily = siteData.font_family.includes(' ')
+                        ? `'${siteData.font_family}'`
+                        : siteData.font_family;
+                    document.documentElement.style.setProperty('--site-font-family', `${fontFamily}, sans-serif`);
 
                     // Dynamisk Google Fonts import for alle fonter i listen
                     const googleFonts = [
