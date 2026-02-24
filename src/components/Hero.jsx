@@ -143,11 +143,11 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-6 landscape:space-y-4"
+          className="space-y-6"
         >
           {resolvedHeroTitle && (
             <h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none landscape:text-3xl landscape:leading-tight"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
               style={{ textWrap: 'balance' }}
             >
               {resolvedHeroTitle}
