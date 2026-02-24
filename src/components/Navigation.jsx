@@ -9,6 +9,12 @@ import { cn } from '@/lib/utils';
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [viewportFrame, setViewportFrame] = useState({
+    top: 0,
+    left: 0,
+    width: null,
+    height: null,
+  });
   const navigate = useNavigate();
   const location = useLocation();
   const safeAreaTop = 'env(safe-area-inset-top, 0px)';
@@ -34,6 +40,49 @@ const Navigation = () => {
       document.body.style.overflow = '';
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) {
+      return undefined;
+    }
+
+    const viewport = window.visualViewport;
+    let rafId = null;
+
+    const applyViewportFrame = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+
+      rafId = requestAnimationFrame(() => {
+        const nextFrame = {
+          top: Math.max(0, Math.round(viewport.offsetTop || 0)),
+          left: Math.max(0, Math.round(viewport.offsetLeft || 0)),
+          width: Math.round(viewport.width || window.innerWidth),
+          height: Math.round(viewport.height || window.innerHeight),
+        };
+
+        setViewportFrame((prev) => (
+          prev.top === nextFrame.top &&
+            prev.left === nextFrame.left &&
+            prev.width === nextFrame.width &&
+            prev.height === nextFrame.height
+            ? prev
+            : nextFrame
+        ));
+      });
+    };
+
+    applyViewportFrame();
+    viewport.addEventListener('resize', applyViewportFrame);
+    viewport.addEventListener('scroll', applyViewportFrame);
+    window.addEventListener('orientationchange', applyViewportFrame);
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      viewport.removeEventListener('resize', applyViewportFrame);
+      viewport.removeEventListener('scroll', applyViewportFrame);
+      window.removeEventListener('orientationchange', applyViewportFrame);
+    };
+  }, []);
 
   // Hide navigation on admin pages only
   if (location.pathname.startsWith('/admin')) {
@@ -71,16 +120,21 @@ const Navigation = () => {
 
   const primaryColor = 'hsl(var(--primary))';
   const primaryForeground = 'hsl(var(--primary-foreground))';
+  const fixedViewportStyle = {
+    top: `${viewportFrame.top}px`,
+    left: `${viewportFrame.left}px`,
+    width: viewportFrame.width ? `${viewportFrame.width}px` : '100%',
+  };
 
   return (
     <>
       {/* --- HEADER --- */}
       <header
         className={cn(
-          "fixed top-0 left-0 w-full z-50 transition-all duration-300",
+          "fixed z-50 overflow-x-hidden transition-colors duration-300",
           isTransparent ? "bg-transparent" : "bg-white shadow-sm"
         )}
-        style={{ paddingTop: safeAreaTop }}
+        style={{ ...fixedViewportStyle, paddingTop: safeAreaTop }}
       >
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -91,7 +145,11 @@ const Navigation = () => {
             */}
             <div
               onClick={handleLogoClick}
-              className={`cursor-pointer flex items-center h-full w-[180px] transition-opacity duration-200 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
+              className={cn(
+                "cursor-pointer flex items-center h-full min-w-0 flex-1 max-w-[calc(100%-3.5rem)] transition-opacity duration-200",
+                "sm:max-w-[320px] lg:max-w-none lg:flex-none lg:w-[180px]",
+                isOpen ? 'opacity-0' : 'opacity-100'
+              )}
             >
               <Logo color={isTransparent ? 'light' : 'dark'} />
             </div>
@@ -124,7 +182,7 @@ const Navigation = () => {
             </nav>
 
             {/* Hamburger (Mobil) */}
-            <div className={`lg:hidden ${isOpen ? 'hidden' : 'block'}`}>
+            <div className={`lg:hidden shrink-0 ml-2 ${isOpen ? 'hidden' : 'block'}`}>
               <button
                 onClick={() => setIsOpen(true)}
                 className={`flex items-center justify-center p-2 transition-colors duration-300 focus:outline-none ${isTransparent ? 'text-white' : ''
@@ -148,18 +206,26 @@ const Navigation = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             // 'fixed inset-0' + 'w-full' sikrer at menyen dekker alt og ikke flyter
-            className="fixed inset-0 z-[100] flex flex-col w-full h-[100dvh]"
-            style={{ backgroundColor: primaryColor, paddingTop: safeAreaTop }}
+            className="fixed z-[100] flex flex-col w-full"
+            style={{
+              ...fixedViewportStyle,
+              height: viewportFrame.height ? `${viewportFrame.height}px` : '100dvh',
+              backgroundColor: primaryColor,
+              paddingTop: safeAreaTop,
+            }}
           >
             {/* Topp-bar meny */}
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">
-              <div onClick={handleLogoClick} className="cursor-pointer w-[180px]">
+              <div
+                onClick={handleLogoClick}
+                className="cursor-pointer min-w-0 flex-1 max-w-[calc(100%-3.5rem)] sm:max-w-[320px] lg:max-w-none lg:w-[180px]"
+              >
                 <Logo color="light" isMobileMenu={true} />
               </div>
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center p-2 text-white hover:text-blue-200 transition-colors focus:outline-none"
+                className="flex items-center justify-center p-2 text-white hover:text-blue-200 transition-colors focus:outline-none shrink-0 ml-2"
               >
                 <X size={32} />
               </button>

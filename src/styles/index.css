@@ -82,12 +82,26 @@
     color: hsl(var(--foreground));
     @apply antialiased;
     font-family: var(--site-font-family, 'DM Sans'), sans-serif;
+    overflow-x: clip;
   }
 }
 
 html {
   scroll-behavior: smooth;
-  scrollbar-gutter: stable;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    scrollbar-gutter: stable;
+  }
 }
 
 /* prose classes for rich text rendering */

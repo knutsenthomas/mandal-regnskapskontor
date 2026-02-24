@@ -11,7 +11,7 @@ const Logo = ({
 	const isDarkText = color === 'dark';
 
 	return (
-		<motion.div initial={false} className="flex items-center space-x-3 cursor-pointer select-none">
+		<motion.div initial={false} className="flex items-center gap-2 sm:gap-3 cursor-pointer select-none min-w-0 w-full">
 			{/* Icon Container */}
 			{logoUrl ? (
 				<motion.div
@@ -36,12 +36,12 @@ const Logo = ({
 			)}
 
 			{/* Text Container */}
-			<div className="flex flex-col justify-center">
+			<div className="flex flex-col justify-center min-w-0 overflow-hidden">
 				<motion.span
 					initial={false}
 					animate={{ color: isDarkText ? '#1e3a8a' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
-					className={`font-bold leading-tight tracking-wide uppercase whitespace-nowrap ${isMobileMenu ? 'text-base' : 'text-base sm:text-lg md:text-xl'}`}
+					className={`font-bold leading-tight tracking-wide uppercase truncate ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
 				>
 					{logoText || "MANDAL REGNSKAPSKONTOR"}
 				</motion.span>
@@ -59,7 +59,7 @@ const Logo = ({
 					initial={false}
 					animate={{ color: isDarkText ? '#64748B' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
-					className="text-[9px] font-bold tracking-[0.1em] uppercase mt-0.5 sm:hidden whitespace-nowrap"
+					className="text-[9px] font-bold tracking-[0.08em] uppercase mt-0.5 sm:hidden truncate"
 				>
 					AUTORISERT REGNSKAPSFØRER
 				</motion.span>
