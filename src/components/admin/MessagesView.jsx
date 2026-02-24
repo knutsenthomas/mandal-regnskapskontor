@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
+import AdminHeader from './layout/AdminHeader';
 import {
     Dialog,
     DialogContent,
@@ -33,8 +34,6 @@ const MessagesView = () => {
     const fetchMessages = async () => {
         setLoading(true);
         try {
-            // Fetch messages ordered by created_at descending (newest first)
-            // Assuming 'created_at' exists. If not, we might need to rely on ID.
             const { data, error } = await supabase
                 .from('contact_messages')
                 .select('*')
@@ -51,7 +50,7 @@ const MessagesView = () => {
     };
 
     const markAsRead = async (id, currentStatus) => {
-        if (currentStatus) return; // Already read
+        if (currentStatus) return;
 
         try {
             const { error } = await supabase
@@ -61,12 +60,10 @@ const MessagesView = () => {
 
             if (error) throw error;
 
-            // Update local state
             setMessages(prev => prev.map(msg =>
                 msg.id === id ? { ...msg, read: true } : msg
             ));
 
-            // Update selected message if open
             if (selectedMessage && selectedMessage.id === id) {
                 setSelectedMessage(prev => ({ ...prev, read: true }));
             }
@@ -91,7 +88,7 @@ const MessagesView = () => {
             if (error) throw error;
 
             setMessages(prev => prev.filter(msg => msg.id !== id));
-            setSelectedMessage(null); // Close modal if deleted
+            setSelectedMessage(null);
             toast({
                 title: "Melding slettet",
                 description: "Meldingen ble slettet permanent.",
@@ -145,7 +142,7 @@ const MessagesView = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-12 text-gray-500">
-                <Loader2 className="w-8 h-8 animate-spin mb-4" />
+                <Loader2 className="w-8 h-8 animate-spin mb-4 text-[#1B4965]" />
                 <p>Laster meldinger...</p>
             </div>
         );
@@ -162,17 +159,14 @@ const MessagesView = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Innboks</h2>
-                    <p className="text-gray-500">
-                        Du har <span className="font-semibold text-[#1B4965]">{unreadCount}</span> uleste meldinger
-                    </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <AdminHeader
+                icon={Mail}
+                title="Innboks & Meldinger"
+                description={`Du har ${unreadCount} uleste meldinger i innboksen din.`}
+            >
+                <div className="flex gap-2">
                     {unreadCount > 0 && (
-                        <Button variant="outline" onClick={markAllAsRead} className="whitespace-nowrap">
+                        <Button variant="outline" onClick={markAllAsRead} className="whitespace-nowrap bg-white border-gray-200">
                             <MailOpen className="w-4 h-4 mr-2" />
                             Marker alle som lest
                         </Button>
@@ -183,17 +177,18 @@ const MessagesView = () => {
                             placeholder="Søk i meldinger..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-9"
+                            className="pl-9 bg-gray-50/50 border-gray-200"
                         />
                     </div>
                 </div>
-            </div>
+            </AdminHeader>
 
-            {/* Message List */}
-            <div className="grid gap-3">
+            <div className="grid gap-4">
                 {filteredMessages.length === 0 ? (
-                    <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
-                        <Mail className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-200 shadow-sm">
+                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                            <Mail className="w-8 h-8 text-gray-200" />
+                        </div>
                         <h3 className="text-lg font-medium text-gray-900">Ingen meldinger funnet</h3>
                         <p className="text-gray-500">Prøv et annet søkeord eller vent på nye henvendelser.</p>
                     </div>
@@ -201,103 +196,117 @@ const MessagesView = () => {
                     filteredMessages.map((msg) => (
                         <Card
                             key={msg.id}
-                            className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${msg.read ? 'border-l-gray-200 bg-white opacity-80' : 'border-l-[#1B4965] bg-blue-50/30'}`}
+                            className={`cursor-pointer transition-all hover:shadow-md border-none rounded-xl overflow-hidden ${msg.read ? 'bg-white/80 grayscale-[0.5]' : 'bg-white shadow-sm ring-1 ring-primary/10'}`}
                             onClick={() => {
                                 setSelectedMessage(msg);
                                 markAsRead(msg.id, msg.read);
                             }}
                         >
-                            <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                            <CardContent className="p-0 flex flex-col sm:flex-row items-stretch">
+                                <div className={`w-1.5 shrink-0 ${msg.read ? 'bg-gray-100' : 'bg-[#1B4965]'}`}></div>
+                                <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between flex-1">
+                                    <div className="flex items-start gap-4 flex-1 min-w-0">
+                                        <div className={`w-10 h-10 rounded-full shrink-0 flex items-center justify-center ${msg.read ? 'bg-gray-50 text-gray-400' : 'bg-primary/5 text-primary'}`}>
+                                            {msg.read ? <MailOpen className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
+                                        </div>
 
-                                <div className="flex items-start gap-4 flex-1 min-w-0">
-                                    <div className={`p-2 rounded-full shrink-0 ${msg.read ? 'bg-gray-100 text-gray-400' : 'bg-[#1B4965]/10 text-[#1B4965]'}`}>
-                                        {msg.read ? <MailOpen className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
+                                        <div className="space-y-1 min-w-0 flex-1">
+                                            <div className="flex items-center gap-3">
+                                                <h4 className={`text-base truncate ${msg.read ? 'font-medium text-gray-700' : 'font-bold text-gray-900'}`}>
+                                                    {msg.navn}
+                                                </h4>
+                                                {msg.bedriftsnavn && (
+                                                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-gray-100 text-gray-500 rounded flex-shrink-0">
+                                                        {msg.bedriftsnavn}
+                                                    </span>
+                                                )}
+                                                {!msg.read && <span className="w-2 h-2 bg-primary rounded-full"></span>}
+                                            </div>
+                                            <p className={`text-sm line-clamp-1 ${msg.read ? 'text-gray-500' : 'text-gray-800'}`}>
+                                                {msg.melding}
+                                            </p>
+                                            <div className="flex items-center gap-3 text-xs text-gray-400">
+                                                <Calendar className="w-3 h-3" />
+                                                <span>{format(new Date(msg.created_at), 'd. MMM yyyy HH:mm', { locale: nb })}</span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-1 min-w-0 flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <h4 className={`text-base truncate ${msg.read ? 'font-medium text-gray-700' : 'font-bold text-gray-900'}`}>
-                                                {msg.navn}
-                                            </h4>
-                                            {msg.bedriftsnavn && (
-                                                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full truncate max-w-[150px]">
-                                                    {msg.bedriftsnavn}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className={`text-sm line-clamp-1 ${msg.read ? 'text-gray-500' : 'text-gray-800'}`}>
-                                            {msg.melding}
-                                        </p>
-                                        <div className="flex items-center gap-3 text-xs text-gray-400">
-                                            <span>{format(new Date(msg.created_at), 'd. MMM yyyy HH:mm', { locale: nb })}</span>
-                                        </div>
+                                    <div className="flex items-center gap-2 self-end sm:self-center">
+                                        <Button variant="ghost" size="icon" className="text-gray-300 hover:text-red-500 transition-colors" onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteMessage(msg.id);
+                                        }}>
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
                                     </div>
                                 </div>
-
-                                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500 shrink-0" onClick={(e) => {
-                                    e.stopPropagation();
-                                    deleteMessage(msg.id);
-                                }}>
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
-
                             </CardContent>
                         </Card>
                     ))
                 )}
             </div>
 
-            {/* Detail Modal */}
             <Dialog open={!!selectedMessage} onOpenChange={(open) => !open && setSelectedMessage(null)}>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl rounded-2xl">
                     <DialogHeader>
-                        <DialogTitle className="text-xl flex items-center gap-2">
-                            Melding fra {selectedMessage?.navn}
+                        <DialogTitle className="text-2xl font-bold flex flex-wrap items-center gap-3">
+                            {selectedMessage?.navn}
                             {selectedMessage?.bedriftsnavn && (
-                                <span className="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
                                     {selectedMessage.bedriftsnavn}
                                 </span>
                             )}
                         </DialogTitle>
-                        <DialogDescription>
-                            Mottatt: {selectedMessage && format(new Date(selectedMessage.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+                        <DialogDescription className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            {selectedMessage && format(new Date(selectedMessage.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-6 py-4">
-                        {/* Contact Details Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
-                            <div className="flex items-center gap-3">
-                                <Mail className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm font-medium">{selectedMessage?.epost}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="bg-gray-50 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm border border-gray-100">
+                                    <Mail className="w-5 h-5 text-gray-400" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase">E-post</p>
+                                    <p className="text-sm font-semibold truncate">{selectedMessage?.epost}</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <Phone className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm font-medium">{selectedMessage?.telefon}</span>
+                            <div className="bg-gray-50 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm border border-gray-100">
+                                    <Phone className="w-5 h-5 text-gray-400" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase">Telefon</p>
+                                    <p className="text-sm font-semibold truncate">{selectedMessage?.telefon || 'Ikke oppgitt'}</p>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Message Body */}
-                        <div>
-                            <h4 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">Melding</h4>
-                            <div className="bg-white p-4 border rounded-md text-gray-800 whitespace-pre-wrap leading-relaxed">
+                        <div className="space-y-3">
+                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Meldingstekst</h4>
+                            <div className="bg-white p-6 border border-gray-100 rounded-2xl text-gray-800 whitespace-pre-wrap leading-relaxed shadow-sm min-h-[150px]">
                                 {selectedMessage?.melding}
                             </div>
                         </div>
                     </div>
 
-                    <DialogFooter className="flex justify-between gap-2 sm:justify-between w-full">
+                    <DialogFooter className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-gray-50">
                         <Button
-                            variant="destructive"
+                            variant="ghost"
                             onClick={() => deleteMessage(selectedMessage.id)}
-                            className="gap-2"
+                            className="text-gray-400 hover:text-red-500 hover:bg-red-50"
                         >
-                            <Trash2 className="w-4 h-4" /> Slett melding
+                            <Trash2 className="w-4 h-4 mr-2" /> Slett henvendelse
                         </Button>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                             <Button
                                 variant="outline"
+                                className="border-gray-200 rounded-xl"
                                 onClick={() => {
                                     if (selectedMessage?.epost) {
                                         window.location.href = `mailto:${selectedMessage.epost}`;
@@ -309,9 +318,9 @@ const MessagesView = () => {
                                     }
                                 }}
                             >
-                                <Mail className="w-4 h-4 mr-2" /> Svar på e-post
+                                <Mail className="w-4 h-4 mr-2" /> Svar nå
                             </Button>
-                            <Button onClick={() => setSelectedMessage(null)}>
+                            <Button className="rounded-xl px-8" onClick={() => setSelectedMessage(null)}>
                                 Lukk
                             </Button>
                         </div>

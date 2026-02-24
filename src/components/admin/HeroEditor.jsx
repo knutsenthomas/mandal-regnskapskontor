@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Loader2, Upload } from 'lucide-react';
+import { Save, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
 import { useContent } from '@/contexts/ContentContext';
+import AdminHeader from './layout/AdminHeader';
 
 const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
@@ -156,101 +157,108 @@ const HeroEditor = ({ content, onUpdate }) => {
   }
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tittel</label>
-        <input
-          type="text"
-          name="hero_title"
-          value={formData.hero_title}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] mb-2"
-          placeholder="Hovedtittel på forsiden"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tekstlinjer under tittel</label>
-        <div className="space-y-2">
-          {formData.hero_lines && formData.hero_lines.map((line, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
-              <input
-                type="text"
-                value={line}
-                onChange={e => handleLineChange(idx, e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
-                placeholder={`Linje ${idx + 1}`}
-              />
-              {formData.hero_lines.length > 1 && (
-                <button type="button" onClick={() => handleRemoveLine(idx)} className="text-red-500 text-xs px-2 py-1">Fjern</button>
-              )}
-            </div>
-          ))}
-          <button type="button" onClick={handleAddLine} className="text-[#1B4965] text-xs mt-2 px-2 py-1 border border-[#1B4965] rounded">+ Legg til linje</button>
-        </div>
-      </div>
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Forsidebilde</label>
-        <div className="flex items-center space-x-4">
-          {formData.hero_image && (
-            <div className="rounded-lg overflow-hidden shadow border border-gray-200 bg-white">
-              <img src={formData.hero_image} alt="Hero" className="h-16 object-cover" />
-            </div>
-          )}
-          <label className="flex items-center px-3 py-2 bg-gray-100 rounded cursor-pointer border border-gray-200 hover:bg-gray-200">
-            <Upload className="w-4 h-4 mr-2" />
-            <span>Last opp bilde</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-          </label>
-        </div>
-      </div>
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Hero-farge (valgfritt)</label>
-        <p className="text-xs text-gray-500 mb-3">
-          Farge på overlay i hero-seksjonen. La stå tom for å bruke hovedfargen fra fargetema.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="color"
-            value={normalizeHexColor(formData.hero_primary_color) || '#1B4965'}
-            onInput={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
-            onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
-            className="h-10 w-14 cursor-pointer rounded border border-gray-300 bg-white p-1"
-            aria-label="Velg hero-farge"
-          />
-          <input
-            type="text"
-            value={formData.hero_primary_color}
-            onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
-            className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965]"
-            placeholder="#1B4965"
-          />
-          <button
-            type="button"
-            onClick={() => setFormData((prev) => ({ ...prev, hero_primary_color: '' }))}
-            className="text-xs px-3 py-2 border border-gray-300 rounded hover:bg-gray-50"
-          >
-            Bruk temaets hovedfarge
-          </button>
-        </div>
-      </div>
-      <div className="flex justify-end pt-4">
+    <div className="space-y-6">
+      <AdminHeader
+        icon={ImageIcon}
+        title="Forside (Hero)"
+        description="Administrer hovedbilde, tittel og farge på forsiden av nettsiden."
+      >
         <Button
           onClick={handleSave}
           disabled={loading || uploading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+          className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
         >
           {loading ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
-            <Save className="w-4 h-4 mr-2" />
+            <Save className="w-4 h-4" />
           )}
           Lagre endringer
         </Button>
+      </AdminHeader>
+
+      <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Hovedtittel</label>
+          <input
+            type="text"
+            name="hero_title"
+            value={formData.hero_title}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:outline-none mb-2"
+            placeholder="Hovedtittel på forsiden"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tekstlinjer under tittel</label>
+          <div className="space-y-2">
+            {formData.hero_lines && formData.hero_lines.map((line, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={line}
+                  onChange={e => handleLineChange(idx, e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  placeholder={`Linje ${idx + 1}`}
+                />
+                {formData.hero_lines.length > 1 && (
+                  <button type="button" onClick={() => handleRemoveLine(idx)} className="text-red-500 text-xs px-2 py-1">Fjern</button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={handleAddLine} className="text-[#1B4965] text-xs mt-2 px-3 py-1.5 border border-[#1B4965]/20 rounded-lg hover:bg-[#1B4965]/5 transition-colors">+ Legg til linje</button>
+          </div>
+        </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Forsidebilde</label>
+          <div className="flex items-center space-x-4">
+            {formData.hero_image && (
+              <div className="rounded-lg overflow-hidden shadow border border-gray-200 bg-white">
+                <img src={formData.hero_image} alt="Hero" className="h-16 object-cover" />
+              </div>
+            )}
+            <label className="flex items-center px-4 py-2 bg-gray-50 rounded-lg cursor-pointer border border-gray-200 hover:bg-gray-100 transition-colors">
+              <Upload className="w-4 h-4 mr-2" />
+              <span>Last opp bilde</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Hero-farge (valgfritt)</label>
+          <p className="text-xs text-gray-500 mb-3">
+            Farge på overlay i hero-seksjonen. La stå tom for å bruke hovedfargen fra fargetema.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="color"
+              value={normalizeHexColor(formData.hero_primary_color) || '#1B4965'}
+              onInput={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+              className="h-10 w-14 cursor-pointer rounded-lg border border-gray-300 bg-white p-1"
+              aria-label="Velg hero-farge"
+            />
+            <input
+              type="text"
+              value={formData.hero_primary_color}
+              onChange={(e) => setFormData((prev) => ({ ...prev, hero_primary_color: e.target.value }))}
+              className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:outline-none"
+              placeholder="#1B4965"
+            />
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, hero_primary_color: '' }))}
+              className="text-xs px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Bruk temaets hovedfarge
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

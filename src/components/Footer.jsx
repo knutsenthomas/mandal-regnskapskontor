@@ -155,7 +155,10 @@ const Footer = () => {
 
         <div className="border-t border-background/15 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-background/50">
           <RichText value={copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`} />
-          <div className="mt-4 md:mt-0">
+          <div className="mt-4 md:mt-0 flex items-center gap-6">
+            <Link to="/personvern" className="hover:text-background transition-colors">
+              Personvernerklæring
+            </Link>
             <Link to="/admin/login" className="flex items-center hover:text-background transition-colors">
               <Lock className="w-3 h-3 mr-1" />
               {useContent('footer.adminlink').content || 'Admin'}

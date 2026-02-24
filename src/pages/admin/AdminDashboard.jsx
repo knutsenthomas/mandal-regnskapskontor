@@ -28,6 +28,7 @@ import ProfileSettings from '@/components/admin/ProfileSettings';
 import SEOEditor from '@/app/admin/SEOEditor';
 import AnalyticsOverview from '@/components/admin/AnalyticsOverview';
 import UserManagement from '@/components/admin/UserManagement';
+import PrivacyEditor from '@/components/admin/PrivacyEditor';
 // import ContentBlocksEditor from '@/components/admin/ContentBlocksEditor';
 
 // LAYOUT
@@ -83,6 +84,7 @@ const AdminDashboard = () => {
       'theme': 'Tema & farger',
       'seo': 'SEO & synlighet',
       'administration': 'Brukeradministrasjon',
+      'privacy': 'Personvern & Cookies',
       'content-blocks': 'Alt tekstinnhold'
     };
     setActiveTabTitle(titles[activeTab] || 'Admin');
@@ -321,15 +323,9 @@ const AdminDashboard = () => {
           return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
         case 'footer':
           return (
-            <div className="space-y-8">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Generelle Innstillinger</h3>
-                {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-100 pb-2">Footer Informasjon</h3>
-                {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
-              </div>
+            <div className="space-y-12">
+              {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
+              {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
             </div>
           );
         case 'theme':
@@ -338,6 +334,8 @@ const AdminDashboard = () => {
           return <SEOEditor />;
         case 'administration':
           return <UserManagement />;
+        case 'privacy':
+          return <PrivacyEditor />;
         default:
           return renderDashboardHome();
       }

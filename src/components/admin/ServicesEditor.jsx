@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Plus, Trash2, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
+import { Save, Plus, Trash2, Loader2, Upload, Layers, Image as ImageIcon } from 'lucide-react';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
+import AdminHeader from './layout/AdminHeader';
 
 const ServicesEditor = ({ content, onUpdate, onNavigateToDetails }) => {
   const { toast } = useToast();
@@ -121,7 +122,6 @@ const ServicesEditor = ({ content, onUpdate, onNavigateToDetails }) => {
       setHasUnsavedChanges(false);
       if (onUpdate) await onUpdate();
 
-      // Redirect if a new service was added
       if (isNewService && onNavigateToDetails) {
         setTimeout(() => {
           onNavigateToDetails(services.length - 1);
@@ -139,149 +139,122 @@ const ServicesEditor = ({ content, onUpdate, onNavigateToDetails }) => {
     }
   };
 
-
-  // Default images from Services.jsx to show in preview if no custom image is set
   const defaultImages = [
-    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800', // Accounting
-    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800', // Invoicing
-    'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800', // Team
-    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800', // Audit
-    'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800'  // Growth
+    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800'
   ];
 
   return (
     <div className="space-y-6">
-      {/* SLEGGE-LØSNINGEN: Vi tvinger fargene med CSS !important */}
-      <style>{`
-        .super-custom-save-btn {
-          background-color: #1B4965 !important;
-          color: white !important;
-          border: none !important;
-        }
-        .super-custom-save-btn:hover {
-          background-color: #0F3347 !important;
-          color: white !important;
-        }
-      `}</style>
+      <AdminHeader
+        icon={Layers}
+        title="Tjenester"
+        description="Administrer oversikten over tjenester som vises på forsiden."
+      >
+        <div className="flex gap-2">
+          <Button onClick={addService} variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50 bg-white">
+            <Plus className="w-4 h-4 mr-2" />
+            Ny tjeneste
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={loading}
+            className="bg-[#1B4965] hover:bg-[#0F3347] text-white"
+          >
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Lagre endringer
+          </Button>
+        </div>
+      </AdminHeader>
 
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-gray-900">Administrer Tjenester</h3>
-        <Button onClick={addService} variant="outline" size="sm" className="border-[#1B4965] text-[#1B4965] hover:bg-blue-50">
-          <Plus className="w-4 h-4 mr-2" />
-          Legg til tjeneste
-        </Button>
-      </div>
-
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {services.map((service, index) => (
-          <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative group flex flex-col md:flex-row gap-4">
+          <div key={index} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm relative group space-y-4">
+            <div className="aspect-video bg-gray-50 rounded-xl overflow-hidden relative border border-gray-100 flex items-center justify-center">
+              {service.image || defaultImages[index % defaultImages.length] ? (
+                <img
+                  src={service.image || defaultImages[index % defaultImages.length]}
+                  alt={service.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <ImageIcon className="text-gray-300 w-8 h-8" />
+              )}
 
-
-
-
-            {/* Image Section */}
-            <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-2">
-              <div className="aspect-video bg-gray-200 rounded-md overflow-hidden relative border border-gray-300 flex items-center justify-center group-hover/image:border-[#1B4965] transition-colors">
-                {/* Use modulo to cycle through default images if we have more services than images */}
-                {service.image || defaultImages[index % defaultImages.length] ? (
-                  <img
-                    src={service.image || defaultImages[index % defaultImages.length]}
-                    alt={service.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <ImageIcon className="text-gray-400 w-8 h-8" />
-                )}
-
-                {/* Hover overlay for upload */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <label htmlFor={`service-upload-${index}`} className="cursor-pointer text-white flex flex-col items-center gap-1 text-xs font-medium bg-black/20 p-2 rounded backdrop-blur-sm hover:bg-black/40 transition-colors w-full h-full justify-center">
-                    <Upload className="w-5 h-5" />
-                    <span>Last opp</span>
-                  </label>
-                </div>
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <label htmlFor={`service-upload-${index}`} className="cursor-pointer text-white flex flex-col items-center gap-2 text-xs font-semibold bg-white/20 p-3 rounded-xl backdrop-blur-md hover:bg-white/30 transition-all scale-95 group-hover:scale-100">
+                  <Upload className="w-5 h-5" />
+                  <span>Bytt bilde</span>
+                </label>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                id={`service-upload-${index}`}
-                onChange={(e) => handleImageUpload(index, e)}
-                className="hidden"
-                disabled={uploading}
-              />
             </div>
 
-            {/* Content Section */}
-            <div className="space-y-4 flex-1">
+            <input
+              type="file"
+              accept="image/*"
+              id={`service-upload-${index}`}
+              onChange={(e) => handleImageUpload(index, e)}
+              className="hidden"
+              disabled={uploading}
+            />
+
+            <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Tittel
-                </label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tjeneste Navn</label>
                 <input
                   type="text"
                   value={service.title || ''}
                   onChange={(e) => handleServiceChange(index, 'title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white"
-                  placeholder="Navn på tjeneste"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50"
+                  placeholder="f.eks. Bokføring"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Beskrivelse
-                </label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Beskrivelse</label>
                 <textarea
                   value={service.description || ''}
                   onChange={(e) => handleServiceChange(index, 'description', e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white resize-none"
-                  placeholder="Kort beskrivelse..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 resize-none text-sm"
+                  placeholder="Kort forklaring av tjenesten..."
                 />
-              </div>
-
-              {/* Navigation Button */}
-              <div className="pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={hasUnsavedChanges}
-                  onClick={() => onNavigateToDetails && onNavigateToDetails(index)}
-                  className="w-full md:w-auto border-[#1B4965] text-[#1B4965] hover:bg-blue-50"
-                >
-                  {hasUnsavedChanges ? 'Lagre først for å redigere detaljer' : 'Rediger utvidet innhold →'}
-                </Button>
               </div>
             </div>
 
-            <button
-              onClick={() => removeService(index)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Slett tjeneste"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+            <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={hasUnsavedChanges}
+                onClick={() => onNavigateToDetails && onNavigateToDetails(index)}
+                className="text-primary hover:text-primary/80 hover:bg-primary/5 p-0 h-auto font-semibold"
+              >
+                {hasUnsavedChanges ? 'Lagre først...' : 'Rediger detaljer →'}
+              </Button>
+
+              <button
+                onClick={() => removeService(index)}
+                className="text-gray-300 hover:text-red-500 transition-colors"
+                title="Slett tjeneste"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         ))}
 
-        {services.length === 0 && (
-          <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            Ingen tjenester lagt til ennå.
-          </div>
-        )}
-      </div>
-
-      <div className="flex justify-end pt-4 border-t border-gray-100">
         <button
-          onClick={handleSave}
-          disabled={loading}
-          className="super-custom-save-btn inline-flex items-center justify-center px-6 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+          onClick={addService}
+          className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center gap-3 text-gray-400 hover:border-primary/30 hover:text-primary/50 transition-all bg-gray-50/30 group"
         >
-          {loading ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          Lagre endringer
+          <div className="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+            <Plus className="w-6 h-6" />
+          </div>
+          <span className="font-medium text-sm">Legg til ny tjeneste</span>
         </button>
       </div>
     </div>

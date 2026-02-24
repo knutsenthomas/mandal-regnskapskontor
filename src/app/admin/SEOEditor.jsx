@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/customSupabaseClient";
+import AdminHeader from "../../components/admin/layout/AdminHeader";
+import { Globe, Save, Eye, EyeOff } from "lucide-react";
 
 const staticPages = [
   { id: 'home', label: 'Forside' },
@@ -7,6 +9,7 @@ const staticPages = [
   { id: 'contact', label: 'Kontakt' },
   { id: 'calendar', label: 'Kalender' },
 ];
+
 const defaultSEO = {
   title: "Mandal Regnskapskontor | Regnskapstjenester for bedrifter og privatpersoner",
   description: "Mandal Regnskapskontor tilbyr profesjonelle regnskapstjenester, rådgivning og økonomisk støtte for bedrifter og privatpersoner. Kontakt oss for en trygg økonomisk fremtid.",
@@ -66,7 +69,6 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
     fetchServices();
   }, []);
 
-  // Hent SEO-data for valgt side/tjeneste
   useEffect(() => {
     async function fetchSEO() {
       setLoading(true);
@@ -114,7 +116,7 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSaveStatus('Lagrer...');
     const seoData = {
       side: selectedPage,
@@ -149,9 +151,8 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
     if (onSave) onSave(form);
   };
 
-  // Hjelpefunksjon for bildeopplasting
   let lastUploadTime = 0;
-  const UPLOAD_RATE_LIMIT_MS = 10000; // 10 sekunder mellom opplastinger
+  const UPLOAD_RATE_LIMIT_MS = 10000;
 
   async function handleImageUpload(e) {
     const now = Date.now();
@@ -163,34 +164,19 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
 
     const file = e.target.files[0];
     if (!file) return;
-    // Sikkerhetsbegrensning: kun jpg/png og maks 2MB
     const allowedTypes = ['image/jpeg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
       alert('Kun JPG og PNG er tillatt.');
-      console.warn('Mistenkelig filtype forsøkt opplastet:', file.type);
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
       alert('Bildet er for stort (maks 2MB).');
-      console.warn('Mistenkelig filstørrelse forsøkt opplastet:', file.size);
       return;
     }
-    // Tilgangskontroll: kun admin kan laste opp
-    if (!window.currentUser || window.currentUser.role !== 'admin') {
-      alert('Du har ikke tilgang til å laste opp bilder.');
-      console.warn('Uautorisert opplastingsforsøk av bruker:', window.currentUser);
-      return;
-    }
-    // CSRF-beskyttelse: sjekk at bruker har gyldig session/token
-    if (!window.currentUser || !window.currentUser.csrfToken) {
-      alert('CSRF-token mangler. Prøv å logge inn på nytt.');
-      return;
-    }
+
     setLoading(true);
     const filePath = `${selectedPage}/og-image-${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage.from('seo-images').upload(filePath, file, {
-      headers: { 'X-CSRF-Token': window.currentUser.csrfToken }
-    });
+    const { data, error } = await supabase.storage.from('seo-images').upload(filePath, file);
     if (error) {
       alert('Feil ved opplasting: ' + error.message);
       setLoading(false);
@@ -201,7 +187,6 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
     setLoading(false);
   }
 
-  // Valideringseksempler
   const validate = () => {
     const errors = {};
     if (form.title.length > 60) errors.title = "Tittel bør være under 60 tegn.";
@@ -213,144 +198,156 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
 
   return (
     <div className="space-y-6">
-      {/* Veiledning */}
-      <div className="mb-4" style={{ background: 'var(--card)', borderLeft: '4px solid var(--primary)', borderRadius: '0.5rem', padding: '1rem' }}>
-        <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--foreground)' }}>SEO-verktøy for nettsiden</h2>
-        <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Her kan du enkelt optimalisere synlighet i Google og sosiale medier. Fyll ut tittel, beskrivelse og nøkkelord for hver side eller tjeneste. Avanserte innstillinger gir deg full kontroll over teknisk SEO.</p>
-      </div>
-      {/* Sidevelger */}
-      <div className="mb-4">
-        <label className="font-semibold mb-2 block" style={{ color: 'var(--foreground)' }}>Velg side eller tjeneste:</label>
+      <AdminHeader
+        icon={Globe}
+        title="SEO & Synlighet"
+        description="Optimaliser hvordan nettsiden din vises i søkemotorer som Google."
+      >
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPreview(!preview)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            type="button"
+          >
+            {preview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {preview ? "Skjul forhåndsvisning" : "Forhåndsvis"}
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="flex items-center gap-2 px-4 py-2 bg-[#1B4965] text-white rounded-lg text-sm font-medium hover:bg-[#0F3347] transition-colors"
+            type="button"
+          >
+            <Save className="w-4 h-4" />
+            Lagre SEO
+          </button>
+        </div>
+      </AdminHeader>
+
+      <div className="mb-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <label className="font-semibold text-gray-700">Rediger SEO for side eller tjeneste:</label>
         <select
           value={selectedPage}
           onChange={e => setSelectedPage(e.target.value)}
-          className="border p-2 rounded"
-          style={{ background: 'var(--card)', color: 'var(--foreground)' }}
+          className="border border-gray-200 p-2 rounded-lg bg-gray-50 text-gray-900 focus:ring-2 focus:ring-primary/20 outline-none min-w-[280px]"
         >
           {pageOptions.map(page => (
             <option key={page.id} value={page.id}>{page.label}</option>
           ))}
         </select>
       </div>
-      {/* Lagringsstatus */}
-      {saveStatus && <div className="text-green-700 font-semibold mb-2">{saveStatus}</div>}
-      <form onSubmit={handleSubmit} className="space-y-8 p-6 bg-white rounded shadow">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-          <span>SEO for</span>
-          <span>{pageOptions.find(p => p.id === selectedPage)?.label}</span>
+
+      {saveStatus && (
+        <div className="bg-green-50 text-green-700 px-4 py-2 rounded-lg border border-green-200 font-medium">
+          {saveStatus}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-8 p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
+          SEOinnstillinger for {pageOptions.find(p => p.id === selectedPage)?.label}
         </h2>
-        <div className="bg-blue-50 rounded-lg p-4 mb-4 shadow-sm" style={{ background: 'var(--card)', borderRadius: '0.5rem', padding: '1rem', boxShadow: 'var(--tw-shadow)' }}>
-          <h3 className="text-lg font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--primary)' }}>
+
+        <div className="bg-blue-50/50 rounded-xl p-6 border border-blue-100 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-[#1B4965]">
             <span role="img" aria-label="meta">🔍</span> Meta Tags
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label title="Tittel som vises i søkeresultat">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <label title="Tittel som vises i søkeresultat" className="block text-sm font-medium text-gray-700">
               Tittel
-              <input name="title" value={form.title} onChange={handleChange} className="w-full border p-2 rounded" maxLength={70} placeholder="F.eks. Mandal Regnskapskontor | Regnskap Grimstad" style={{ color: 'var(--foreground)' }} />
-              {errors.title && <span className="text-xs" style={{ color: 'var(--destructive)' }}>{errors.title}</span>}
+              <input name="title" value={form.title} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" maxLength={70} placeholder="F.eks. Mandal Regnskapskontor | Regnskap Grimstad" />
+              {errors.title && <span className="text-xs text-red-500">{errors.title}</span>}
             </label>
-            <label title="Kort beskrivelse for Google">
+            <label title="Kort beskrivelse for Google" className="block text-sm font-medium text-gray-700">
               Beskrivelse
-              <input name="description" value={form.description} onChange={handleChange} className="w-full border p-2 rounded" maxLength={170} placeholder="F.eks. Vi tilbyr regnskapstjenester for bedrifter i Grimstad og Mandal." style={{ color: 'var(--foreground)' }} />
-              {errors.description && <span className="text-xs" style={{ color: 'var(--destructive)' }}>{errors.description}</span>}
+              <input name="description" value={form.description} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" maxLength={170} placeholder="F.eks. Vi tilbyr regnskapstjenester for bedrifter i Grimstad og Mandal." />
+              {errors.description && <span className="text-xs text-red-500">{errors.description}</span>}
             </label>
-            <label title="Nøkkelord separert med komma">
+            <label title="Nøkkelord separert med komma" className="block text-sm font-medium text-gray-700">
               Nøkkelord
-              <input name="keywords" value={form.keywords} onChange={handleChange} className="w-full border p-2 rounded" placeholder="regnskap, Grimstad, Mandal, regnskapskontor, økonomi" style={{ color: 'var(--foreground)' }} />
-              <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>Tips: Legg til relevante steder og tjenester.</span>
+              <input name="keywords" value={form.keywords} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" placeholder="regnskap, Grimstad, Mandal, regnskapskontor, økonomi" />
+              <span className="text-xs text-gray-400">Tips: Legg til relevante steder og tjenester.</span>
             </label>
-            <label title="Styrer hvordan søkemotorer indekserer siden">
+            <label title="Styrer hvordan søkemotorer indekserer siden" className="block text-sm font-medium text-gray-700">
               Robots
-              <input name="robots" value={form.robots} onChange={handleChange} className="w-full border p-2 rounded" style={{ color: 'var(--foreground)' }} />
+              <input name="robots" value={form.robots} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" />
             </label>
-            <label title="URL som Google skal bruke som original">
+            <label title="URL som Google skal bruke som original" className="block text-sm font-medium text-gray-700">
               Canonical URL
-              <input name="canonical" value={form.canonical} onChange={handleChange} className="w-full border p-2 rounded" style={{ color: 'var(--foreground)' }} />
-              {errors.canonical && <span className="text-xs" style={{ color: 'var(--destructive)' }}>{errors.canonical}</span>}
+              <input name="canonical" value={form.canonical} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" />
+              {errors.canonical && <span className="text-xs text-red-500">{errors.canonical}</span>}
             </label>
           </div>
         </div>
+
         <button type="button"
-          className="border px-4 py-2 rounded mb-4 font-semibold shadow-sm"
-          style={{ background: 'var(--muted)', color: 'var(--foreground)', borderColor: 'var(--border)' }}
+          className="border px-4 py-2 rounded-lg font-semibold shadow-sm bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200 transition-colors"
           onClick={() => setShowAdvanced(!showAdvanced)}
         >
           {showAdvanced ? "Skjul avanserte innstillinger" : "Vis avanserte innstillinger"}
         </button>
+
         {showAdvanced && (
-          <>
-            <div className="bg-green-50 rounded-lg p-4 mb-4 shadow-sm">
-              <h3 className="text-lg font-semibold text-green-800 mb-2 flex items-center gap-2">
+          <div className="space-y-6">
+            <div className="bg-green-50/50 rounded-xl p-6 border border-green-100 shadow-sm">
+              <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
                 <span role="img" aria-label="open graph">🌐</span> Open Graph
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label title="Tittel for Facebook og LinkedIn">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <label className="block text-sm font-medium text-gray-700">
                   Open Graph Tittel
-                  <input name="ogTitle" value={form.ogTitle} onChange={handleChange} className="w-full border p-2 rounded" />
+                  <input name="ogTitle" value={form.ogTitle} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" />
                 </label>
-                <label title="Beskrivelse for sosiale medier">
+                <label className="block text-sm font-medium text-gray-700">
                   Open Graph Beskrivelse
-                  <input name="ogDescription" value={form.ogDescription} onChange={handleChange} className="w-full border p-2 rounded" />
+                  <input name="ogDescription" value={form.ogDescription} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" />
                 </label>
-                <label title="Bilde som vises ved deling">
+                <label className="block text-sm font-medium text-gray-700">
                   Open Graph Bilde
-                  <input name="ogImage" value={form.ogImage} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full border p-2 rounded mt-1" />
-                  <span className="text-xs text-gray-500">Last opp bilde for deling på SoMe</span>
+                  <input name="ogImage" value={form.ogImage} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white mb-2" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="mt-1 w-full text-xs" />
+                  <span className="text-xs text-gray-400">Anbefalt størrelse: 1200x630px</span>
                 </label>
-                <label title="Type (website, article, etc.)">
+                <label className="block text-sm font-medium text-gray-700">
                   Open Graph Type
-                  <input name="ogType" value={form.ogType} onChange={handleChange} className="w-full border p-2 rounded" />
+                  <input name="ogType" value={form.ogType} onChange={handleChange} className="mt-1 w-full border border-gray-200 p-2 rounded-lg bg-white" />
                 </label>
               </div>
             </div>
-            <div className="bg-yellow-50 rounded-lg p-4 mb-4 shadow-sm">
-              <h3 className="text-lg font-semibold text-yellow-800 mb-2 flex items-center gap-2">
+
+            <div className="bg-yellow-50/50 rounded-xl p-6 border border-yellow-100 shadow-sm">
+              <h3 className="text-lg font-semibold text-yellow-800 mb-4 flex items-center gap-2">
                 <span role="img" aria-label="structured data">🗂️</span> Structured Data (JSON-LD)
               </h3>
-              <label title="Strukturert data for Google og andre søkemotorer">
-                <textarea name="jsonLd" value={form.jsonLd} onChange={handleChange} className="w-full border p-2 rounded font-mono" rows={6} />
-              </label>
+              <textarea name="jsonLd" value={form.jsonLd} onChange={handleChange} className="w-full border border-gray-200 p-2 rounded-lg bg-white font-mono text-xs" rows={10} />
             </div>
-          </>
+          </div>
         )}
-        <div className="flex gap-2">
-          <button type="submit" className="bg-[#1B4965] hover:bg-[#0F3347] text-white px-4 py-2 rounded font-semibold shadow-sm flex items-center gap-2">Lagre</button>
-          <button type="button" className="bg-gray-200 px-4 py-2 rounded font-semibold shadow-sm" onClick={() => setPreview(!preview)}>
-            {preview ? "Skjul forhåndsvisning" : "Forhåndsvis SEO"}
-          </button>
-        </div>
       </form>
+
       {preview && (
-        <div className="bg-gray-50 p-4 rounded shadow">
-          <h3 className="font-semibold mb-2">SEO Forhåndsvisning</h3>
-          <div className="mb-4 border border-blue-200 rounded p-3">
-            <strong>Google:</strong>
-            <div className="border-l-4 border-blue-400 pl-4 mt-2">
-              <div className="text-blue-700 text-lg font-bold">{form.title}</div>
-              <div className="text-gray-700">{form.canonical}</div>
-              <div className="text-gray-600">{form.description}</div>
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm mt-8">
+          <h3 className="font-bold text-gray-800 mb-6">Forhåndsvisning</h3>
+          <div className="space-y-6">
+            <div className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
+              <strong className="text-sm text-gray-400 uppercase tracking-wider">Google Søk:</strong>
+              <div className="mt-4">
+                <div className="text-[#1a0dab] text-xl font-normal hover:underline cursor-pointer">{form.title}</div>
+                <div className="text-[#006621] text-sm mt-1">{form.canonical}</div>
+                <div className="text-[#4d5156] text-sm mt-1 leading-relaxed">{form.description}</div>
+              </div>
             </div>
-          </div>
-          <div className="mb-4 border border-green-200 rounded p-3">
-            <strong>Open Graph:</strong>
-            <div className="border-l-4 border-green-400 pl-4 mt-2">
-              <div className="text-green-700 font-bold">{form.ogTitle}</div>
-              <div className="text-gray-700">{form.ogDescription}</div>
-              <img src={form.ogImage} alt="OG Image" className="h-16 mt-2" />
+
+            <div className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
+              <strong className="text-sm text-gray-400 uppercase tracking-wider">Sosiale Medier:</strong>
+              <div className="mt-4 border border-gray-100 rounded-lg overflow-hidden max-w-md">
+                {form.ogImage && <img src={form.ogImage} alt="OG Preview" className="w-full h-48 object-cover" />}
+                <div className="p-4 bg-gray-50 border-t border-gray-100">
+                  <div className="text-xs text-gray-400 uppercase">{new URL(form.canonical || 'https://mandalregnskapskontor.no').hostname}</div>
+                  <div className="font-bold text-gray-800 mt-1">{form.ogTitle || form.title}</div>
+                  <div className="text-sm text-gray-600 mt-1 line-clamp-2">{form.ogDescription || form.description}</div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="mb-4 border border-green-200 rounded p-3">
-            <strong>Open Graph:</strong>
-            <div className="border-l-4 border-green-400 pl-4 mt-2">
-              <div className="text-green-700 font-bold">{form.ogTitle}</div>
-              <div className="text-gray-700">{form.ogDescription}</div>
-              <img src={form.ogImage} alt="OG Image" className="h-16 mt-2" />
-            </div>
-          </div>
-          <div className="border border-yellow-200 rounded p-3">
-            <strong>Structured Data:</strong>
-            <pre className="bg-white p-2 rounded text-xs font-mono overflow-x-auto">{form.jsonLd}</pre>
           </div>
         </div>
       )}

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Loader2, Plus, Trash2 } from 'lucide-react';
+import { Save, Loader2, Plus, Trash2, FileText, Info, CheckCircle2, ListChecks, Banknote, HelpCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import AdminHeader from './layout/AdminHeader';
 
 const AVAILABLE_ICONS = [
   "BookOpen", "FileSpreadsheet", "FileCheck", "UploadCloud",
@@ -174,7 +175,6 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
     setData(prev => {
       const nextItem = { ...emptyItem };
       if (field === 'offerings' && !nextItem.icon) {
-        // Fallback icon generation
         const sequence = getIconSequenceForService(serviceTitle);
         nextItem.icon = sequence[prev[field].length % sequence.length] || 'CheckCircle2';
       }
@@ -303,207 +303,25 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
   };
 
 
-  if (!selectedServiceId) return <div className="p-8 text-center text-gray-500">Velg en tjeneste for å redigere detaljer.</div>;
+  if (!selectedServiceId) return (
+    <div className="p-20 text-center bg-white rounded-2xl border border-dashed border-gray-200">
+      <FileText className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+      <h3 className="text-lg font-bold text-gray-900">Ingen tjeneste valgt</h3>
+      <p className="text-gray-500">Velg en tjeneste fra menyen for å redigere detaljer.</p>
+    </div>
+  );
 
   return (
-    <div className="space-y-12 pb-12">
-      <style>{`
-        .super-custom-save-btn {
-          background-color: #1B4965 !important;
-          color: white !important;
-          border: none !important;
-        }
-      `}</style>
-
-      <div className="flex justify-between items-center mb-8 pt-2">
-        <h2 className="text-lg font-semibold text-gray-700">Innhold</h2>
-      </div>
-
-      {/* Innledning og Målgruppe */}
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <RichTextEditor
-            label="Utvidet beskrivelse (Innledning)"
-            value={data.extended_description}
-            onChange={(value) => setData({ ...data, extended_description: value })}
-            placeholder="Skriv innledningen til tjenestesiden her..."
-            minHeight={220}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <RichTextEditor
-            label="Målgruppe (Hvem er dette for?)"
-            value={data.target_audience}
-            onChange={(value) => setData({ ...data, target_audience: value })}
-            placeholder="Beskriv hvem tjenesten passer for..."
-            minHeight={180}
-          />
-        </div>
-      </div>
-
-      {/* Offerings */}
-      <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
-        <div className="flex justify-between items-center">
-          <label className="block text-lg font-bold text-gray-800">Hva vi tilbyr (Liste med ikoner)</label>
-          <Button size="sm" variant="outline" onClick={() => addItem('offerings', { title: '' })}>
-            <Plus className="w-4 h-4 mr-2" /> Legg til punkt
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.offerings.map((item, index) => (
-            <div key={index} className="flex gap-2 items-center bg-white p-3 rounded shadow-sm relative">
-              <Select
-                value={item.icon}
-                onValueChange={(val) => updateItem('offerings', index, 'icon', val)}
-              >
-                <SelectTrigger className="w-[180px] bg-white z-10">
-                  <SelectValue placeholder="Ikon" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-xl z-50 max-h-[300px] overflow-y-auto">
-                  {AVAILABLE_ICONS.map(icon => <SelectItem key={icon} value={icon} className="cursor-pointer hover:bg-gray-100">{icon}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <input
-                type="text"
-                value={item.title}
-                onChange={(e) => updateItem('offerings', index, 'title', e.target.value)}
-                className="flex-1 p-2 border rounded"
-                placeholder="Tittel..."
-              />
-              <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => removeItem('offerings', index)}>
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Prosess seksjon */}
-      <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <label className="block text-lg font-bold text-gray-800">Prosess (Steg for steg)</label>
-          </div>
-          <Button size="sm" variant="outline" onClick={() => addItem('process_steps', { title: '', description: '' })}>
-            <Plus className="w-4 h-4 mr-2" /> Legg til steg
-          </Button>
-        </div>
-        <div className="space-y-3">
-          {data.process_steps.map((step, index) => (
-            <div key={index} className="flex gap-4 items-start bg-white p-4 rounded shadow-sm">
-              <span className="font-bold text-gray-400 mt-2">#{index + 1}</span>
-              <div className="flex-1 space-y-2">
-                <input
-                  type="text"
-                  value={step.title}
-                  onChange={(e) => updateItem('process_steps', index, 'title', e.target.value)}
-                  className="w-full p-2 border rounded font-medium"
-                  placeholder="Steg tittel"
-                />
-                <RichTextEditor
-                  label={null}
-                  value={step.description}
-                  onChange={(value) => updateItem('process_steps', index, 'description', value)}
-                  placeholder="Beskrivelse av steget..."
-                  minHeight={120}
-                />
-              </div>
-              <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => removeItem('process_steps', index)}>
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Pricing Packages */}
-      <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
-        <div className="flex justify-between items-center">
-          <label className="block text-lg font-bold text-gray-800">Prispakker</label>
-          <Button size="sm" variant="outline" onClick={() => addItem('pricing_packages', { name: '', price: '', description: '', features: [''] })}>
-            <Plus className="w-4 h-4 mr-2" /> Legg til pakke
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {data.pricing_packages.map((pkg, index) => (
-            <div key={index} className="bg-white p-4 rounded shadow border border-gray-200 flex flex-col gap-3">
-              <div className="flex justify-between">
-                <span className="font-bold text-sm text-gray-500">Pakke {index + 1}</span>
-                <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500" onClick={() => removeItem('pricing_packages', index)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
-              <input type="text" value={pkg.name} onChange={(e) => updateItem('pricing_packages', index, 'name', e.target.value)} className="p-2 border rounded" placeholder="Pakkenavn (f.eks Basis)" />
-              <input type="text" value={pkg.price} onChange={(e) => updateItem('pricing_packages', index, 'price', e.target.value)} className="p-2 border rounded" placeholder="Pris (f.eks 2500,-/mnd)" />
-              <RichTextEditor
-                label={null}
-                value={pkg.description}
-                onChange={(value) => updateItem('pricing_packages', index, 'description', value)}
-                placeholder="Kort beskrivelse..."
-                minHeight={120}
-              />
-
-              <div className="mt-2 space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase">Inkludert</label>
-                {pkg.features && pkg.features.map((feat, fIdx) => (
-                  <div key={fIdx} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={feat}
-                      onChange={(e) => updateItemFeature(index, fIdx, e.target.value)}
-                      className="flex-1 p-1 px-2 border rounded text-sm bg-gray-50"
-                    />
-                    <button onClick={() => removeFeature(index, fIdx)} className="text-gray-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
-                  </div>
-                ))}
-                <Button size="sm" variant="ghost" className="w-full text-xs" onClick={() => addFeature(index)}><Plus className="w-3 h-3 mr-1" /> Legg til funksjon</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* FAQ seksjon */}
-      <div className="space-y-4 bg-gray-50 p-6 rounded-xl">
-        <div className="flex justify-between items-center">
-          <label className="block text-lg font-bold text-gray-800">FAQ (Ofte stilte spørsmål)</label>
-          <Button size="sm" variant="outline" onClick={() => addItem('faqs', { question: '', answer: '' })}>
-            <Plus className="w-4 h-4 mr-2" /> Legg til spørsmål
-          </Button>
-        </div>
-        <div className="space-y-3">
-          {data.faqs.map((faq, index) => (
-            <div key={index} className="flex gap-4 items-start bg-white p-4 rounded shadow-sm">
-              <div className="flex-1 space-y-2">
-                <input
-                  type="text"
-                  value={faq.question}
-                  onChange={(e) => updateItem('faqs', index, 'question', e.target.value)}
-                  className="w-full p-2 border rounded font-medium"
-                  placeholder="Spørsmål..."
-                />
-                <RichTextEditor
-                  label={null}
-                  value={faq.answer}
-                  onChange={(value) => updateItem('faqs', index, 'answer', value)}
-                  placeholder="Svar..."
-                  minHeight={120}
-                />
-              </div>
-              <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => removeItem('faqs', index)}>
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex justify-end pt-4 border-t border-gray-100">
-        <button
+    <div className="space-y-6">
+      <AdminHeader
+        icon={FileText}
+        title={`Detaljer: ${serviceTitle}`}
+        description="Konfigurer utvidet informasjon, prispakker og FAQ for denne tjenesten."
+      >
+        <Button
           onClick={handleSave}
           disabled={loading}
-          className="super-custom-save-btn inline-flex items-center justify-center px-6 py-2 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+          className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -511,7 +329,265 @@ const ServiceDetailEditor = ({ selectedServiceId, serviceTitle }) => {
             <Save className="w-4 h-4 mr-2" />
           )}
           Lagre endringer
-        </button>
+        </Button>
+      </AdminHeader>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Innledning og Målgruppe */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+            <RichTextEditor
+              label="Utvidet beskrivelse (Innledning)"
+              value={data.extended_description}
+              onChange={(value) => setData({ ...data, extended_description: value })}
+              placeholder="Skriv innledningen til tjenestesiden her..."
+              minHeight={250}
+            />
+
+            <RichTextEditor
+              label="Målgruppe (Hvem er dette for?)"
+              value={data.target_audience}
+              onChange={(value) => setData({ ...data, target_audience: value })}
+              placeholder="Beskriv hvem tjenesten passer for..."
+              minHeight={150}
+            />
+          </div>
+
+          {/* Offerings */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                Hva vi tilbyr
+              </h3>
+              <Button size="sm" variant="outline" onClick={() => addItem('offerings', { title: '' })} className="rounded-xl border-gray-200 text-gray-600">
+                <Plus className="w-4 h-4 mr-1" /> Legg til
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.offerings.map((item, index) => (
+                <div key={index} className="flex gap-2 items-center bg-gray-50/50 p-3 rounded-xl border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
+                  <Select
+                    value={item.icon}
+                    onValueChange={(val) => updateItem('offerings', index, 'icon', val)}
+                  >
+                    <SelectTrigger className="w-[120px] bg-white border-gray-200 rounded-lg">
+                      <SelectValue placeholder="Ikon" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-gray-200 shadow-xl z-50 max-h-[300px] overflow-y-auto">
+                      {AVAILABLE_ICONS.map(icon => <SelectItem key={icon} value={icon}>{icon}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <input
+                    type="text"
+                    value={item.title}
+                    onChange={(e) => updateItem('offerings', index, 'title', e.target.value)}
+                    className="flex-1 p-2 border border-gray-200 rounded-lg outline-none bg-white font-medium text-sm"
+                    placeholder="Tittel..."
+                  />
+                  <Button size="icon" variant="ghost" className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100" onClick={() => removeItem('offerings', index)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {data.offerings.length === 0 && (
+                <div className="col-span-2 py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-xs">
+                  Ingen tilbudspunkter lagt til.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Prosess seksjon */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
+                <ListChecks className="w-5 h-5 text-primary" />
+                Prosess – steg for steg
+              </h3>
+              <Button size="sm" variant="outline" onClick={() => addItem('process_steps', { title: '', description: '' })} className="rounded-xl border-gray-200 text-gray-600">
+                <Plus className="w-4 h-4 mr-1" /> Legg til steg
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {data.process_steps.map((step, index) => (
+                <div key={index} className="flex gap-4 items-start bg-gray-50/50 p-5 rounded-2xl border border-gray-100 group relative">
+                  <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 space-y-4">
+                    <input
+                      type="text"
+                      value={step.title}
+                      onChange={(e) => updateItem('process_steps', index, 'title', e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none bg-white font-bold text-gray-800"
+                      placeholder="Tittel på steg..."
+                    />
+                    <RichTextEditor
+                      label={null}
+                      value={step.description}
+                      onChange={(value) => updateItem('process_steps', index, 'description', value)}
+                      placeholder="Beskrivelse av steget..."
+                      minHeight={120}
+                    />
+                  </div>
+                  <Button size="icon" variant="ghost" className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 absolute top-4 right-4" onClick={() => removeItem('process_steps', index)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {data.process_steps.length === 0 && (
+                <div className="py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-xs">
+                  Ingen steg i prosessen lagt til.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Pricing Packages */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
+                <Banknote className="w-5 h-5 text-primary" />
+                Prispakker
+              </h3>
+              <Button size="sm" variant="outline" onClick={() => addItem('pricing_packages', { name: '', price: '', description: '', features: [''] })} className="rounded-xl border-gray-200 text-gray-600">
+                <Plus className="w-4 h-4 mr-1" /> Ny pakke
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              {data.pricing_packages.map((pkg, index) => (
+                <div key={index} className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 flex flex-col gap-4 relative group">
+                  <Button size="icon" variant="ghost" className="absolute top-4 right-4 h-8 w-8 text-gray-300 hover:text-red-500" onClick={() => removeItem('pricing_packages', index)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Pakkenavn</label>
+                      <input type="text" value={pkg.name} onChange={(e) => updateItem('pricing_packages', index, 'name', e.target.value)} className="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none bg-white font-bold" placeholder="f.eks. Basis" />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Pris</label>
+                      <input type="text" value={pkg.price} onChange={(e) => updateItem('pricing_packages', index, 'price', e.target.value)} className="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none bg-white font-bold text-primary" placeholder="f.eks. 1500,-/mnd" />
+                    </div>
+                  </div>
+
+                  <RichTextEditor
+                    label="Beskrivelse"
+                    value={pkg.description}
+                    onChange={(value) => updateItem('pricing_packages', index, 'description', value)}
+                    placeholder="Kort forklaring av pakken..."
+                    minHeight={120}
+                  />
+
+                  <div className="space-y-3 pt-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Inkluderte tjenester</label>
+                    <div className="space-y-2">
+                      {pkg.features && pkg.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex gap-2 group/feat">
+                          <input
+                            type="text"
+                            value={feat}
+                            onChange={(e) => updateItemFeature(index, fIdx, e.target.value)}
+                            className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white"
+                            placeholder="f.eks. Bilagsinnføring"
+                          />
+                          <button onClick={() => removeFeature(index, fIdx)} className="text-gray-300 hover:text-red-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ))}
+                      <Button size="sm" variant="ghost" className="w-full text-xs font-bold text-primary hover:bg-primary/5 rounded-lg border border-dashed border-primary/20" onClick={() => addFeature(index)}>
+                        <Plus className="w-3 h-3 mr-1" /> Legg til funksjon
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {data.pricing_packages.length === 0 && (
+                <div className="col-span-2 py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-xs">
+                  Ingen prispakker lagt til.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* FAQ seksjon */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
+                <HelpCircle className="w-5 h-5 text-gray-400" />
+                Ofte stilte spørsmål (FAQ)
+              </h3>
+              <Button size="sm" variant="outline" onClick={() => addItem('faqs', { question: '', answer: '' })} className="rounded-xl border-gray-200 text-gray-600">
+                <Plus className="w-4 h-4 mr-1" /> Nytt spørsmål
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {data.faqs.map((faq, index) => (
+                <div key={index} className="flex gap-4 items-start bg-gray-50/50 p-6 rounded-2xl border border-gray-100 group relative">
+                  <div className="flex-1 space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Spørsmål</label>
+                      <input
+                        type="text"
+                        value={faq.question}
+                        onChange={(e) => updateItem('faqs', index, 'question', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none bg-white font-bold"
+                        placeholder="Hva koster tjenesten?"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Svar</label>
+                      <RichTextEditor
+                        label={null}
+                        value={faq.answer}
+                        onChange={(value) => updateItem('faqs', index, 'answer', value)}
+                        placeholder="Svaret på spørsmålet..."
+                        minHeight={120}
+                      />
+                    </div>
+                  </div>
+                  <Button size="icon" variant="ghost" className="absolute top-4 right-4 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100" onClick={() => removeItem('faqs', index)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {data.faqs.length === 0 && (
+                <div className="py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-xs">
+                  Ingen spørsmål lagt til.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-primary rounded-2xl p-6 text-white shadow-lg space-y-4 relative overflow-hidden group">
+            <h4 className="font-bold text-lg relative z-10 flex items-center gap-2">
+              <Info className="w-5 h-5" />
+              Redigeringstips
+            </h4>
+            <p className="text-xs text-blue-100 leading-relaxed relative z-10">
+              Her kan du lage en rik opplevelse for kundene dine. Husk at detaljerte beskrivelser og tydelige priser ofte fører til flere henvendelser.
+            </p>
+            <div className="pt-4 space-y-3 relative z-10">
+              <div className="flex gap-2 items-start">
+                <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                <p className="text-[11px] text-blue-50">Bruk gjerne FAQ til å svare på vanlige bekymringer kundene har.</p>
+              </div>
+              <div className="flex gap-2 items-start">
+                <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                <p className="text-[11px] text-blue-50">Prispakker gjør det enkelt for kunden å velge rett nivå.</p>
+              </div>
+            </div>
+            <FileText className="absolute -right-10 -bottom-10 w-40 h-40 text-white/5 group-hover:rotate-6 transition-transform duration-1000" />
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-2">
+            <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sist lagret</h5>
+            <p className="text-sm font-medium text-gray-900">Endringene lagres direkte i databasen og blir synlige med en gang.</p>
+          </div>
+        </div>
       </div>
     </div>
   );

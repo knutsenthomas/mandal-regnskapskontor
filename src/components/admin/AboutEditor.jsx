@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Loader2, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
+import { Save, Loader2, Plus, Trash2, Upload, Image as ImageIcon, Info, Heart } from 'lucide-react';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
+import AdminHeader from './layout/AdminHeader';
 
 const AboutEditor = ({ content, onUpdate }) => {
   const { toast } = useToast();
@@ -129,101 +129,16 @@ const AboutEditor = ({ content, onUpdate }) => {
 
 
   return (
-    <div className="space-y-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-      {/* Main Text Section */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Hovedtekst</h3>
-        <RichTextEditor
-          value={aboutText}
-          onChange={setAboutText}
-          placeholder="Skriv om bedriften..."
-          minHeight={220}
-        />
-      </div>
-
-      {/* Image Section */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Bilde</label>
-        <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden h-64 group">
-          <img
-            src={aboutImage || "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D"}
-            alt="Preview"
-            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
-          />
-          {!aboutImage && (
-            <span className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium z-10">Standardbilde</span>
-          )}
-
-          <div className="relative z-10 flex flex-col items-center bg-white/90 p-4 rounded-xl shadow-sm backdrop-blur-sm">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              id="about-upload"
-              disabled={uploading}
-            />
-            <label
-              htmlFor="about-upload"
-              className={`cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {uploading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Upload className="w-4 h-4 mr-2" />
-              )}
-              {uploading ? 'Laster opp...' : 'Last opp nytt bilde'}
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* Values Section */}
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Kjerneverdier / Nøkkelpunkter</h3>
-          <Button onClick={addValue} variant="outline" size="sm" className="border-[#1B4965] text-[#1B4965] hover:bg-blue-50">
-            <Plus className="w-4 h-4 mr-2" />
-            Legg til verdi
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {values.map((val, index) => (
-            <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative group">
-              <button
-                onClick={() => removeValue(index)}
-                className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={val.title || ''}
-                  onChange={(e) => handleValueChange(index, 'title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white text-sm font-semibold"
-                  placeholder="Tittel (f.eks. Erfaring)"
-                />
-                <textarea
-                  value={val.description || ''}
-                  onChange={(e) => handleValueChange(index, 'description', e.target.value)}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white text-sm resize-none"
-                  placeholder="Beskrivelse..."
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex justify-end pt-4 border-t border-gray-100">
+    <div className="space-y-6">
+      <AdminHeader
+        icon={Info}
+        title="Om oss"
+        description="Rediger teksten, hovedbildet og kjerneverdiene som presenteres på 'Om oss'-siden."
+      >
         <Button
           onClick={handleSave}
           disabled={loading}
-          className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+          className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -232,6 +147,117 @@ const AboutEditor = ({ content, onUpdate }) => {
           )}
           Lagre endringer
         </Button>
+      </AdminHeader>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center gap-2 mb-2 font-bold text-gray-800">
+              Hovedtekst
+            </div>
+            <RichTextEditor
+              value={aboutText}
+              onChange={setAboutText}
+              placeholder="Fortell kundene dine litt om Mandal Regnskapskontor..."
+              minHeight={300}
+            />
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-400" />
+                Kjerneverdier & Nøkkelpunkter
+              </h3>
+              <Button onClick={addValue} variant="outline" size="sm" className="bg-white border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg">
+                <Plus className="w-4 h-4 mr-1" />
+                Ny verdi
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {values.map((val, index) => (
+                <div key={index} className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 relative group transition-all hover:bg-white hover:shadow-md hover:ring-1 hover:ring-primary/5">
+                  <button
+                    onClick={() => removeValue(index)}
+                    className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Tittel</label>
+                      <input
+                        type="text"
+                        value={val.title || ''}
+                        onChange={(e) => handleValueChange(index, 'title', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-white text-sm font-bold shadow-sm"
+                        placeholder="f.eks. Erfaring"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Beskrivelse</label>
+                      <textarea
+                        value={val.description || ''}
+                        onChange={(e) => handleValueChange(index, 'description', e.target.value)}
+                        rows={3}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-white text-sm resize-none shadow-sm"
+                        placeholder="Kort forklaring..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {values.length === 0 && (
+                <div className="col-span-2 py-12 text-center border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50">
+                  <p className="text-gray-400 text-sm">Ingen kjerneverdier lagt til ennå.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+            <h4 className="font-bold text-gray-800">Hovedbilde</h4>
+            <div className="aspect-[4/3] bg-gray-50 rounded-xl overflow-hidden relative border border-gray-100 group">
+              <img
+                src={aboutImage || "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60"}
+                alt="Feature"
+                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-700"
+              />
+
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <label htmlFor="image-replace" className="cursor-pointer bg-white/20 backdrop-blur-md text-white px-6 py-2 rounded-xl border border-white/30 hover:bg-white/30 transition-all font-bold text-xs flex items-center gap-2">
+                  <Upload className="w-4 h-4" />
+                  Bytt bilde
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="image-replace"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={uploading}
+                />
+              </div>
+            </div>
+            <p className="text-[10px] text-gray-400 leading-relaxed italic px-1 text-center">
+              Anbefalt bildestørrelse: 1200x800px. Standardbilde vises hvis ingen fil er valgt.
+            </p>
+          </div>
+
+          <div className="bg-[#1B4965]/5 p-5 rounded-2xl border border-[#1B4965]/10 space-y-3 shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-[#1B4965] text-[10px] uppercase tracking-widest">
+              <Heart className="w-4 h-4" />
+              Tips for godt innhold
+            </div>
+            <p className="text-xs text-[#1B4965]/80 leading-relaxed italic">
+              Bruk personlige bilder av kontoret eller teamet for å bygge tillit hos potensielle kunder. En god "Om oss"-side er ofte den mest besøkte siden etter forsiden.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

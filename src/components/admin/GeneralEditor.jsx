@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Save, Loader2, Upload, Image as ImageIcon, BarChart3 } from 'lucide-react';
+import { Save, Loader2, Upload, Image as ImageIcon, BarChart3, Settings, Type } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
+import AdminHeader from './layout/AdminHeader';
 
 const LOGO_ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'image/gif'];
 const FAVICON_ALLOWED_TYPES = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml', 'image/webp'];
@@ -22,9 +23,8 @@ const GeneralEditor = ({ content, onUpdate }) => {
     const [logoUrl, setLogoUrl] = useState('');
     const [logoText, setLogoText] = useState('');
     const [faviconUrl, setFaviconUrl] = useState('');
-    const [gaId, setGaId] = useState(''); // Google Analytics ID
+    const [gaId, setGaId] = useState('');
 
-    // Fetch initial data
     useEffect(() => {
         if (content) {
             setLogoUrl(content.logo_url || '');
@@ -124,8 +124,6 @@ const GeneralEditor = ({ content, onUpdate }) => {
         setLoading(true);
 
         try {
-            // 1. Update Content (Logo)
-            // 1. Update Content (Logo) via RPC
             if (content?.id) {
                 const { error: contentError } = await supabase.rpc('update_general_content', {
                     p_id: content.id,
@@ -135,8 +133,6 @@ const GeneralEditor = ({ content, onUpdate }) => {
                 if (contentError) throw contentError;
             }
 
-            // 2. Update Settings (GA ID, Logo Text, Favicon) via RPC
-            // Since we have multiple settings, we call upsert for each or a loop
             const settingsToUpdate = [
                 { key: 'google_analytics_id', value: gaId },
                 { key: 'logo_text', value: logoText },
@@ -172,177 +168,167 @@ const GeneralEditor = ({ content, onUpdate }) => {
     };
 
     return (
-        <div className="space-y-8">
-            {/* LOGO SECTION */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Nettside Logo</CardTitle>
-                    <CardDescription>Last opp logoen som vises i toppen av nettsiden.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50">
-                        {logoUrl ? (
-                            <div className="relative group">
-                                <div className="mb-4 rounded-xl overflow-hidden border border-gray-200 bg-white p-2 shadow-sm">
-                                    <img src={logoUrl} alt="Logo Preview" className="h-20 object-contain rounded-lg" />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="text-gray-400 flex flex-col items-center mb-4">
-                                <ImageIcon className="w-12 h-12 mb-2" />
-                                <span className="text-sm">Ingen logo lastet opp</span>
-                            </div>
-                        )}
-
-                        <div className="relative">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className="hidden"
-                                id="logo-upload"
-                                disabled={uploading}
-                            />
-                            <label
-                                htmlFor="logo-upload"
-                                className={`cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                {uploading ? (
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                ) : (
-                                    <Upload className="w-4 h-4 mr-2" />
-                                )}
-                                {uploading ? 'Laster opp...' : 'Last opp ny logo'}
-                            </label>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">Anbefalt: PNG med gjennomsiktig bakgrunn</p>
-
-                        <div className="mt-6 w-full max-w-md">
-                            <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">Eller lim inn URL / Base64 direkte</label>
-                            <input
-                                type="text"
-                                value={logoUrl}
-                                onChange={(e) => setLogoUrl(e.target.value)}
-                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="https://eksempel.no/logo.png"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* LOGO TEXT SECTION */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Logo Tekst</CardTitle>
-                    <CardDescription>Overstyr teksten som vises ved siden av logoen (valgfritt).</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <input
-                        type="text"
-                        placeholder="MANDAL REGNSKAPSKONTOR"
-                        value={logoText}
-                        onChange={(e) => setLogoText(e.target.value)}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                    <p className="text-xs text-gray-500 mt-2">
-                        La stå tom for å bruke standard tekst.
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* FAVICON SECTION */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Favicon</CardTitle>
-                    <CardDescription>Last opp ikonet som vises i nettleser-fanen.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center bg-gray-50">
-                        {faviconUrl ? (
-                            <div className="relative group">
-                                <div className="mb-4 rounded-lg overflow-hidden border border-gray-200 bg-white p-1 shadow-sm">
-                                    <img src={faviconUrl} alt="Favicon Preview" className="h-12 w-12 object-contain rounded-md" />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="text-gray-400 flex flex-col items-center mb-4">
-                                <ImageIcon className="w-8 h-8 mb-2" />
-                                <span className="text-sm">Ingen favicon lastet opp</span>
-                            </div>
-                        )}
-
-                        <div className="relative">
-                            <input
-                                type="file"
-                                accept="image/x-icon,image/png,image/svg+xml"
-                                onChange={handleFaviconUpload}
-                                className="hidden"
-                                id="favicon-upload"
-                                disabled={uploading}
-                            />
-                            <label
-                                htmlFor="favicon-upload"
-                                className={`cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                {uploading ? (
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                ) : (
-                                    <Upload className="w-4 h-4 mr-2" />
-                                )}
-                                {uploading ? 'Laster opp...' : 'Last opp favicon'}
-                            </label>
-                        </div>
-
-                        <div className="mt-4 w-full max-w-md">
-                            <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">Eller lim inn URL direkte</label>
-                            <input
-                                type="text"
-                                value={faviconUrl}
-                                onChange={(e) => setFaviconUrl(e.target.value)}
-                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="https://eksempel.no/favicon.ico"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* ANALYTICS SECTION */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5 text-[#1B4965]" />
-                        Google Analytics
-                    </CardTitle>
-                    <CardDescription>Koble nettsiden til Google Analytics 4 for å spore besøkende.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Measurement ID (G-XXXXXXXXXX)</label>
-                        <input
-                            type="text"
-                            placeholder="G-12345678"
-                            value={gaId}
-                            onChange={(e) => setGaId(e.target.value)}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        />
-                        <p className="text-xs text-gray-500">
-                            Du finner denne ID-en i Google Analytics under <strong>Admin {'>'} Data Streams</strong>.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <div className="flex justify-end pt-4 border-t border-gray-100">
+        <div className="space-y-6">
+            <AdminHeader
+                icon={Settings}
+                title="Generelle innstillinger"
+                description="Administrer nettsidens logo, merkevare og analyseverktøy."
+            >
                 <Button
                     onClick={handleSave}
                     disabled={loading || uploading}
-                    className="bg-[#1B4965] hover:bg-[#0F3347] text-white w-full md:w-auto"
+                    className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
                 >
                     {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                     Lagre endringer
                 </Button>
+            </AdminHeader>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* LOGO SECTION */}
+                <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
+                    <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <ImageIcon className="w-4 h-4 text-primary" />
+                            Nettside Logo
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                        <div className="p-8 border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center justify-center bg-gray-50/50 group transition-colors hover:bg-white hover:border-primary/20">
+                            {logoUrl ? (
+                                <div className="mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 min-h-[100px] flex items-center justify-center">
+                                    <img src={logoUrl} alt="Logo Preview" className="max-h-16 object-contain" />
+                                </div>
+                            ) : (
+                                <div className="text-gray-300 flex flex-col items-center mb-6">
+                                    <ImageIcon className="w-16 h-16 mb-2 opacity-20" />
+                                    <span className="text-xs font-medium uppercase tracking-widest">Ingen logo valgt</span>
+                                </div>
+                            )}
+
+                            <div className="flex flex-col items-center gap-3">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    className="hidden"
+                                    id="logo-upload"
+                                    disabled={uploading}
+                                />
+                                <label
+                                    htmlFor="logo-upload"
+                                    className={`cursor-pointer inline-flex items-center px-6 py-2 bg-white border border-gray-200 shadow-sm text-sm font-bold rounded-xl text-gray-700 hover:bg-gray-50 transition-all ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                                    {uploading ? 'Laster opp...' : 'Bytt logo'}
+                                </label>
+                                <p className="text-[10px] text-gray-400 italic">Anbefalt: Gjennomsiktig PNG</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 space-y-2">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Logo URL eller Base64</label>
+                            <input
+                                type="text"
+                                value={logoUrl}
+                                onChange={(e) => setLogoUrl(e.target.value)}
+                                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                                placeholder="https://..."
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <div className="space-y-6">
+                    {/* LOGO TEXT SECTION */}
+                    <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <Type className="w-4 h-4 text-primary" />
+                                Logo Tekst
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Tekst i navbar</label>
+                                <input
+                                    type="text"
+                                    placeholder="MANDAL REGNSKAPSKONTOR"
+                                    value={logoText}
+                                    onChange={(e) => setLogoText(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                />
+                                <p className="text-[10px] text-gray-400 italic">Dette er teksten som vises ved siden av bilde-logoen.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* FAVICON SECTION */}
+                    <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <ImageIcon className="w-4 h-4 text-primary" />
+                                Favicon
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 flex items-center gap-6">
+                            <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 shrink-0 shadow-inner">
+                                {faviconUrl ? (
+                                    <img src={faviconUrl} alt="Favicon" className="w-8 h-8 object-contain" />
+                                ) : (
+                                    <ImageIcon className="w-6 h-6 text-gray-200" />
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-3">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFaviconUpload}
+                                    className="hidden"
+                                    id="favicon-upload"
+                                    disabled={uploading}
+                                />
+                                <label
+                                    htmlFor="favicon-upload"
+                                    className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-200 shadow-sm text-xs font-bold rounded-xl text-gray-700 hover:bg-gray-50 transition-all w-full justify-center"
+                                >
+                                    {uploading ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Upload className="w-3 h-3 mr-2" />}
+                                    Bytt favicon
+                                </label>
+                                <input
+                                    type="text"
+                                    value={faviconUrl}
+                                    onChange={(e) => setFaviconUrl(e.target.value)}
+                                    className="w-full px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs focus:ring-1 focus:ring-primary/20 outline-none"
+                                    placeholder="URL..."
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* ANALYTICS SECTION */}
+                    <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <BarChart3 className="w-4 h-4 text-primary" />
+                                Google Analytics
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Measurement ID (G-XXXXXXXXXX)</label>
+                                <input
+                                    type="text"
+                                    placeholder="G-12345678"
+                                    value={gaId}
+                                    onChange={(e) => setGaId(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-mono text-sm"
+                                />
+                                <p className="text-[10px] text-gray-400">Tracker besøk og aktivitet automatisk på hele siden.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     );

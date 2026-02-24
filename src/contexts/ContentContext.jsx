@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/customSupabaseClient';
 
-const ContentContext = createContext();
+export const ContentContext = createContext();
 const DASHBOARD_MANAGED_SLUGS = new Set([
   'hero.title',
   'hero.lines',

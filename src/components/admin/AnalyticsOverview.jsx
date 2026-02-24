@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, RefreshCw, AlertCircle } from 'lucide-react';
+import { Activity, RefreshCw, AlertCircle, Users, Globe, Layout, MousePointer2, Smartphone, Monitor } from 'lucide-react';
 
 const REFRESH_MS = 60_000;
 
@@ -17,12 +17,17 @@ const emptyState = {
   updatedAt: null,
 };
 
-const MetricCard = ({ value, label, loading }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
-    <div className="text-3xl font-bold text-[#1B4965] mb-2">
-      {loading ? '...' : value}
+const MetricCard = ({ value, label, loading, icon: Icon }) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col group hover:shadow-md transition-all">
+    <div className="flex justify-between items-start mb-2">
+      <div className="text-3xl font-bold text-[#1B4965]">
+        {loading ? <div className="h-9 w-16 bg-gray-100 animate-pulse rounded"></div> : value}
+      </div>
+      <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+        <Icon className="w-5 h-5 text-gray-400 group-hover:text-white" />
+      </div>
     </div>
-    <div className="text-sm text-gray-500 font-medium text-center">{label}</div>
+    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{label}</div>
   </div>
 );
 
@@ -92,10 +97,6 @@ const AnalyticsOverview = () => {
     ? stats.usersByCountry
     : [{ country: 'Ingen data ennå', users: 0 }];
 
-  const landingPages = stats.landingPages.length > 0
-    ? stats.landingPages
-    : [{ page: 'Ingen data ennå', sessions: 0 }];
-
   const topPages = stats.topPages.length > 0
     ? stats.topPages
     : [{ page: 'Ingen data ennå', views: 0 }];
@@ -104,40 +105,41 @@ const AnalyticsOverview = () => {
     ? stats.devices
     : [{ category: 'Ingen data ennå', users: 0 }];
 
-  const browsers = stats.browsers.length > 0
-    ? stats.browsers
-    : [{ browser: 'Ingen data ennå', users: 0 }];
-
   const realtimeLabel = stats.activeUsersRealtime === null
-    ? 'Aktive besøkende (realtime utilgjengelig)'
-    : 'Aktive besøkende (nå)';
+    ? 'Aktive nå (Estimert)'
+    : 'Aktive besøkende nå';
 
   return (
-    <div className="mt-8">
-      <div className="flex items-center justify-between gap-2 mb-4">
-        <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5 text-[#1B4965]" />
-          <h3 className="text-lg font-semibold text-gray-800">Besøksstatistikk (Google Analytics)</h3>
+    <div className="mt-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#1B4965]/5 flex items-center justify-center">
+            <Activity className="w-5 h-5 text-[#1B4965]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-800">Besøksstatistikk</h3>
+            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Google Analytics 4 Data</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-3">
           {stats.updatedAt && !error && (
-            <span>
-              Oppdatert {new Date(stats.updatedAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full uppercase tracking-widest border border-gray-100">
+              Oppdatert {new Date(stats.updatedAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
-          {refreshing && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+          {refreshing && <RefreshCw className="w-4 h-4 text-primary animate-spin" />}
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+        <div className="rounded-2xl border-none bg-red-50 p-6 flex items-start gap-4 shadow-sm ring-1 ring-red-100">
+          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-5 h-5 text-red-600" />
+          </div>
           <div>
-            <div className="font-medium">Analytics kunne ikke lastes</div>
-            <div>{error}</div>
-            <div className="mt-1 text-red-600/80">
-              Sjekk Vercel env vars: `GA4_PROPERTY_ID`, `GA_SERVICE_ACCOUNT_EMAIL`, `GA_SERVICE_ACCOUNT_PRIVATE_KEY`.
-            </div>
+            <div className="font-bold text-red-900 mb-1">Analytics koble-feil</div>
+            <p className="text-sm text-red-700/80 leading-relaxed mb-3">{error}</p>
+            <div className="text-[10px] font-bold text-red-800 uppercase tracking-widest opacity-60">Sjekk konfigurasjon i miljøvariabler</div>
           </div>
         </div>
       )}
@@ -147,95 +149,81 @@ const AnalyticsOverview = () => {
           value={stats.activeUsersRealtime ?? stats.activeUsers30d}
           label={realtimeLabel}
           loading={loading}
+          icon={Users}
         />
         <MetricCard
           value={stats.events30d}
-          label="Antall hendelser (30 dager)"
+          label="Interaksjoner (30 dager)"
           loading={loading}
+          icon={MousePointer2}
         />
         <MetricCard
           value={stats.newUsers30d}
-          label="Nye besøkende (30 dager)"
+          label="Nye brukere (30 dager)"
           loading={loading}
+          icon={Activity}
         />
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-gray-400" />
-            Hvor kommer de fra? (30 dager)
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col group min-h-[300px]">
+          <div className="font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-50 pb-4">
+            <Globe className="w-4 h-4 text-primary" />
+            <span className="text-sm uppercase tracking-widest font-bold text-gray-400 text-[10px]">Trafikkilder</span>
           </div>
-          <ul className="space-y-3">
+          <ul className="space-y-4 flex-1">
             {trafficSources.map((src, i) => (
-              <li key={`${src.source}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 truncate">{src.source}</span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{src.sessions}</span>
+              <li key={`${src.source}-${i}`} className="flex justify-between items-center group/item">
+                <span className="text-sm font-medium text-gray-600 truncate max-w-[150px] group-hover/item:text-primary transition-colors">{src.source}</span>
+                <span className="font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg text-xs shadow-sm ring-1 ring-gray-100 group-hover/item:bg-primary group-hover/item:text-white transition-all">{src.sessions}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Mest populære inngangssider (30 dager)</div>
-          <ul className="space-y-3">
-            {landingPages.map((lp, i) => (
-              <li key={`${lp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 truncate" title={lp.page}>
-                  {lp.page === '/' ? 'Forsiden' : lp.page}
-                </span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{lp.sessions}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Mest besøkte sider (30 dager)</div>
-          <ul className="space-y-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col group min-h-[300px]">
+          <div className="font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-50 pb-4">
+            <Layout className="w-4 h-4 text-primary" />
+            <span className="text-sm uppercase tracking-widest font-bold text-gray-400 text-[10px]">Topp sider</span>
+          </div>
+          <ul className="space-y-4 flex-1">
             {topPages.map((tp, i) => (
-              <li key={`${tp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 truncate" title={tp.page}>
+              <li key={`${tp.page}-${i}`} className="flex justify-between items-center group/item">
+                <span className="text-sm font-medium text-gray-600 truncate max-w-[150px] group-hover/item:text-primary transition-colors" title={tp.page}>
                   {tp.page === '/' ? 'Forsiden' : tp.page}
                 </span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{tp.views}</span>
+                <span className="font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg text-xs shadow-sm ring-1 ring-gray-100 group-hover/item:bg-primary group-hover/item:text-white transition-all">{tp.views}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Enhetstyper (30 dager)</div>
-          <ul className="space-y-3">
-            {devices.map((d, i) => (
-              <li key={`${d.category}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 capitalize">{d.category}</span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{d.users}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Nettlesere (30 dager)</div>
-          <ul className="space-y-3">
-            {browsers.map((b, i) => (
-              <li key={`${b.browser}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 truncate">{b.browser}</span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{b.users}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
-          <div className="font-semibold text-gray-800 mb-4">Geografi (30 dager)</div>
-          <ul className="space-y-3">
-            {usersByCountry.map((c, i) => (
-              <li key={`${c.country}-${i}`} className="flex justify-between items-center text-sm gap-3">
-                <span className="text-gray-600 truncate">{c.country}</span>
-                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{c.users}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col group min-h-[300px]">
+          <div className="font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-50 pb-4">
+            <Smartphone className="w-4 h-4 text-primary" />
+            <span className="text-sm uppercase tracking-widest font-bold text-gray-400 text-[10px]">Enheter & Geografi</span>
+          </div>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold text-gray-300 uppercase px-1">Enhetstyper</p>
+              {devices.slice(0, 3).map((d, i) => (
+                <div key={`${d.category}-${i}`} className="flex justify-between items-center">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                    {d.category === 'mobile' ? <Smartphone className="w-3 h-3 text-gray-400" /> : <Monitor className="w-3 h-3 text-gray-400" />}
+                    <span className="capitalize">{d.category}</span>
+                  </div>
+                  <span className="font-bold text-xs text-gray-900">{d.users}</span>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-3 pt-4 border-t border-gray-50">
+              <p className="text-[10px] font-bold text-gray-300 uppercase px-1">Hvor i verden</p>
+              {usersByCountry.slice(0, 3).map((c, i) => (
+                <div key={`${c.country}-${i}`} className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600 truncate max-w-[150px]">{c.country}</span>
+                  <span className="font-bold text-xs text-gray-900">{c.users}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

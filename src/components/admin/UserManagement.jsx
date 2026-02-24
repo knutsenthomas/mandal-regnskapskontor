@@ -3,9 +3,10 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Trash2, Plus, Loader2, ShieldCheck, Mail, AlertCircle, Pencil, Check, X } from 'lucide-react';
+import { Trash2, Plus, Loader2, ShieldCheck, Mail, AlertCircle, Pencil, Check, X, Phone, User as UserIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import AdminHeader from './layout/AdminHeader';
 
 const UserManagement = () => {
     const [admins, setAdmins] = useState([]);
@@ -15,7 +16,6 @@ const UserManagement = () => {
     const [newName, setNewName] = useState('');
     const [newPhone, setNewPhone] = useState('');
 
-    // Edit state
     const [editingId, setEditingId] = useState(null);
     const [editName, setEditName] = useState('');
     const [editPhone, setEditPhone] = useState('');
@@ -50,7 +50,7 @@ const UserManagement = () => {
     };
 
     const handleAddAdmin = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         const email = newEmail.toLowerCase().trim();
         if (!email) return;
 
@@ -79,7 +79,8 @@ const UserManagement = () => {
 
             toast({
                 title: 'Suksess',
-                description: result.message || 'Brukeren er invitert og lagt til i listen.'
+                description: result.message || 'Brukeren er invitert og lagt til i listen.',
+                className: "bg-green-50 border-green-200"
             });
 
             setNewEmail('');
@@ -111,7 +112,11 @@ const UserManagement = () => {
 
             if (error) throw error;
 
-            toast({ title: 'Oppdatert', description: 'Administrator-info er oppdatert.' });
+            toast({
+                title: 'Oppdatert',
+                description: 'Administrator-info er oppdatert.',
+                className: "bg-green-50 border-green-200"
+            });
             setEditingId(null);
             fetchAdmins();
         } catch (error) {
@@ -160,178 +165,183 @@ const UserManagement = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12 text-gray-500">
+                <Loader2 className="w-8 h-8 animate-spin mb-4 text-[#1B4965]" />
+                <p>Laster brukere...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-5 h-5 text-[#1B4965]" />
-                        <CardTitle>Administrasjon</CardTitle>
-                    </div>
-                    <CardDescription>
-                        Her administrerer du hvem som har tilgang til å logge inn på dette panelet og deres kontaktinformasjon.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-r-lg">
-                        <div className="flex items-start gap-3">
-                            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
-                            <div className="text-sm text-blue-800">
-                                <p className="font-semibold mb-1">Viktig informasjon om brukere:</p>
-                                <p>1. Legg til personens kontaktinfo og e-post her først.</p>
-                                <p>2. Gå deretter til <strong>Supabase Dashboard &gt; Authentication &gt; Users</strong> og velg <strong>"Invite User"</strong>.</p>
-                            </div>
+            <AdminHeader
+                icon={ShieldCheck}
+                title="Administrasjon"
+                description="Administrer tilgang og kontaktinformasjon for kontrollpanelet."
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-4 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
+                            <h3 className="font-bold text-gray-700">Aktive Administratorer</h3>
+                            <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded-lg uppercase tracking-wider">{admins.length} brukere</span>
+                        </div>
+                        <div className="divide-y divide-gray-50">
+                            {admins.map((admin) => (
+                                <div key={admin.id || admin.email} className="p-6 transition-colors group">
+                                    {editingId === admin.email ? (
+                                        <div className="flex flex-col md:flex-row gap-4 items-end">
+                                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                                <div className="space-y-1.5">
+                                                    <Label className="text-[10px] uppercase font-bold text-gray-400 px-1">Fullt Navn</Label>
+                                                    <Input
+                                                        value={editName}
+                                                        onChange={(e) => setEditName(e.target.value)}
+                                                        className="h-10 bg-gray-50/50"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label className="text-[10px] uppercase font-bold text-gray-400 px-1">Telefon</Label>
+                                                    <Input
+                                                        value={editPhone}
+                                                        onChange={(e) => setEditPhone(e.target.value)}
+                                                        className="h-10 bg-gray-50/50"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleUpdateAdmin(admin.email)}
+                                                    disabled={updating}
+                                                    className="bg-green-600 hover:bg-green-700 text-white rounded-lg h-10 px-4"
+                                                >
+                                                    {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+                                                    Lagre
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => setEditingId(null)}
+                                                    className="border-gray-200 rounded-lg h-10"
+                                                >
+                                                    Avbryt
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                            <div className="flex items-center gap-4 flex-1">
+                                                <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 shadow-sm shrink-0">
+                                                    <UserIcon className="w-6 h-6" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="font-bold text-gray-900 truncate text-lg">
+                                                        {admin.full_name || 'Navn ikke oppgitt'}
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-sm text-gray-500">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Mail className="w-3.5 h-3.5 text-gray-400" />
+                                                            {admin.email}
+                                                        </span>
+                                                        {admin.phone && (
+                                                            <span className="flex items-center gap-1.5">
+                                                                <Phone className="w-3.5 h-3.5 text-gray-400" />
+                                                                {admin.phone}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => startEditing(admin)}
+                                                    className="text-gray-300 hover:text-primary hover:bg-primary/5 rounded-lg"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => handleDeleteAdmin(admin.email)}
+                                                    className="text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
+                </div>
 
-                    {/* ADD FORM */}
-                    <form onSubmit={handleAddAdmin} className="space-y-4 mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
-                        <h4 className="text-sm font-semibold text-gray-700">Legg til ny administrator</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs">Fullt Navn</Label>
+                <div className="space-y-6">
+                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                <Plus className="w-4 h-4 text-primary" />
+                            </div>
+                            <h4 className="font-bold text-gray-800">Ny administrator</h4>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] uppercase font-bold text-gray-400 px-1">Fullt Navn</Label>
                                 <Input
-                                    placeholder="Ola Nordmann"
+                                    placeholder="f.eks. Ola Nordmann"
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
+                                    className="bg-gray-50/50"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs">E-post (påkrevd for innlogging)</Label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <Input
-                                        type="email"
-                                        placeholder="ola@eksempel.no"
-                                        className="pl-10"
-                                        value={newEmail}
-                                        onChange={(e) => setNewEmail(e.target.value)}
-                                        required
-                                    />
-                                </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] uppercase font-bold text-gray-400 px-1">E-post *</Label>
+                                <Input
+                                    type="email"
+                                    placeholder="ola@eksempel.no"
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    className="bg-gray-50/50"
+                                    required
+                                />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs">Telefonnr</Label>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] uppercase font-bold text-gray-400 px-1">Telefonnr</Label>
                                 <Input
                                     placeholder="900 00 000"
                                     value={newPhone}
                                     onChange={(e) => setNewPhone(e.target.value)}
+                                    className="bg-gray-50/50"
                                 />
                             </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <Button type="submit" disabled={adding} className="bg-[#1B4965] hover:bg-[#0F3347]">
-                                {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-                                Legg til i listen
+                            <Button
+                                onClick={handleAddAdmin}
+                                disabled={adding}
+                                className="w-full bg-[#1B4965] hover:bg-[#0F3347] text-white font-bold h-11 mt-4 rounded-xl"
+                            >
+                                {adding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                                Legg til bruker
                             </Button>
                         </div>
-                    </form>
-
-                    {/* LIST */}
-                    <div className="space-y-2">
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Aktive Administratorer</h4>
-                        {loading ? (
-                            <div className="py-8 flex justify-center">
-                                <Loader2 className="w-6 h-6 animate-spin text-[#1B4965]" />
-                            </div>
-                        ) : admins.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border border-dashed">
-                                Ingen administratorer funnet.
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-gray-100 border rounded-lg overflow-hidden bg-white shadow-sm">
-                                {admins.map((admin) => (
-                                    <div key={admin.id || admin.email} className="p-4 hover:bg-gray-50 transition-colors">
-                                        {editingId === admin.email ? (
-                                            <div className="flex flex-col md:flex-row gap-4 items-center">
-                                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                                    <div className="space-y-1">
-                                                        <Label className="text-[10px] uppercase text-gray-400">Navn</Label>
-                                                        <Input
-                                                            value={editName}
-                                                            onChange={(e) => setEditName(e.target.value)}
-                                                            className="h-9"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <Label className="text-[10px] uppercase text-gray-400">Telefon</Label>
-                                                        <Input
-                                                            value={editPhone}
-                                                            onChange={(e) => setEditPhone(e.target.value)}
-                                                            className="h-9"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => handleUpdateAdmin(admin.email)}
-                                                        disabled={updating}
-                                                        className="bg-green-600 hover:bg-green-700"
-                                                    >
-                                                        {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        onClick={() => setEditingId(null)}
-                                                        className="border-gray-200"
-                                                    >
-                                                        <X className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                                <div className="flex items-center gap-4 flex-1">
-                                                    <div className="w-10 h-10 rounded-full bg-[#1B4965] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-inner">
-                                                        {(admin.full_name || admin.email)[0].toUpperCase()}
-                                                    </div>
-                                                    <div className="min-w-0 flex-1">
-                                                        <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
-                                                            {admin.full_name || 'Navn ikke oppgitt'}
-                                                        </div>
-                                                        <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-sm text-gray-500">
-                                                            <span className="flex items-center gap-1.5">
-                                                                <Mail className="w-3.5 h-3.5 opacity-60" />
-                                                                {admin.email}
-                                                            </span>
-                                                            {admin.phone && (
-                                                                <span className="flex items-center gap-1.5">
-                                                                    <div className="w-1 h-1 bg-gray-300 rounded-full hidden md:block"></div>
-                                                                    Tlf: {admin.phone}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => startEditing(admin)}
-                                                        className="text-gray-400 hover:text-blue-600 hover:bg-blue-50"
-                                                    >
-                                                        <Pencil className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => handleDeleteAdmin(admin.email)}
-                                                        className="text-red-400 hover:text-red-600 hover:bg-red-50"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
-                </CardContent>
-            </Card>
+
+                    <div className="bg-orange-50/50 border border-orange-100 p-5 rounded-xl space-y-3 shadow-sm">
+                        <div className="flex items-center gap-2 text-orange-800 font-bold text-[10px] uppercase tracking-widest">
+                            <AlertCircle className="w-4 h-4" />
+                            Viktig!
+                        </div>
+                        <p className="text-xs text-orange-800/80 leading-relaxed">
+                            Når du legger til en bruker her, må du også sende en invitasjon via <strong>Supabase Dashboard</strong> under Authentication for at de skal kunne logge inn.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

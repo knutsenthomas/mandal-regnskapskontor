@@ -14,50 +14,44 @@ import { supabase } from '../lib/customSupabaseClient';
 import { Toaster } from '../components/ui/toaster';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { ContentProvider } from '../contexts/ContentContext';
-import { SiteProvider } from '../contexts/SiteContext';
+import { SiteProvider, useSite } from '../contexts/SiteContext';
+import PrivacyPage from '../pages/PrivacyPage';
+import CookieConsent from '../components/CookieConsent';
+
+// Component to handle Google Analytics 4 based on consent
+const GASetup = () => {
+  const { cookiePreferences, gaId } = useSite();
+
+  useEffect(() => {
+    if (cookiePreferences?.statistics && gaId) {
+      const measurementId = String(gaId).trim();
+      ReactGA.initialize(measurementId);
+      ReactGA.send({
+        hitType: "pageview",
+        page: window.location.pathname + window.location.search,
+      });
+    }
+  }, [cookiePreferences?.statistics, gaId]);
+
+  return null;
+};
 
 // Component to handle route changes
 const RouteTracker = () => {
   const location = useLocation();
+  const { cookiePreferences } = useSite();
 
   useEffect(() => {
-    // Send page view on route change
-    // ReactGA checks isInitialized internally, but good to be safe or rely on react-ga4 handling
-    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
-  }, [location]);
+    // Send page view on route change ONLY if consent is given
+    if (cookiePreferences?.statistics) {
+      ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+    }
+  }, [location, cookiePreferences?.statistics]);
 
   return null;
 };
 
 function App() {
-  useEffect(() => {
-    const initGA = async () => {
-      try {
-        const { data } = await supabase
-          .from('site_settings')
-          .select('value')
-          .eq('key', 'google_analytics_id')
-          .maybeSingle();
-
-        const dbId = data?.value ? String(data.value).trim() : null;
-        const measurementId = dbId || 'G-0HWDM4R4TY';
-
-        if (measurementId) {
-          ReactGA.initialize(measurementId);
-          // RouteTracker kan fire før async GA init er ferdig, så send en initial pageview her også.
-          ReactGA.send({
-            hitType: "pageview",
-            page: window.location.pathname + window.location.search,
-          });
-        }
-      } catch (error) {
-        // Silent fail for analytics
-        console.warn("Failed to init GA:", error);
-      }
-    };
-    initGA();
-  }, []);
-
   return (
     <SiteProvider>
       <AuthProvider>
@@ -65,10 +59,12 @@ function App() {
           <ErrorBoundary>
             <Router>
               <RouteTracker />
+              <GASetup />
               <ScrollToTop />
               <main className="pt-0">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/personvern" element={<PrivacyPage />} />
                   <Route path="/service/:id" element={<ServiceDetailPage />} />
                   <Route path="/admin/login" element={<LoginPageWithBoundary />} />
                   <Route path="/set-password" element={<SetPasswordPage />} />
@@ -82,6 +78,7 @@ function App() {
                   />
                 </Routes>
               </main>
+              <CookieConsent />
               <Toaster />
             </Router>
           </ErrorBoundary>

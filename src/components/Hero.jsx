@@ -44,6 +44,19 @@ const Hero = () => {
   const { content: heroButton } = useContent('hero.button');
   const { content: color } = useContent('hero.primaryColor');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const locationRef = React.useRef(null);
+
+  // Close location info when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (locationRef.current && !locationRef.current.contains(event.target)) {
+        setSelectedLocation(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const resolvedHeroTitle = heroTitle || '';
   const resolvedHeroImage = heroImage || '';
   const resolvedHeroLinesRaw = heroLinesRaw || '';
@@ -140,7 +153,7 @@ const Hero = () => {
             </p>
           ))}
 
-          <div className="pt-8">
+          <div className="pt-10 flex flex-col items-center gap-6">
             {heroButton && (
               <Button
                 onClick={scrollToContact}
@@ -151,6 +164,50 @@ const Hero = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             )}
+
+            {/* Location Section */}
+            <div ref={locationRef} className="flex flex-col items-center">
+              <div className="flex gap-4 mb-4">
+                {[
+                  { name: 'Mandal', address: 'Bryggegata 1, 4514 Mandal' },
+                  { name: 'Grimstad', address: 'Storgata 1, 4876 Grimstad' }
+                ].map((loc) => (
+                  <button
+                    key={loc.name}
+                    onClick={() => setSelectedLocation(selectedLocation === loc.name ? null : loc.name)}
+                    className={`
+                      flex items-center gap-2 px-6 py-2 rounded-full border-2 transition-all font-medium
+                      ${selectedLocation === loc.name
+                        ? 'bg-white text-primary border-white'
+                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'}
+                    `}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${selectedLocation === loc.name ? 'bg-primary' : 'bg-green-400'}`}></span>
+                    {loc.name}
+                  </button>
+                ))}
+              </div>
+
+              <motion.div
+                initial={false}
+                animate={{ height: selectedLocation ? 'auto' : 0, opacity: selectedLocation ? 1 : 0 }}
+                className="overflow-hidden"
+              >
+                {selectedLocation && (
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-white flex items-center gap-3 shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                      <ArrowRight className="w-4 h-4 text-white rotate-90" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-bold uppercase tracking-wider text-white/60">Adresse {selectedLocation}</p>
+                      <p className="font-medium">
+                        {selectedLocation === 'Mandal' ? 'Bryggegata 1, 4514 Mandal' : 'Storgata 1, 4876 Grimstad'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>

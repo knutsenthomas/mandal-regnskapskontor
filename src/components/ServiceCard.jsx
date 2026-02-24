@@ -8,6 +8,11 @@ const ServiceCard = ({ service, index, variants }) => {
   const primaryColor = 'hsl(var(--primary))';
   const primaryForeground = 'hsl(var(--primary-foreground))';
 
+  // HOOKS MUST BE CALLED AT THE TOP
+  const { content: cardTitle } = useContent('servicecard.title');
+  const { content: cardDescription } = useContent('servicecard.description');
+  const { content: cardButtonLabel } = useContent('servicecard.button');
+
   return (
     <motion.div
       variants={variants}
@@ -15,8 +20,6 @@ const ServiceCard = ({ service, index, variants }) => {
       className="group relative h-[320px] lg:h-[300px] xl:h-[280px] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer"
     >
       <Link to={`/service/${index}`} className="block h-full w-full">
-        {/* Background Image */}
-        {/* Background Image */}
         {/* Background Image */}
         <div className="absolute inset-0 bg-gray-900">
           {service.image && (
@@ -37,12 +40,12 @@ const ServiceCard = ({ service, index, variants }) => {
 
           {/* Title */}
           <h3 className="text-xl xl:text-lg font-bold mb-2 tracking-tight leading-tight group-hover:text-white/85 transition-colors">
-            {service.title || useContent('servicecard.title').content || 'Tittel'}
+            {service.title || cardTitle || 'Tittel'}
           </h3>
 
           {/* Description (truncated/shortened visually) */}
           <p className="text-gray-300 text-sm mb-4 line-clamp-3 font-light leading-relaxed opacity-90 group-hover:opacity-100">
-            {service.description || useContent('servicecard.description').content || 'Beskrivelse av tjenesten.'}
+            {service.description || cardDescription || 'Beskrivelse av tjenesten.'}
           </p>
 
           {/* Action Button */}
@@ -50,8 +53,8 @@ const ServiceCard = ({ service, index, variants }) => {
             className="inline-flex items-center justify-center font-medium py-2.5 px-5 rounded-lg transition-all duration-300 w-fit group-hover:gap-2 shadow-lg hover:brightness-90"
             style={{ backgroundColor: primaryColor, color: primaryForeground }}
           >
-            <span>{useContent('servicecard.button').content || 'Les mer'}</span>
-            <ArrowRight className="w-0 h-4 opacity-0 -ml-2 group-hover:w-4 group-hover:ml-2 group-hover:opacity-100 transition-all duration-300" />
+            <span>{cardButtonLabel || 'Les mer'}</span>
+            <ArrowRight className="w-4 h-4 opacity-0 -ml-2 group-hover:ml-2 group-hover:opacity-100 transition-all duration-300" />
           </div>
         </div>
 

@@ -313,7 +313,7 @@ const LoginPage = () => {
       </motion.div>
     </div>
   );
-}
+};
 
 const LoginPageWithBoundary = () => (
   <ErrorBoundary>

@@ -18,6 +18,19 @@ export const SiteProvider = ({ children }) => {
         font_family: null,
     });
     const [loading, setLoading] = useState(true);
+    const [cookieConsent, setCookieConsent] = useState(null); // null = not set, 'all', 'partial', 'none'
+    const [cookiePreferences, setCookiePreferences] = useState({
+        necessary: true,
+        statistics: false,
+        marketing: false
+    });
+
+    const updateConsent = (prefs) => {
+        setCookiePreferences(prefs);
+        const consentType = prefs.statistics && prefs.marketing ? 'all' : (prefs.statistics || prefs.marketing ? 'partial' : 'none');
+        setCookieConsent(consentType);
+        localStorage.setItem('cookie-consent', JSON.stringify({ type: consentType, prefs }));
+    };
 
     const fetchSiteData = async () => {
         try {
@@ -81,6 +94,19 @@ export const SiteProvider = ({ children }) => {
         }
     };
 
+    useEffect(() => {
+        const savedConsent = localStorage.getItem('cookie-consent');
+        if (savedConsent) {
+            try {
+                const parsed = JSON.parse(savedConsent);
+                setCookieConsent(parsed.type);
+                setCookiePreferences(parsed.prefs);
+            } catch (e) {
+                console.error("Failed to parse saved cookie consent");
+            }
+        }
+    }, []);
+
 
     useEffect(() => {
         fetchSiteData();
@@ -141,7 +167,10 @@ export const SiteProvider = ({ children }) => {
     const value = {
         ...siteData,
         refreshSiteData: fetchSiteData,
-        loading
+        loading,
+        cookieConsent,
+        cookiePreferences,
+        updateConsent
     };
 
     return (
