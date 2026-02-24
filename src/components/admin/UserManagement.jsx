@@ -34,7 +34,7 @@ const UserManagement = () => {
             console.error('Error fetching admins:', error);
             toast({
                 title: 'Feil ved henting',
-                description: 'Kunne ikke hente listen over administratorer.',
+                description: `Databasefeil: ${error.message || 'Kunne ikke hente listen.'}`,
                 variant: 'destructive'
             });
         } finally {
