@@ -57,7 +57,7 @@ export function ContentProvider({ children }) {
         return dashboardContent.contact_address || '';
 
       case 'footer.companyName':
-        return dashboardContent.company_name || 'Mandal Regnskapskontor AS';
+        return dashboardContent.company_name || 'Mandal Regnskapskontor';
       case 'footer.companyDesc':
         return dashboardContent.footer_text || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.';
       case 'footer.quicklinksLabel':
@@ -81,7 +81,7 @@ export function ContentProvider({ children }) {
       case 'footer.hoursWeekend':
         return 'Stengt';
       case 'footer.copyright':
-        return `© ${new Date().getFullYear()} Mandal Regnskapskontor AS. Alle rettigheter reservert.`;
+        return `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`;
       case 'footer.adminlink':
         return 'Admin';
       case 'footer.link.home':

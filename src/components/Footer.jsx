@@ -42,7 +42,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <p className="text-2xl font-bold text-white">{companyName || 'Mandal Regnskapskontor AS'}</p>
+            <p className="text-2xl font-bold text-white">{companyName || 'Mandal Regnskapskontor'}</p>
             <RichText
               className="text-sm leading-relaxed"
               value={companyDesc || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.'}
@@ -133,7 +133,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <RichText value={copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor AS. Alle rettigheter reservert.`} />
+          <RichText value={copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`} />
           <div className="mt-4 md:mt-0">
             <Link to="/admin/login" className="flex items-center hover:text-white transition-colors">
               <Lock className="w-3 h-3 mr-1" />

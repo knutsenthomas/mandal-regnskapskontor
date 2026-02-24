@@ -44,7 +44,7 @@ const About = () => {
   }
   const defaultImage = "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D";
   const displayImage = aboutImage || defaultImage;
-  const defaultText = `Mandal Regnskapskontor AS er et ledende regnskapsbyrå med solid forankring i lokalsamfunnet. Med over 15 års erfaring har vi bygget opp en bred kompetanse som kommer våre kunder til gode hver eneste dag.\n\nVi spesialiserer oss på å levere høykvalitets regnskaps- og finansielle tjenester til små og mellomstore bedrifter. Vårt dedikerte team av erfarne regnskapsførere og revisor er forpliktet til å gi deg den beste service, personlig oppfølging og strategisk rådgivning.`;
+  const defaultText = `Mandal Regnskapskontor er et ledende regnskapsbyrå med solid forankring i lokalsamfunnet. Med over 15 års erfaring har vi bygget opp en bred kompetanse som kommer våre kunder til gode hver eneste dag.\n\nVi spesialiserer oss på å levere høykvalitets regnskaps- og finansielle tjenester til små og mellomstore bedrifter. Vårt dedikerte team av erfarne regnskapsførere og revisor er forpliktet til å gi deg den beste service, personlig oppfølging og strategisk rådgivning.`;
   const displayText = aboutText || defaultText;
   const valuesGridCols = parsedValues.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
   return (

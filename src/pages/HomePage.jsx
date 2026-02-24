@@ -41,7 +41,7 @@ const HomePage = () => {
     >
       <Navigation />
       <Helmet>
-        <title>Mandal regnskapskontor AS - Profesjonell Regnskap og Finansiell Rådgivning</title>
+        <title>Mandal regnskapskontor - Profesjonell Regnskap og Finansiell Rådgivning</title>
         <meta
           name="description"
           content="Din pålitelige partner for profesjonell regnskap, fakturering, lønn, revisjon og skatteplanlegging i Mandal. Over 15 års erfaring med små og mellomstore bedrifter."
