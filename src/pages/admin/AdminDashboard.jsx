@@ -71,17 +71,17 @@ const AdminDashboard = () => {
   useEffect(() => {
     const titles = {
       'dashboard': 'Mandal Regnskapskontor',
-      'messages': 'Innboks & Meldinger',
-      'calendar': 'Kalender & Hendelser',
+      'messages': 'Innboks & meldinger',
+      'calendar': 'Kalender & hendelser',
       'services': 'Tjenester',
-      'service-details': 'Rediger Tjenesteinnhold',
-      'hero': 'Forside (Hero Seksjon)',
+      'service-details': 'Rediger tjenesteinnhold',
+      'hero': 'Forside (hero-seksjon)',
       'about': 'Om oss',
       'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
-      'footer': 'Footer & Innstillinger',
-      'theme': 'Tema & Farger',
-      'seo': 'SEO & Synlighet',
+      'footer': 'Footer & innstillinger',
+      'theme': 'Tema & farger',
+      'seo': 'SEO & synlighet',
       'administration': 'Brukeradministrasjon',
       'content-blocks': 'Alt tekstinnhold'
     };
