@@ -68,27 +68,12 @@ const ContactForm = () => {
             epost: formData.epost,
             telefon: formData.telefon,
             bedriftsnavn: formData.bedriftsnavn,
-            melding: formData.melding
+            melding: formData.melding,
+            read: false
           }
         ]);
 
       if (supabaseError) throw supabaseError;
-
-      // 2. SEND E-POST VARSEL (Bruker Google Forms)
-      const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfSD_hhiM9Ud4D0VWuwgiNRdCK1KGf__RraDTCZ7dkbvff4Yw/formResponse";
-
-      const formParams = new URLSearchParams();
-      formParams.append('entry.599509457', formData.navn);        // Navn
-      formParams.append('entry.1400512221', formData.telefon);    // Telefon
-      formParams.append('entry.933613981', formData.epost);       // E-post
-      formParams.append('entry.737423993', formData.bedriftsnavn);// Bedrift
-      formParams.append('entry.900097937', formData.melding);     // Melding
-
-      await fetch(googleFormUrl, {
-        method: "POST",
-        mode: "no-cors", // Viktig for Google Forms
-        body: formParams
-      });
 
       // Suksess!
       toast({
