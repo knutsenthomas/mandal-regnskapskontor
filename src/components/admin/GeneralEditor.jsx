@@ -59,7 +59,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
             if (!file) return;
             const { publicUrl } = await uploadImageToPublicBucket({
                 file,
-                bucket: 'Images',
+                bucket: 'images',
                 folder: 'branding',
                 prefix: 'logo',
                 allowedTypes: LOGO_ALLOWED_TYPES,
@@ -93,7 +93,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
             if (!file) return;
             const { publicUrl } = await uploadImageToPublicBucket({
                 file,
-                bucket: 'Images',
+                bucket: 'images',
                 folder: 'branding',
                 prefix: 'favicon',
                 allowedTypes: FAVICON_ALLOWED_TYPES,

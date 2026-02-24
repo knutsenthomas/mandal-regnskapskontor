@@ -40,7 +40,7 @@ export const getUploadErrorMessage = (error, fallback = 'Opplasting feilet.') =>
 
 export async function uploadImageToPublicBucket({
   file,
-  bucket = 'Images',
+  bucket = 'images',
   folder = '',
   prefix = 'image',
   allowedTypes = null,

@@ -62,7 +62,7 @@ const AboutEditor = ({ content, onUpdate }) => {
       if (!file) return;
       const { publicUrl } = await uploadImageToPublicBucket({
         file,
-        bucket: 'Images',
+        bucket: 'images',
         folder: 'about',
         prefix: 'about',
         maxBytes: 8 * 1024 * 1024,

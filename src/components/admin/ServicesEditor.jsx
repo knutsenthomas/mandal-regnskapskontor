@@ -57,7 +57,7 @@ const ServicesEditor = ({ content, onUpdate }) => {
       setUploading(true);
       const { publicUrl } = await uploadImageToPublicBucket({
         file,
-        bucket: 'Images',
+        bucket: 'images',
         folder: 'services',
         prefix: 'service',
         maxBytes: 8 * 1024 * 1024,
