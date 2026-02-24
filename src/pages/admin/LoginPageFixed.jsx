@@ -22,7 +22,9 @@ const LoginPage = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  const from = location.state?.from?.pathname + (location.state?.from?.search || '') || '/admin/dashboard';
+  const from = location.state?.from ?
+    (location.state.from.pathname + (location.state.from.search || '')) :
+    '/admin/dashboard';
 
   React.useEffect(() => {
     if (user) {
