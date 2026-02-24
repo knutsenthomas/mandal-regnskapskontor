@@ -95,7 +95,7 @@ export default async function handler(req, res) {
   }
 
   const propertyId = String(process.env.GA4_PROPERTY_ID || '479163398').trim();
-  const clientEmail = String(process.env.GA_SERVICE_ACCOUNT_EMAIL || '').trim();
+  const clientEmail = String(process.env.GA_SERVICE_ACCOUNT_EMAIL || 'mandal-regnskapskontor@mandal-regnskapskontor-488411.iam.gserviceaccount.com').trim();
   const privateKeyRaw = String(process.env.GA_SERVICE_ACCOUNT_PRIVATE_KEY || '');
   const privateKey = privateKeyRaw.replace(/\\n/g, '\n').trim();
 
