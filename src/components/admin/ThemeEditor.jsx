@@ -68,7 +68,7 @@ const ThemeColorInput = React.memo(function ThemeColorInput({
 
 const ThemeEditor = () => {
     const { toast } = useToast();
-    const { theme, refreshSiteData } = useSite();
+    const { theme, font_family, h1_size, h2_size, h3_size, body_size, refreshSiteData } = useSite();
     const [loading, setLoading] = useState(false);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [colors, setColors] = useState(THEME_DEFAULTS);
@@ -78,6 +78,17 @@ const ThemeEditor = () => {
             setColors(prev => ({ ...prev, ...theme }));
         }
     }, [theme]);
+
+    useEffect(() => {
+        const loadedTypography = {
+            font_family: font_family || DEFAULT_TYPOGRAPHY.font_family,
+            h1_size: h1_size || DEFAULT_TYPOGRAPHY.h1_size,
+            h2_size: h2_size || DEFAULT_TYPOGRAPHY.h2_size,
+            h3_size: h3_size || DEFAULT_TYPOGRAPHY.h3_size,
+            body_size: body_size || DEFAULT_TYPOGRAPHY.body_size,
+        };
+        setTypography(loadedTypography);
+    }, [font_family, h1_size, h2_size, h3_size, body_size]);
 
     const handleColorChange = (key, value) => {
         setColors(prev => ({ ...prev, [key]: value }));
