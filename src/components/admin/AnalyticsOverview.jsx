@@ -11,6 +11,8 @@ const emptyState = {
   trafficSources: [],
   usersByCountry: [],
   landingPages: [],
+  devices: [],
+  topPages: [],
   updatedAt: null,
 };
 
@@ -56,6 +58,8 @@ const AnalyticsOverview = () => {
           trafficSources: Array.isArray(json.trafficSources) ? json.trafficSources : [],
           usersByCountry: Array.isArray(json.usersByCountry) ? json.usersByCountry : [],
           landingPages: Array.isArray(json.landingPages) ? json.landingPages : [],
+          devices: Array.isArray(json.devices) ? json.devices : [],
+          topPages: Array.isArray(json.topPages) ? json.topPages : [],
           updatedAt: json.updatedAt || null,
         });
         setError('');
@@ -89,6 +93,14 @@ const AnalyticsOverview = () => {
   const landingPages = stats.landingPages.length > 0
     ? stats.landingPages
     : [{ page: 'Ingen data ennå', sessions: 0 }];
+
+  const topPages = stats.topPages.length > 0
+    ? stats.topPages
+    : [{ page: 'Ingen data ennå', views: 0 }];
+
+  const devices = stats.devices.length > 0
+    ? stats.devices
+    : [{ category: 'Ingen data ennå', users: 0 }];
 
   const realtimeLabel = stats.activeUsersRealtime === null
     ? 'Aktive besøkende (realtime utilgjengelig)'
@@ -165,6 +177,32 @@ const AnalyticsOverview = () => {
                   {lp.page === '/' ? 'Forsiden' : lp.page}
                 </span>
                 <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{lp.sessions}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+          <div className="font-semibold text-gray-800 mb-4">Mest besøkte sider (7 dager)</div>
+          <ul className="space-y-3">
+            {topPages.map((tp, i) => (
+              <li key={`${tp.page}-${i}`} className="flex justify-between items-center text-sm gap-3">
+                <span className="text-gray-600 truncate" title={tp.page}>
+                  {tp.page === '/' ? 'Forsiden' : tp.page}
+                </span>
+                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{tp.views}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+          <div className="font-semibold text-gray-800 mb-4">Enhetstyper (7 dager)</div>
+          <ul className="space-y-3">
+            {devices.map((d, i) => (
+              <li key={`${d.category}-${i}`} className="flex justify-between items-center text-sm gap-3">
+                <span className="text-gray-600 capitalize">{d.category}</span>
+                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{d.users}</span>
               </li>
             ))}
           </ul>

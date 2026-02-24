@@ -113,7 +113,15 @@ export default async function handler(req, res) {
   try {
     const accessToken = await getAccessToken({ clientEmail, privateKey });
 
-    const [summaryReport, trafficReport, countryReport, landingPagesReport, realtimeReport] = await Promise.all([
+    const [
+      summaryReport,
+      trafficReport,
+      countryReport,
+      landingPagesReport,
+      deviceReport,
+      pagesReport,
+      realtimeReport
+    ] = await Promise.all([
       googlePost({
         path: `/properties/${propertyId}:runReport`,
         accessToken,
@@ -157,6 +165,28 @@ export default async function handler(req, res) {
         },
       }),
       googlePost({
+        path: `/properties/${propertyId}:runReport`,
+        accessToken,
+        body: {
+          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'deviceCategory' }],
+          metrics: [{ name: 'activeUsers' }],
+          orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+          limit: 5,
+        },
+      }),
+      googlePost({
+        path: `/properties/${propertyId}:runReport`,
+        accessToken,
+        body: {
+          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'pagePath' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+          limit: 5,
+        },
+      }),
+      googlePost({
         path: `/properties/${propertyId}:runRealtimeReport`,
         accessToken,
         body: {
@@ -182,6 +212,16 @@ export default async function handler(req, res) {
       sessions: row.metric,
     }));
 
+    const devices = mapDimensionMetricRows(deviceReport).map((row) => ({
+      category: row.dimension,
+      users: row.metric,
+    }));
+
+    const topPages = mapDimensionMetricRows(pagesReport).map((row) => ({
+      page: row.dimension,
+      views: row.metric,
+    }));
+
     const payload = {
       activeUsersRealtime: realtimeReport ? metricValue(realtimeReport, 0, 0) : null,
       activeUsers7d: metricValue(summaryReport, 0, 0),
@@ -190,6 +230,8 @@ export default async function handler(req, res) {
       trafficSources,
       usersByCountry,
       landingPages,
+      devices,
+      topPages,
       updatedAt: new Date().toISOString(),
     };
 
