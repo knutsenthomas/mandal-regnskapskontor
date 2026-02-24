@@ -89,7 +89,7 @@ const AdminDashboard = () => {
   const servicesList = (content?.services_data && Array.isArray(content.services_data))
     ? content.services_data.map((service, index) => ({
       id: index.toString(),
-      name: service.title || `Tjeneste ${index + 1}`
+      name: service?.title || `Tjeneste ${index + 1}`
     }))
     : [];
 
@@ -142,6 +142,7 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error("Critical fetch error:", error);
       setFetchError(error.message || "En ukjent feil oppstod ved henting av data.");
+      setContent({});
     } finally {
       setLoading(false);
     }
