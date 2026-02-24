@@ -55,6 +55,10 @@ export const SiteProvider = ({ children }) => {
                 gaId: settingsMap['google_analytics_id'] || null,
                 theme: themeSettings,
                 font_family: settingsMap['font_family'] || null,
+                h1_size: settingsMap['h1_size'] || null,
+                h2_size: settingsMap['h2_size'] || null,
+                h3_size: settingsMap['h3_size'] || null,
+                body_size: settingsMap['body_size'] || null,
             };
 
             setSiteData(newSiteData);
@@ -95,33 +99,41 @@ export const SiteProvider = ({ children }) => {
 
     useEffect(() => {
         try {
-            if (siteData && siteData.font_family) {
-                document.body.style.setProperty('--site-font-family', siteData.font_family + ', sans-serif');
-                // Dynamisk Google Fonts import
-                const googleFonts = [
-                    'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito', 'Oswald', 'Poppins', 'Source Sans Pro'
-                ];
-                if (googleFonts.includes(siteData.font_family)) {
-                    const fontName = siteData.font_family.replace(/ /g, '+');
-                    const linkId = 'dynamic-google-font';
-                    let link = document.getElementById(linkId);
-                    if (!link) {
-                        link = document.createElement('link');
-                        link.id = linkId;
-                        link.rel = 'stylesheet';
-                        document.head.appendChild(link);
+            if (siteData) {
+                // Font Family
+                if (siteData.font_family) {
+                    document.documentElement.style.setProperty('--site-font-family', siteData.font_family + ', sans-serif');
+
+                    // Dynamisk Google Fonts import for alle fonter i listen
+                    const googleFonts = [
+                        'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito',
+                        'Oswald', 'Poppins', 'Source Sans Pro'
+                    ];
+
+                    if (googleFonts.includes(siteData.font_family)) {
+                        const fontName = siteData.font_family.replace(/ /g, '+');
+                        const linkId = 'dynamic-google-font';
+                        let link = document.getElementById(linkId);
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.id = linkId;
+                            link.rel = 'stylesheet';
+                            document.head.appendChild(link);
+                        }
+                        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400;500;600;700&display=swap`;
                     }
-                    link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400;700&display=swap`;
                 }
-            } else {
-                document.body.style.setProperty('--site-font-family', 'DM Sans, sans-serif');
+
+                // Typography Sizes
+                if (siteData.h1_size) document.documentElement.style.setProperty('--h1-size', siteData.h1_size);
+                if (siteData.h2_size) document.documentElement.style.setProperty('--h2-size', siteData.h2_size);
+                if (siteData.h3_size) document.documentElement.style.setProperty('--h3-size', siteData.h3_size);
+                if (siteData.body_size) document.documentElement.style.setProperty('--body-size', siteData.body_size);
             }
         } catch (e) {
-            // Fallback til fabrikkinnstillinger
-            document.body.style.setProperty('--site-font-family', 'DM Sans, sans-serif');
-            // Du kan også resette typografi her hvis ønskelig
+            console.error('Error applying theme/typography:', e);
         }
-    }, [siteData?.font_family]);
+    }, [siteData]);
 
     const value = {
         ...siteData,
