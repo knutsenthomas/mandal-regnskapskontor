@@ -296,10 +296,20 @@ const MessagesView = () => {
                         </Button>
 
                         <div className="flex gap-2">
-                            <Button variant="outline" asChild>
-                                <a href={`mailto:${selectedMessage?.epost}`}>
-                                    <Mail className="w-4 h-4 mr-2" /> Svar på e-post
-                                </a>
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    if (selectedMessage?.epost) {
+                                        window.location.href = `mailto:${selectedMessage.epost}`;
+                                        navigator.clipboard.writeText(selectedMessage.epost);
+                                        toast({
+                                            title: "E-post kopiert",
+                                            description: "Adressen er kopiert til utklippstavlen.",
+                                        });
+                                    }
+                                }}
+                            >
+                                <Mail className="w-4 h-4 mr-2" /> Svar på e-post
                             </Button>
                             <Button onClick={() => setSelectedMessage(null)}>
                                 Lukk
