@@ -168,10 +168,10 @@ const AdminDashboard = () => {
             legge til kalenderhendelser eller oppdatere tjenestene dine.
           </p>
           <button
-            onClick={() => setActiveTab('calendar')}
+            onClick={() => handleTabChange('messages')}
             className="mt-6 bg-white text-[#1B4965] px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2"
           >
-            Gå til Kalender <ArrowRight className="w-4 h-4" />
+            Gå til Meldinger <ArrowRight className="w-4 h-4" />
           </button>
         </div>
         {/* Decoration */}
