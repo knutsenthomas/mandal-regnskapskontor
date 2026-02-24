@@ -26,20 +26,20 @@ export default async function handler(req, res) {
     });
 
     try {
-        // 1. First, find if the user exists in Auth to get their ID
-        const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
+        // 1. Try to find and delete from Auth first (optional step)
+        try {
+            const { data: { users } } = await supabase.auth.admin.listUsers();
+            const userToDelete = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
 
-        if (listError) throw listError;
-
-        const userToDelete = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
-
-        // 2. If user exists in Auth, delete them completely
-        if (userToDelete) {
-            const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userToDelete.id);
-            if (deleteAuthError) throw deleteAuthError;
+            if (userToDelete) {
+                await supabase.auth.admin.deleteUser(userToDelete.id);
+            }
+        } catch (authError) {
+            console.warn('Auth deletion failed or user already gone:', authError);
+            // We continue anyway to ensure database removal
         }
 
-        // 3. Delete from the admin_users whitelist table
+        // 2. ALWAYS delete from the admin_users whitelist table
         const { error: deleteDbError } = await supabase
             .from('admin_users')
             .delete()
