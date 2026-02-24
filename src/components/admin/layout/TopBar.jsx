@@ -19,28 +19,43 @@ const TopBar = ({ title, onMenuClick, onOpenSearch, onOpenProfile }) => {
 
     React.useEffect(() => {
         const fetchUnread = async () => {
-            const { count, error } = await supabase
-                .from('contact_messages')
-                .select('*', { count: 'exact', head: true })
-                .eq('read', false);
+            try {
+                const { count, error } = await supabase
+                    .from('contact_messages')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('read', false);
 
-            if (!error) setUnreadCount(count || 0);
+                if (error) throw error;
+                setUnreadCount(count || 0);
+            } catch (err) {
+                console.error('Error fetching unread count:', err);
+            }
         };
 
         fetchUnread();
 
-        // Realtime subscription could go here
         const channel = supabase
-            .channel('public:contact_messages')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, () => {
-                fetchUnread();
-            })
-            .subscribe();
+            .channel('contact_messages_changes')
+            .on('postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'contact_messages'
+                },
+                (payload) => {
+                    fetchUnread();
+                }
+            )
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    // console.log('Successfully subscribed to contact_messages changes');
+                }
+            });
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [supabase]);
+    }, []);
 
     return (
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 sticky top-0">
