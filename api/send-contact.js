@@ -46,7 +46,7 @@ export default async function handler(req, res) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Mandal Regnskapskontor <system@mandalregnskapskontor.no>',
+                    from: 'Mandal Regnskapskontor <onboarding@resend.dev>',
                     to: [NOTIFICATION_EMAIL],
                     subject: `Ny melding fra ${navn}`,
                     html: `
