@@ -84,16 +84,16 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="order-1 lg:order-2 text-center"
+            className="order-1 lg:order-2 text-center lg:text-left"
           >
             <h3 className="text-2xl font-semibold text-primary mb-6">{useContent('about.subtitle').content || 'Din lokale partner for økonomisk vekst'}</h3>
             {containsHtml(displayText) ? (
               <div
-                className="prose prose-lg mx-auto text-foreground/80 font-light text-center"
+                className="prose prose-lg mx-auto lg:mx-0 text-foreground/80 font-light text-center lg:text-left"
                 dangerouslySetInnerHTML={{ __html: displayText }}
               />
             ) : (
-              <div className="text-lg text-foreground/80 leading-relaxed font-light whitespace-pre-line text-center">
+              <div className="text-lg text-foreground/80 leading-relaxed font-light whitespace-pre-line text-center lg:text-left">
                 {displayText}
               </div>
             )}
