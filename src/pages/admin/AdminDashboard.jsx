@@ -263,7 +263,16 @@ const AdminDashboard = () => {
         case 'calendar':
           return <CalendarEditor />;
         case 'services':
-          return content ? <ServicesEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+          return content ? (
+            <ServicesEditor
+              content={content}
+              onUpdate={fetchContent}
+              onNavigateToDetails={(id) => {
+                setSelectedServiceId(id.toString());
+                handleTabChange('service-details');
+              }}
+            />
+          ) : <p>Laster...</p>;
         case 'service-details': {
           if (!content) return <p>Laster...</p>;
           // Velg automatisk første tjeneste hvis ingen valgt

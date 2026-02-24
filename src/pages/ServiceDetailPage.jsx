@@ -223,15 +223,14 @@ const ServiceDetailPage = () => {
               className="lg:col-span-5 lg:sticky lg:top-32 self-start"
             >
               <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-blue-900/5 border border-gray-100">
-                <h2 className="text-2xl font-bold text-blue-950 mb-8 flex items-center gap-2">
-                  <span className="w-1.5 h-6 rounded-full inline-block" style={{ backgroundColor: primaryColor }}></span>
-                  Hva vi tilbyr
-                </h2>
-
-                {details?.offerings && details.offerings.length > 0 ? (
-                  <OfferingsList offerings={details.offerings} />
-                ) : (
-                  <p className="text-gray-400 italic text-sm">Ingen spesifikke punkter spesifisert ennå.</p>
+                {details?.offerings && details.offerings.length > 0 && (
+                  <>
+                    <h2 className="text-2xl font-bold text-blue-950 mb-8 flex items-center gap-2">
+                      <span className="w-1.5 h-6 rounded-full inline-block" style={{ backgroundColor: primaryColor }}></span>
+                      Hva vi tilbyr
+                    </h2>
+                    <OfferingsList offerings={details.offerings} />
+                  </>
                 )}
 
                 <div className="mt-12 rounded-2xl p-8 text-white relative overflow-hidden group" style={{ backgroundColor: primaryColor }}>

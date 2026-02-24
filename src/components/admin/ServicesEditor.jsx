@@ -5,20 +5,25 @@ import { useToast } from '@/components/ui/use-toast';
 import { Save, Plus, Trash2, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 import { uploadImageToPublicBucket, getUploadErrorMessage } from '@/lib/storageUpload';
 
-const ServicesEditor = ({ content, onUpdate }) => {
+const ServicesEditor = ({ content, onUpdate, onNavigateToDetails }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [services, setServices] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialServiceCount, setInitialServiceCount] = useState(0);
 
   useEffect(() => {
     if (content?.services_data) {
       const data = Array.isArray(content.services_data) ? content.services_data : [];
       setServices(data);
+      setInitialServiceCount(data.length);
+      setHasUnsavedChanges(false);
     }
   }, [content]);
 
   const handleServiceChange = (index, field, value) => {
+    setHasUnsavedChanges(true);
     setServices(prev => {
       const updatedServices = [...prev];
       if (updatedServices[index]) {
@@ -33,18 +38,20 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
   const addService = () => {
     setServices(prev => [...prev, { title: '', description: '' }]);
+    setHasUnsavedChanges(true);
     toast({
-      title: "Ny tjeneste lagt til",
-      description: "Et nytt kort er opprettet nederst i listen.",
+      title: "Ny tjeneste klargjort",
+      description: "Fyll inn navn og beskrivelse, og klikk 'Lagre endringer' for å opprette.",
       className: "bg-blue-50 border-blue-200"
     });
   };
 
   const removeService = (index) => {
     setServices(prev => prev.filter((_, i) => i !== index));
+    setHasUnsavedChanges(true);
     toast({
-      title: "Tjeneste slettet",
-      description: "Tjenesten er fjernet fra listen.",
+      title: "Tjeneste markert for sletting",
+      description: "Husk å lagre for å fullføre slettingen.",
       variant: "destructive"
     });
   };
@@ -101,13 +108,25 @@ const ServicesEditor = ({ content, onUpdate }) => {
 
       if (error) throw error;
 
+      const isNewService = services.length > initialServiceCount;
+
       toast({
-        title: "Tjenester oppdatert",
-        description: "Endringene er lagret.",
+        title: isNewService ? "Tjeneste opprettet!" : "Tjenester oppdatert",
+        description: isNewService
+          ? "Tjenesten er nå opprettet. Du blir nå videresendt for å fylle inn detaljer."
+          : "Endringene er lagret.",
         className: "bg-green-50 border-green-200"
       });
 
-      if (onUpdate) onUpdate();
+      setHasUnsavedChanges(false);
+      if (onUpdate) await onUpdate();
+
+      // Redirect if a new service was added
+      if (isNewService && onNavigateToDetails) {
+        setTimeout(() => {
+          onNavigateToDetails(services.length - 1);
+        }, 1000);
+      }
     } catch (error) {
       console.error("Save error details:", error);
       toast({
@@ -218,6 +237,19 @@ const ServicesEditor = ({ content, onUpdate }) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1B4965] focus:border-[#1B4965] bg-white resize-none"
                   placeholder="Kort beskrivelse..."
                 />
+              </div>
+
+              {/* Navigation Button */}
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={hasUnsavedChanges}
+                  onClick={() => onNavigateToDetails && onNavigateToDetails(index)}
+                  className="w-full md:w-auto border-[#1B4965] text-[#1B4965] hover:bg-blue-50"
+                >
+                  {hasUnsavedChanges ? 'Lagre først for å redigere detaljer' : 'Rediger utvidet innhold →'}
+                </Button>
               </div>
             </div>
 
