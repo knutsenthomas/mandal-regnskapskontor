@@ -73,11 +73,11 @@ export function ContentProvider({ children }) {
       case 'footer.hoursLabel':
         return 'Åpningstider';
       case 'footer.hours.weeklabel':
-        return 'Mandag - Fredag:';
+        return 'Mandag - Fredag';
       case 'footer.hoursWeek':
-        return dashboardContent.opening_hours || '08:00 - 16:00';
+        return '08:00 - 16:00';
       case 'footer.hours.weekendlabel':
-        return 'Lørdag - Søndag:';
+        return 'Lørdag - Søndag';
       case 'footer.hoursWeekend':
         return 'Stengt';
       case 'footer.copyright':

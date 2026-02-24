@@ -120,13 +120,13 @@ const Footer = () => {
           <div>
             <p className="text-lg font-semibold text-white mb-4">{hoursLabel || 'Åpningstider'}</p>
             <ul className="space-y-2 text-sm">
-              <li className="flex justify-between">
-                <span>{useContent('footer.hours.weeklabel').content || 'Mandag - Fredag:'}</span>
-                <RichText className="text-white text-right" value={hoursWeek || '08:00 - 16:00'} />
+              <li className="flex justify-between items-start gap-4">
+                <span className="shrink-0">{useContent('footer.hours.weeklabel').content || 'Mandag - Fredag'}</span>
+                <RichText className="text-white text-right whitespace-nowrap" value={hoursWeek || '08:00 - 16:00'} />
               </li>
-              <li className="flex justify-between">
-                <span>{useContent('footer.hours.weekendlabel').content || 'Lørdag - Søndag:'}</span>
-                <RichText className="text-white text-right" value={hoursWeekend || 'Stengt'} />
+              <li className="flex justify-between items-start gap-4">
+                <span className="shrink-0">{useContent('footer.hours.weekendlabel').content || 'Lørdag - Søndag'}</span>
+                <RichText className="text-white text-right whitespace-nowrap" value={hoursWeekend || 'Stengt'} />
               </li>
             </ul>
           </div>
