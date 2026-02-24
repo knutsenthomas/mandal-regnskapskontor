@@ -54,7 +54,7 @@ const HeroEditor = ({ content, onUpdate }) => {
       if (!file) return;
       const { publicUrl } = await uploadImageToPublicBucket({
         file,
-        bucket: 'images',
+        bucket: 'Images',
         folder: 'hero',
         prefix: 'hero',
         maxBytes: 8 * 1024 * 1024,

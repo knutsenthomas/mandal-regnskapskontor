@@ -40,7 +40,7 @@ export const getUploadErrorMessage = (error, fallback = 'Opplasting feilet.') =>
 
 export async function uploadImageToPublicBucket({
   file,
-  bucket = 'images',
+  bucket = 'Images',
   folder = '',
   prefix = 'image',
   allowedTypes = null,
@@ -77,6 +77,12 @@ export async function uploadImageToPublicBucket({
     });
 
   if (uploadError) {
+    console.error('Supabase Storage Upload Error:', {
+      error: uploadError,
+      bucket,
+      filePath,
+      mimeType,
+    });
     throw uploadError;
   }
 

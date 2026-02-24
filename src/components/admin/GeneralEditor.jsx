@@ -59,7 +59,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
             if (!file) return;
             const { publicUrl } = await uploadImageToPublicBucket({
                 file,
-                bucket: 'images',
+                bucket: 'Images',
                 folder: 'branding',
                 prefix: 'logo',
                 allowedTypes: LOGO_ALLOWED_TYPES,
@@ -93,7 +93,7 @@ const GeneralEditor = ({ content, onUpdate }) => {
             if (!file) return;
             const { publicUrl } = await uploadImageToPublicBucket({
                 file,
-                bucket: 'images',
+                bucket: 'Images',
                 folder: 'branding',
                 prefix: 'favicon',
                 allowedTypes: FAVICON_ALLOWED_TYPES,
@@ -214,6 +214,17 @@ const GeneralEditor = ({ content, onUpdate }) => {
                             </label>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">Anbefalt: PNG med gjennomsiktig bakgrunn</p>
+
+                        <div className="mt-6 w-full max-w-md">
+                            <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">Eller lim inn URL / Base64 direkte</label>
+                            <input
+                                type="text"
+                                value={logoUrl}
+                                onChange={(e) => setLogoUrl(e.target.value)}
+                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="https://eksempel.no/logo.png"
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -277,6 +288,17 @@ const GeneralEditor = ({ content, onUpdate }) => {
                                 )}
                                 {uploading ? 'Laster opp...' : 'Last opp favicon'}
                             </label>
+                        </div>
+
+                        <div className="mt-4 w-full max-w-md">
+                            <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">Eller lim inn URL direkte</label>
+                            <input
+                                type="text"
+                                value={faviconUrl}
+                                onChange={(e) => setFaviconUrl(e.target.value)}
+                                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="https://eksempel.no/favicon.ico"
+                            />
                         </div>
                     </div>
                 </CardContent>
