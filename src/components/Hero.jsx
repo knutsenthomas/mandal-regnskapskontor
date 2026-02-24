@@ -133,8 +133,8 @@ const Hero = () => {
         className={`
           relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
           flex flex-col items-center justify-center h-full text-center
-          pb-20 landscape:pb-8
-          pt-24
+          pb-20 landscape:pb-12
+          pt-24 landscape:pt-32
           lg:pb-0 lg:pt-20
         `}
       >
@@ -142,11 +142,11 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-6 landscape:space-y-3"
+          className="space-y-6 landscape:space-y-2"
         >
           {resolvedHeroTitle && (
             <h1
-              className="text-4xl sm:text-6xl landscape:text-3xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
+              className="text-4xl sm:text-6xl landscape:text-3xl sm:landscape:text-4xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
               style={{ textWrap: 'balance' }}
             >
               {resolvedHeroTitle}
@@ -156,14 +156,14 @@ const Hero = () => {
           {heroLines.map((line, idx) => (
             <p
               key={idx}
-              className="text-xl sm:text-2xl landscape:text-lg text-white/85 max-w-3xl mx-auto font-light"
+              className="text-xl sm:text-2xl landscape:text-base sm:landscape:text-lg text-white/85 max-w-3xl mx-auto font-light"
               style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
             >
               {line}
             </p>
           ))}
 
-          <div className="pt-10 landscape:pt-4 flex flex-col items-center gap-6 landscape:gap-3">
+          <div className="pt-10 landscape:pt-4 flex flex-col items-center gap-6 landscape:gap-2">
             {heroButton && (
               <Button
                 onClick={handleButtonClick}
