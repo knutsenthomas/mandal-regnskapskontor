@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Calendar, Layers, Image, Info, Mail, Settings, LogOut, X, Home, Palette } from 'lucide-react';
+import { LayoutDashboard, Calendar, Layers, Image, Info, Mail, Settings, LogOut, X, Home, Palette, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSite } from '@/contexts/SiteContext';
@@ -19,6 +19,7 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
         { id: 'contact-settings', label: 'Kontakt Info', icon: Settings },
         { id: 'footer', label: 'Footer / Innstillinger', icon: Settings },
         { id: 'theme', label: 'Design', icon: Palette },
+        { id: 'administration', label: 'Administrasjon', icon: ShieldCheck },
     ];
 
     return (
