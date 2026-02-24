@@ -227,10 +227,10 @@ const Navigation = () => {
             }}
           >
             {/* Topp-bar meny */}
-            <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">
+            <div className="flex items-center justify-between px-2 sm:px-6 lg:px-8 h-20 flex-shrink-0 w-full">
               <div
                 onClick={handleLogoClick}
-                className="cursor-pointer min-w-0 flex-1 max-w-[calc(100%-3.5rem)] sm:max-w-[320px] lg:max-w-none lg:w-[430px] xl:w-[500px]"
+                className="cursor-pointer min-w-0 flex-1 max-w-[calc(100%-3.5rem)] lg:max-w-none lg:flex-none lg:w-[430px] xl:w-[500px]"
               >
                 <Logo color="light" isMobileMenu={true} />
               </div>
