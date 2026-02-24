@@ -134,8 +134,8 @@ const Hero = () => {
           relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
           flex flex-col items-center justify-center h-full text-center
           pb-20
-          pt-20
-          landscape:pt-32
+          pt-24
+          landscape:pt-40
           lg:pb-0 lg:pt-20
         `}
       >
@@ -143,11 +143,11 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-6"
+          className="space-y-6 landscape:space-y-4"
         >
           {resolvedHeroTitle && (
             <h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none landscape:text-3xl landscape:leading-tight"
               style={{ textWrap: 'balance' }}
             >
               {resolvedHeroTitle}
