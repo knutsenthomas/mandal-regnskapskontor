@@ -3,9 +3,9 @@ import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Trash2, Plus, Loader2, ShieldCheck, Mail, AlertCircle } from 'lucide-react';
+import { Trash2, Plus, Loader2, ShieldCheck, Mail, AlertCircle, Pencil, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label'; // Added Label import
+import { Label } from '@/components/ui/label';
 
 const UserManagement = () => {
     const [admins, setAdmins] = useState([]);
@@ -14,6 +14,13 @@ const UserManagement = () => {
     const [newEmail, setNewEmail] = useState('');
     const [newName, setNewName] = useState('');
     const [newPhone, setNewPhone] = useState('');
+
+    // Edit state
+    const [editingId, setEditingId] = useState(null);
+    const [editName, setEditName] = useState('');
+    const [editPhone, setEditPhone] = useState('');
+    const [updating, setUpdating] = useState(false);
+
     const { toast } = useToast();
 
     useEffect(() => {
@@ -54,7 +61,6 @@ const UserManagement = () => {
 
         setAdding(true);
         try {
-            // Kall API-et vårt i stedet for å skrive direkte til databasen
             const response = await fetch('/api/invite-admin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -90,6 +96,36 @@ const UserManagement = () => {
         } finally {
             setAdding(false);
         }
+    };
+
+    const handleUpdateAdmin = async (email) => {
+        setUpdating(true);
+        try {
+            const { error } = await supabase
+                .from('admin_users')
+                .update({
+                    full_name: editName.trim(),
+                    phone: editPhone.trim()
+                })
+                .eq('email', email);
+
+            if (error) throw error;
+
+            toast({ title: 'Oppdatert', description: 'Administrator-info er oppdatert.' });
+            setEditingId(null);
+            fetchAdmins();
+        } catch (error) {
+            console.error('Error updating admin:', error);
+            toast({ title: 'Feil', description: 'Kunne ikke oppdatere informasjonen.', variant: 'destructive' });
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const startEditing = (admin) => {
+        setEditingId(admin.email);
+        setEditName(admin.full_name || '');
+        setEditPhone(admin.phone || '');
     };
 
     const handleDeleteAdmin = async (email) => {
@@ -196,39 +232,90 @@ const UserManagement = () => {
                         ) : (
                             <div className="divide-y divide-gray-100 border rounded-lg overflow-hidden bg-white shadow-sm">
                                 {admins.map((admin) => (
-                                    <div key={admin.id || admin.email} className="flex flex-col md:flex-row md:items-center justify-between p-4 hover:bg-gray-50 transition-colors gap-4">
-                                        <div className="flex items-center gap-4 flex-1">
-                                            <div className="w-10 h-10 rounded-full bg-[#1B4965] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-inner">
-                                                {(admin.full_name || admin.email)[0].toUpperCase()}
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <div className="font-semibold text-gray-900 truncate">
-                                                    {admin.full_name || 'Navn ikke oppgitt'}
+                                    <div key={admin.id || admin.email} className="p-4 hover:bg-gray-50 transition-colors">
+                                        {editingId === admin.email ? (
+                                            <div className="flex flex-col md:flex-row gap-4 items-center">
+                                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                                    <div className="space-y-1">
+                                                        <Label className="text-[10px] uppercase text-gray-400">Navn</Label>
+                                                        <Input
+                                                            value={editName}
+                                                            onChange={(e) => setEditName(e.target.value)}
+                                                            className="h-9"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <Label className="text-[10px] uppercase text-gray-400">Telefon</Label>
+                                                        <Input
+                                                            value={editPhone}
+                                                            onChange={(e) => setEditPhone(e.target.value)}
+                                                            className="h-9"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-sm text-gray-500">
-                                                    <span className="flex items-center gap-1.5">
-                                                        <Mail className="w-3.5 h-3.5 opacity-60" />
-                                                        {admin.email}
-                                                    </span>
-                                                    {admin.phone && (
-                                                        <span className="flex items-center gap-1.5">
-                                                            <div className="w-1 h-1 bg-gray-300 rounded-full hidden md:block"></div>
-                                                            Tlf: {admin.phone}
-                                                        </span>
-                                                    )}
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() => handleUpdateAdmin(admin.email)}
+                                                        disabled={updating}
+                                                        className="bg-green-600 hover:bg-green-700"
+                                                    >
+                                                        {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => setEditingId(null)}
+                                                        className="border-gray-200"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </Button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="flex items-center justify-end">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDeleteAdmin(admin.email)}
-                                                className="text-red-400 hover:text-red-600 hover:bg-red-50"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
+                                        ) : (
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <div className="w-10 h-10 rounded-full bg-[#1B4965] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-inner">
+                                                        {(admin.full_name || admin.email)[0].toUpperCase()}
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="font-semibold text-gray-900 truncate flex items-center gap-2">
+                                                            {admin.full_name || 'Navn ikke oppgitt'}
+                                                        </div>
+                                                        <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-sm text-gray-500">
+                                                            <span className="flex items-center gap-1.5">
+                                                                <Mail className="w-3.5 h-3.5 opacity-60" />
+                                                                {admin.email}
+                                                            </span>
+                                                            {admin.phone && (
+                                                                <span className="flex items-center gap-1.5">
+                                                                    <div className="w-1 h-1 bg-gray-300 rounded-full hidden md:block"></div>
+                                                                    Tlf: {admin.phone}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => startEditing(admin)}
+                                                        className="text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                                                    >
+                                                        <Pencil className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleDeleteAdmin(admin.email)}
+                                                        className="text-red-400 hover:text-red-600 hover:bg-red-50"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
