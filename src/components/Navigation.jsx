@@ -159,7 +159,7 @@ const Navigation = () => {
               onClick={handleLogoClick}
               className={cn(
                 "cursor-pointer flex items-center h-full min-w-0 flex-1 max-w-[calc(100%-3.5rem)] transition-opacity duration-200",
-                "sm:max-w-[320px] md:max-w-[500px] lg:max-w-none lg:flex-none lg:w-[430px] xl:w-[500px]",
+                "max-w-none lg:flex-none lg:w-[430px] xl:w-[500px]",
                 isOpen ? 'opacity-0' : 'opacity-100'
               )}
             >
