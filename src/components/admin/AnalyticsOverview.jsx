@@ -13,6 +13,7 @@ const emptyState = {
   landingPages: [],
   devices: [],
   topPages: [],
+  browsers: [],
   updatedAt: null,
 };
 
@@ -60,6 +61,7 @@ const AnalyticsOverview = () => {
           landingPages: Array.isArray(json.landingPages) ? json.landingPages : [],
           devices: Array.isArray(json.devices) ? json.devices : [],
           topPages: Array.isArray(json.topPages) ? json.topPages : [],
+          browsers: Array.isArray(json.browsers) ? json.browsers : [],
           updatedAt: json.updatedAt || null,
         });
         setError('');
@@ -101,6 +103,10 @@ const AnalyticsOverview = () => {
   const devices = stats.devices.length > 0
     ? stats.devices
     : [{ category: 'Ingen data ennå', users: 0 }];
+
+  const browsers = stats.browsers.length > 0
+    ? stats.browsers
+    : [{ browser: 'Ingen data ennå', users: 0 }];
 
   const realtimeLabel = stats.activeUsersRealtime === null
     ? 'Aktive besøkende (realtime utilgjengelig)'
@@ -153,7 +159,7 @@ const AnalyticsOverview = () => {
           loading={loading}
         />
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 col-span-1 md:col-span-2 flex flex-col">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <Activity className="w-4 h-4 text-gray-400" />
             Hvor kommer de fra? (7 dager)
@@ -203,6 +209,18 @@ const AnalyticsOverview = () => {
               <li key={`${d.category}-${i}`} className="flex justify-between items-center text-sm gap-3">
                 <span className="text-gray-600 capitalize">{d.category}</span>
                 <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{d.users}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+          <div className="font-semibold text-gray-800 mb-4">Nettlesere (7 dager)</div>
+          <ul className="space-y-3">
+            {browsers.map((b, i) => (
+              <li key={`${b.browser}-${i}`} className="flex justify-between items-center text-sm gap-3">
+                <span className="text-gray-600 truncate">{b.browser}</span>
+                <span className="font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded shrink-0">{b.users}</span>
               </li>
             ))}
           </ul>

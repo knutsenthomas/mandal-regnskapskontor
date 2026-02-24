@@ -120,6 +120,7 @@ export default async function handler(req, res) {
       landingPagesReport,
       deviceReport,
       pagesReport,
+      browserReport,
       realtimeReport
     ] = await Promise.all([
       googlePost({
@@ -187,6 +188,17 @@ export default async function handler(req, res) {
         },
       }),
       googlePost({
+        path: `/properties/${propertyId}:runReport`,
+        accessToken,
+        body: {
+          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'browser' }],
+          metrics: [{ name: 'activeUsers' }],
+          orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+          limit: 5,
+        },
+      }),
+      googlePost({
         path: `/properties/${propertyId}:runRealtimeReport`,
         accessToken,
         body: {
@@ -222,6 +234,11 @@ export default async function handler(req, res) {
       views: row.metric,
     }));
 
+    const browsers = mapDimensionMetricRows(browserReport).map((row) => ({
+      browser: row.dimension,
+      users: row.metric,
+    }));
+
     const payload = {
       activeUsersRealtime: realtimeReport ? metricValue(realtimeReport, 0, 0) : null,
       activeUsers7d: metricValue(summaryReport, 0, 0),
@@ -232,6 +249,7 @@ export default async function handler(req, res) {
       landingPages,
       devices,
       topPages,
+      browsers,
       updatedAt: new Date().toISOString(),
     };
 
