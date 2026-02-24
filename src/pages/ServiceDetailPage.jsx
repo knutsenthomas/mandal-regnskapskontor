@@ -11,6 +11,7 @@ import ProcessSteps from '@/components/service-detail/ProcessSteps';
 import PricingPackages from '@/components/service-detail/PricingPackages';
 import FAQSection from '@/components/service-detail/FAQSection';
 import OfferingsList from '@/components/service-detail/OfferingsList';
+import ContactForm from '@/components/ContactForm';
 import CustomPlanCTAEditor from '@/components/admin/CustomPlanCTAEditor';
 import CustomPlanEditor from '@/components/admin/CustomPlanEditor';
 import { useContent } from '@/contexts/ContentContext';
@@ -161,13 +162,13 @@ const ServiceDetailPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-10"
           >
-              <Button
-                onClick={handleBack}
-                variant="ghost"
-                className="text-gray-500 pl-0 group font-medium"
-                onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
-              >
+            <Button
+              onClick={handleBack}
+              variant="ghost"
+              className="text-gray-500 pl-0 group font-medium"
+              onMouseEnter={(e) => { e.currentTarget.style.color = primaryColor; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+            >
               <ArrowLeft className="mr-2 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
               Tilbake til oversikten
             </Button>
@@ -205,7 +206,7 @@ const ServiceDetailPage = () => {
               <div className="flex flex-wrap gap-4">
                 <Button
                   size="lg"
-                  onClick={() => navigate('/?section=kontakt')}
+                  onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
                   className="px-8 h-14 rounded-xl shadow-lg transition-transform hover:scale-[1.02] hover:brightness-90"
                   style={{ backgroundColor: primaryColor, color: primaryForeground }}
                 >
@@ -326,6 +327,11 @@ const ServiceDetailPage = () => {
           </div>
         </section>
       )}
+
+      {/* CONTACT SECTION */}
+      <div id="kontakt" className="scroll-mt-16">
+        <ContactForm />
+      </div>
 
       <Footer />
     </div >
