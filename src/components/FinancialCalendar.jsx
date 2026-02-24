@@ -222,7 +222,7 @@ const FinancialCalendar = () => {
                         <Calendar className="w-5 h-5 mr-2" style={{ color: primaryColor }} />
                         <span className="font-medium" style={{ color: primaryColor }}>Viktige datoer</span>
                     </div>
-                    <h2 className="text-4xl font-bold text-foreground mb-4">Økonomisk Kalender</h2>
+                    <h2 className="text-4xl font-bold text-foreground mb-4">Økonomisk kalender</h2>
                     <p className="text-xl text-muted-foreground">
                         Hold oversikt over de viktigste fristene. Vi henter automatisk inn offentlige frister slik at du alltid er oppdatert.
                     </p>
