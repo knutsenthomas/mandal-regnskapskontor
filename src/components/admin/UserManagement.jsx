@@ -54,17 +54,28 @@ const UserManagement = () => {
 
         setAdding(true);
         try {
-            const { error } = await supabase
-                .from('admin_users')
-                .insert([{
+            // Kall API-et vårt i stedet for å skrive direkte til databasen
+            const response = await fetch('/api/invite-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     email,
                     full_name: newName.trim(),
                     phone: newPhone.trim()
-                }]);
+                })
+            });
 
-            if (error) throw error;
+            const result = await response.json();
 
-            toast({ title: 'Suksess', description: `${email} er lagt til som administrator.` });
+            if (!response.ok) {
+                throw new Error(result.error || 'Kunne ikke invitere bruker.');
+            }
+
+            toast({
+                title: 'Suksess',
+                description: result.message || 'Brukeren er invitert og lagt til i listen.'
+            });
+
             setNewEmail('');
             setNewName('');
             setNewPhone('');
@@ -73,7 +84,7 @@ const UserManagement = () => {
             console.error('Error adding admin:', error);
             toast({
                 title: 'Kunne ikke legge til',
-                description: 'Sjekk at du har kjørt SQL-oppdateringen for de nye kolonnene.',
+                description: error.message,
                 variant: 'destructive'
             });
         } finally {
