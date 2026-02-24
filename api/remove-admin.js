@@ -49,9 +49,7 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
             success: true,
-            message: userToDelete
-                ? 'Brukeren er slettet fra både listen og påloggingssystemet.'
-                : 'Brukeren ble fjernet fra listen (fantes ikke i påloggingssystemet).'
+            message: 'Brukeren er fjernet fra systemet.'
         });
 
     } catch (error) {
