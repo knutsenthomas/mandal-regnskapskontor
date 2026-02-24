@@ -35,7 +35,7 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
                         <Layers className="w-5 h-5 text-white" />
                     </div>
                     <h1 className="text-xl font-bold tracking-tight truncate text-white">
-                        Mandal <span className="font-light opacity-70">Admin</span>
+                        Dashboard
                     </h1>
                 </div>
                 {/* Close button for mobile */}
