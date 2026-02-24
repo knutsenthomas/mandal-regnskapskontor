@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Phone, Mail, MapPin } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
+import { cn } from '@/lib/utils';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,7 @@ const Navigation = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 15);
     };
+    handleScroll(); // Check immediately on mount
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -39,7 +41,11 @@ const Navigation = () => {
 
   const handleLogoClick = () => {
     setIsOpen(false);
-    window.location.href = '/';
+    if (isHome) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
   };
 
   const handleLinkClick = (id) => {
@@ -67,27 +73,13 @@ const Navigation = () => {
 
   return (
     <>
-      {/* --- GLOBAL CSS FIX ---
-         Dette hindrer nettsiden i å skli sideveis på mobil.
-         Vi legger det direkte her for å være sikre på at det kjører.
-      */}
-      <style>{`
-        html, body {
-          overflow-x: hidden;
-          width: 100%;
-          position: relative;
-        }
-      `}</style>
-
       {/* --- HEADER --- */}
-      <header className="fixed top-0 left-0 w-full h-20 z-50">
-
-        {/* Bakgrunns-lag (Fade effekt) */}
-        <div
-          className={`absolute inset-0 bg-white transition-opacity duration-300 ease-in-out ${isTransparent ? 'opacity-0' : 'opacity-100 shadow-sm'
-            }`}
-        />
-
+      <header
+        className={cn(
+          "fixed top-0 left-0 w-full h-20 z-50 transition-all duration-300",
+          isTransparent ? "bg-transparent" : "bg-white shadow-sm"
+        )}
+      >
         <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-full">
 

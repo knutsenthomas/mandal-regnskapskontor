@@ -50,7 +50,8 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full flex items-center justify-center overflow-hidden"
+      id="hero-section"
+      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0A192F]"
       style={{ minHeight: '100vh', height: '100dvh' }}
     >
       <div className="absolute inset-0 z-0">
