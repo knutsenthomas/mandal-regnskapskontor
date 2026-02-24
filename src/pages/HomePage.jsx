@@ -28,32 +28,29 @@ const HomePage = () => {
 
     const targetId = decodeURIComponent(rawHash);
     let cancelled = false;
-    let attempts = 0;
-    let timeoutId = null;
+    const timeoutIds = [];
 
     const scrollToTarget = () => {
       if (cancelled) return;
 
       const element = document.getElementById(targetId);
-      if (element) {
-        const headerOffset = 90;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        return;
-      }
+      if (!element) return;
 
-      if (attempts >= 20) return;
-
-      attempts += 1;
-      timeoutId = window.setTimeout(scrollToTarget, 100);
+      const headerOffset = 90;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     };
 
-    scrollToTarget();
+    // Re-apply hash scroll a few times to survive layout shifts (e.g. async-loaded calendar).
+    [0, 150, 400, 900, 1600].forEach((delay) => {
+      const id = window.setTimeout(scrollToTarget, delay);
+      timeoutIds.push(id);
+    });
 
     return () => {
       cancelled = true;
-      if (timeoutId) window.clearTimeout(timeoutId);
+      timeoutIds.forEach((id) => window.clearTimeout(id));
     };
   }, [isLoading, location.hash]);
 
