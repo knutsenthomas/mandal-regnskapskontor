@@ -60,7 +60,7 @@ export default async function handler(req, res) {
                                 .header { background-color: #ffffff; padding: 30px; text-align: center; border-bottom: 2px solid #f0f4f8; }
                                 .content { padding: 40px; color: #102a43; }
                                 .footer { padding: 20px; text-align: center; color: #627d98; font-size: 11px; }
-                                .logo-img { width: 140px; height: auto; display: block; margin: 0 auto; }
+                                .logo-img { width: 80px; height: auto; display: block; margin: 0 auto; }
                                 h1 { color: #1B4965; font-size: 22px; margin: 20px 0 0 0; font-weight: bold; text-align: center; }
                                 .info-box { background-color: #f8fafc; border-radius: 8px; padding: 25px; margin: 25px 0; border: 1px solid #e2e8f0; }
                                 .info-row { margin-bottom: 15px; border-bottom: 1px solid #edf2f7; padding-bottom: 10px; }
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
                             <div class="wrapper">
                                 <div class="main">
                                     <div class="header">
-                                        <img src="https://ovbqtaxwwxflvxdjkeih.supabase.co/storage/v1/object/public/public-assets/logo.png" alt="Mandal Regnskapskontor" class="logo-img">
+                                        <img src="https://ovbqtaxwwxflvxdjkeih.supabase.co/storage/v1/object/public/public-assets/logo.png" alt="Mandal Regnskapskontor" class="logo-img" style="width: 80px;">
                                         <h1>Ny melding fra nettsiden</h1>
                                     </div>
                                     <div class="content">
