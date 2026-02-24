@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     }
 
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const NOTIFICATION_EMAIL = 'jan@mandalregnskapskontor.no';
+    const NOTIFICATION_EMAIL = 'knutsenthomas@gmail.com';
 
     // 1. Initialize Supabase with Service Role Key to bypass RLS if needed
     // (Though contact_messages table usually allows public insert)
