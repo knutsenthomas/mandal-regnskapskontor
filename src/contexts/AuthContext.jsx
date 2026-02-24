@@ -11,16 +11,28 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Listen for auth changes - this fires immediately with initial session
+    // Check initial session
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          await verifyAdminStatus(session.user);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Initial auth check failed:", error);
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-
-
       if (session?.user) {
-        // If we have a user, verify admin status
-        // This handles both initial load and subsequent sign-ins (including magic link)
         await verifyAdminStatus(session.user);
       } else {
-        // No user session
         setUser(null);
         setIsAdmin(false);
         setLoading(false);

@@ -100,21 +100,27 @@ const AdminDashboard = () => {
     try {
       setFetchError(null);
 
+      // Set a safety timeout - if DB is slow, we still want to show the dashboard
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Tilkoblingen til databasen tok for lang tid.")), 10000)
+      );
+
       // Parallel Fetch: Content & Settings
-      const [contentResult, settingsResult] = await Promise.all([
+      const fetchPromise = Promise.all([
         supabase.from('content').select('*').single(),
         supabase.from('site_settings').select('value').eq('key', 'google_analytics_id').single()
       ]);
 
+      const [contentResult, settingsResult] = await Promise.race([fetchPromise, timeoutPromise]);
+
       let { data: contentData, error: contentError } = contentResult;
-      const { data: settingsData } = settingsResult; // Error here is fine if not found
+      const { data: settingsData } = settingsResult;
 
       if (contentError) {
         if (contentError.code === 'PGRST116') {
-          // No content found (row is missing). Let's create it!
           const { data: newContent, error: createError } = await supabase
             .from('content')
-            .insert([{}]) // Insert empty row, let DB handle defaults/ID
+            .insert([{}])
             .select()
             .single();
 
@@ -122,7 +128,7 @@ const AdminDashboard = () => {
             console.error("Failed to create default content:", createError);
             setFetchError("Kunne ikke opprette innholds-rad i databasen.");
           } else {
-            contentData = newContent; // Use the newly created row
+            contentData = newContent;
           }
         } else {
           console.warn("Supabase fetch error:", contentError);
@@ -135,7 +141,7 @@ const AdminDashboard = () => {
 
     } catch (error) {
       console.error("Critical fetch error:", error);
-      setFetchError(error.message);
+      setFetchError(error.message || "En ukjent feil oppstod ved henting av data.");
     } finally {
       setLoading(false);
     }

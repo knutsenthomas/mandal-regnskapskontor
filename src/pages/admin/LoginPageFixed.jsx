@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/customSupabaseClient';
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,16 @@ const LoginPage = () => {
 
   const { signIn, signInWithMagicLink, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const from = location.state?.from?.pathname + (location.state?.from?.search || '') || '/admin/dashboard';
 
   React.useEffect(() => {
     if (user) {
-      navigate('/admin/dashboard');
+      navigate(from, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, from]);
 
   const validateForm = (type) => {
     if (!email) {
@@ -58,7 +61,7 @@ const LoginPage = () => {
         description: "Du blir nå videresendt til kontrollpanelet.",
         className: "bg-green-50 border-green-200 text-green-800"
       });
-      navigate('/admin/dashboard');
+      navigate(from, { replace: true });
     } catch (error) {
       handleLoginError(error);
     } finally {
