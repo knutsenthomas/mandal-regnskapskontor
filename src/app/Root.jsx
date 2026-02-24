@@ -37,14 +37,14 @@ function App() {
           .from('site_settings')
           .select('value')
           .eq('key', 'google_analytics_id')
-          .single();
+          .maybeSingle();
 
-        if (data?.value) {
-          const measurementId = String(data.value).trim();
-          if (!measurementId) return;
+        const dbId = data?.value ? String(data.value).trim() : null;
+        const measurementId = dbId || 'G-0HWDM4R4TY';
 
+        if (measurementId) {
           ReactGA.initialize(measurementId);
-          // RouteTracker can fire before async GA init completes, so send an initial pageview here as well.
+          // RouteTracker kan fire før async GA init er ferdig, så send en initial pageview her også.
           ReactGA.send({
             hitType: "pageview",
             page: window.location.pathname + window.location.search,
