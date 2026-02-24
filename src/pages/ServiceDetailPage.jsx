@@ -38,29 +38,11 @@ const ServiceDetailPage = () => {
   const primaryForeground = 'hsl(var(--primary-foreground))';
 
   const handleBack = () => {
-    navigate('/');
-    setTimeout(() => {
-      const section = document.getElementById('tjenester');
-      if (section) {
-        const headerOffset = 85;
-        const elementPosition = section.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-      }
-    }, 100);
+    navigate('/#tjenester');
   };
 
   const handleContactClick = () => {
-    navigate('/');
-    setTimeout(() => {
-      const section = document.getElementById('kontakt');
-      if (section) {
-        const headerOffset = 85;
-        const elementPosition = section.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-      }
-    }, 100);
+    navigate('/#kontakt');
   };
 
   const serviceConfig = [

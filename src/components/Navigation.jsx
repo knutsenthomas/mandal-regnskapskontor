@@ -101,8 +101,7 @@ const Navigation = () => {
   const handleLinkClick = (id) => {
     setIsOpen(false);
     if (!isHome) {
-      navigate('/');
-      setTimeout(() => scrollToSection(id), 100);
+      navigate(`/#${id}`);
     } else {
       scrollToSection(id);
     }

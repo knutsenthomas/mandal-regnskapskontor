@@ -20,19 +20,12 @@ const Footer = () => {
   const isHome = location.pathname === '/';
 
   const scrollToSection = (id) => {
+    const targetId = id === 'home' ? 'hjem' : id;
+
     if (!isHome) {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          const headerOffset = 65;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
-      }, 100);
+      navigate(`/#${targetId}`);
     } else {
-      const element = document.getElementById(id);
+      const element = document.getElementById(targetId);
       if (element) {
         const headerOffset = 65;
         const elementPosition = element.getBoundingClientRect().top;

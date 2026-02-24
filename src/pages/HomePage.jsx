@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { motion } from 'framer-motion';
 import Hero from '@/components/Hero';
@@ -14,9 +15,47 @@ import { useContent } from '@/contexts/ContentContext';
 import { Loader2 } from 'lucide-react';
 
 const HomePage = () => {
+  const location = useLocation();
   const { loading: siteLoading } = useSite();
   const { loading: contentLoading } = useContent();
   const isLoading = siteLoading || contentLoading;
+
+  useEffect(() => {
+    if (isLoading) return undefined;
+
+    const rawHash = location.hash?.replace(/^#/, '');
+    if (!rawHash) return undefined;
+
+    const targetId = decodeURIComponent(rawHash);
+    let cancelled = false;
+    let attempts = 0;
+    let timeoutId = null;
+
+    const scrollToTarget = () => {
+      if (cancelled) return;
+
+      const element = document.getElementById(targetId);
+      if (element) {
+        const headerOffset = 90;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        return;
+      }
+
+      if (attempts >= 20) return;
+
+      attempts += 1;
+      timeoutId = window.setTimeout(scrollToTarget, 100);
+    };
+
+    scrollToTarget();
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [isLoading, location.hash]);
 
   if (isLoading) {
     return (
