@@ -41,7 +41,7 @@ const Logo = ({
 					initial={false}
 					animate={{ color: isDarkText ? 'hsl(var(--primary))' : '#ffffff' }}
 					transition={{ duration: 0.3 }}
-					className={`font-bold leading-tight tracking-wide uppercase truncate lg:overflow-visible lg:text-clip ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
+					className={`font-bold leading-tight tracking-wide uppercase truncate md:overflow-visible md:text-clip ${isMobileMenu ? 'text-sm sm:text-base' : 'text-sm sm:text-lg md:text-xl'}`}
 				>
 					{logoText || "MANDAL REGNSKAPSKONTOR"}
 				</motion.span>
