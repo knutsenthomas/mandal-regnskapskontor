@@ -14,6 +14,28 @@ export const AuthProvider = ({ children }) => {
     typeof window !== 'undefined' && window.location.pathname === '/set-password'
   );
 
+  const normalizeEmail = (value) => String(value || '').trim().toLowerCase();
+
+  const hasAdminAccessForEmail = async (email) => {
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail) {
+      return { isAdmin: false, error: null };
+    }
+
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('email');
+
+    if (error) {
+      return { isAdmin: false, error };
+    }
+
+    const isAdmin = Array.isArray(data)
+      && data.some((row) => normalizeEmail(row?.email) === normalizedEmail);
+
+    return { isAdmin, error: null };
+  };
+
   useEffect(() => {
     // Check initial session
     const initAuth = async () => {
@@ -60,30 +82,26 @@ export const AuthProvider = ({ children }) => {
 
   const verifyAdminStatus = async (currentUser) => {
     try {
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', currentUser.email)
-        .single();
+      const { isAdmin: allowed, error } = await hasAdminAccessForEmail(currentUser?.email);
 
       if (error) {
         console.warn("Admin verification failed or user not found in admin_users:", error.message);
-        // If not found in admin_users, force sign out
-        if (error.code === 'PGRST116') { // JSON error for no rows returned
-          console.error("User is not an authorized admin. Signing out.");
-          await signOut();
-          setAuthError("Du har ikke tilgang til admin-panelet.");
-          return;
-        }
+        setUser(currentUser);
+        setIsAdmin(false);
+        setAuthError("Kunne ikke verifisere admin-tilgang. Prøv igjen.");
+        return;
       }
 
-      if (data) {
+      if (allowed) {
         setUser(currentUser);
         setIsAdmin(true);
         setAuthError(null);
       } else {
-        setUser(currentUser);
+        console.error("User is not an authorized admin. Signing out.");
+        await signOut();
+        setUser(null);
         setIsAdmin(false);
+        setAuthError("Du har ikke tilgang til admin-panelet.");
       }
     } catch (err) {
       console.error("Unexpected error verifying admin:", err);
@@ -111,14 +129,17 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (data.user) {
-        // Explicitly check admin table after login success
-        const { data: adminData, error: adminError } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('email', email)
-          .single();
+        // Explicitly check admin table after login success (normalize email to avoid case/space mismatch)
+        const loginEmail = data.user.email || email;
+        const { isAdmin: allowed, error: adminError } = await hasAdminAccessForEmail(loginEmail);
 
-        if (adminError || !adminData) {
+        if (adminError) {
+          console.error("Post-login admin check failed:", adminError);
+          await supabase.auth.signOut();
+          throw new Error("Kunne ikke verifisere admin-tilgang. Prøv igjen.");
+        }
+
+        if (!allowed) {
           console.error("Post-login admin check failed. User not in admin_users table.");
           await supabase.auth.signOut();
           throw new Error("Bruker har ikke admin-rettigheter.");
