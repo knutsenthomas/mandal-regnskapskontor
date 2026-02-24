@@ -40,7 +40,15 @@ function App() {
           .single();
 
         if (data?.value) {
-          ReactGA.initialize(data.value);
+          const measurementId = String(data.value).trim();
+          if (!measurementId) return;
+
+          ReactGA.initialize(measurementId);
+          // RouteTracker can fire before async GA init completes, so send an initial pageview here as well.
+          ReactGA.send({
+            hitType: "pageview",
+            page: window.location.pathname + window.location.search,
+          });
         }
       } catch (error) {
         // Silent fail for analytics
