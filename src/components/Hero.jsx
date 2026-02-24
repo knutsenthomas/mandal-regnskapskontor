@@ -4,6 +4,39 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
+const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const HSL_TOKEN_REGEX = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
+
+const hexToRgb = (hex) => {
+  if (!HEX_COLOR_REGEX.test(hex)) return null;
+  const normalized = hex.length === 4
+    ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`
+    : hex;
+  const value = normalized.slice(1);
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return { r, g, b };
+};
+
+const toOverlayColor = (value, alpha, fallback) => {
+  if (typeof value !== 'string') return fallback;
+  const raw = value.trim();
+  if (!raw) return fallback;
+
+  if (HEX_COLOR_REGEX.test(raw)) {
+    const rgb = hexToRgb(raw);
+    if (!rgb) return fallback;
+    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+  }
+
+  if (HSL_TOKEN_REGEX.test(raw)) {
+    return `hsl(${raw} / ${alpha})`;
+  }
+
+  return fallback;
+};
+
 const Hero = () => {
   const { content: heroTitle, loading: contentLoading } = useContent('hero.title');
   const { content: heroLinesRaw } = useContent('hero.lines');
@@ -35,8 +68,8 @@ const Hero = () => {
   const scrollToContact = () => {
     document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  const primaryColor = 'hsl(var(--primary))';
-  const primaryForeground = 'hsl(var(--primary-foreground))';
+  const heroOverlayMid = toOverlayColor(color, 0.88, 'hsl(var(--primary) / 0.88)');
+  const heroOverlayEnd = toOverlayColor(color, 0.78, 'hsl(var(--primary) / 0.78)');
 
   const hasHeroContent = Boolean(resolvedHeroTitle || resolvedHeroImage || heroLines.length > 0 || heroButton);
 
@@ -51,7 +84,7 @@ const Hero = () => {
   return (
     <section
       id="hero-section"
-      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0A192F]"
+      className="relative w-full flex items-center justify-center overflow-hidden bg-foreground"
       style={{ minHeight: '100vh', height: '100dvh' }}
     >
       <div className="absolute inset-0 z-0">
@@ -67,7 +100,7 @@ const Hero = () => {
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(90deg, hsl(var(--foreground) / 0.92), hsl(var(--primary) / 0.88), hsl(var(--primary) / 0.78))`,
+            background: `linear-gradient(90deg, hsl(var(--foreground) / 0.92), ${heroOverlayMid}, ${heroOverlayEnd})`,
           }}
         />
       </div>
@@ -100,7 +133,7 @@ const Hero = () => {
           {heroLines.map((line, idx) => (
             <p
               key={idx}
-              className="text-xl sm:text-2xl text-blue-50 max-w-3xl mx-auto font-light"
+              className="text-xl sm:text-2xl text-white/85 max-w-3xl mx-auto font-light"
               style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
             >
               {line}

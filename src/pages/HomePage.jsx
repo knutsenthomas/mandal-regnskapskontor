@@ -56,14 +56,14 @@ const HomePage = () => {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-[9999]">
+      <div className="fixed inset-0 bg-background flex flex-col items-center justify-center z-[9999]">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
         >
-          <Loader2 className="w-10 h-10 animate-spin text-[#1B4965]" />
-          <p className="text-[#1B4965] font-medium tracking-widest uppercase text-xs">Laster innhold...</p>
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-primary font-medium tracking-widest uppercase text-xs">Laster innhold...</p>
         </motion.div>
       </div>
     );

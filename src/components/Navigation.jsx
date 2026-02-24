@@ -144,7 +144,7 @@ const Navigation = () => {
       <header
         className={cn(
           "fixed z-50 overflow-x-hidden transition-colors duration-300",
-          isTransparent ? "bg-transparent" : "bg-white shadow-sm"
+          isTransparent ? "bg-transparent" : "bg-background shadow-sm"
         )}
         style={{ ...fixedViewportStyle, paddingTop: safeAreaTop }}
       >
@@ -237,7 +237,7 @@ const Navigation = () => {
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center p-2 text-white hover:text-blue-200 transition-colors focus:outline-none shrink-0 ml-2"
+                className="flex items-center justify-center p-2 text-white hover:text-white/75 transition-colors focus:outline-none shrink-0 ml-2"
               >
                 <X size={32} />
               </button>
@@ -252,7 +252,7 @@ const Navigation = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + (index * 0.1), duration: 0.4 }}
                   onClick={() => link === 'hjem' ? handleLogoClick() : handleLinkClick(link)}
-                  className="text-4xl md:text-5xl font-bold capitalize text-white hover:text-blue-200 transition-colors tracking-tight text-center"
+                  className="text-4xl md:text-5xl font-bold capitalize text-white hover:text-white/75 transition-colors tracking-tight text-center"
                 >
                   {link.replace('-', ' ')}
                 </motion.button>

@@ -48,12 +48,12 @@ const Footer = () => {
   const { content: hoursWeekend } = useContent('footer.hoursWeekend');
   const { content: copyright } = useContent('footer.copyright');
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-foreground text-background/75">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <p className="text-2xl font-bold text-white">{companyName || 'Mandal Regnskapskontor'}</p>
+            <p className="text-2xl font-bold text-background">{companyName || 'Mandal Regnskapskontor'}</p>
             <RichText
               className="text-sm leading-relaxed"
               value={companyDesc || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.'}
@@ -62,7 +62,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <p className="text-lg font-semibold text-white mb-4">{quicklinksLabel || 'Hurtiglenker'}</p>
+            <p className="text-lg font-semibold text-background mb-4">{quicklinksLabel || 'Hurtiglenker'}</p>
             <ul className="space-y-2">
               <li>
                 <button
@@ -120,7 +120,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <p className="text-lg font-semibold text-white mb-4">{contactLabel || 'Kontakt'}</p>
+            <p className="text-lg font-semibold text-background mb-4">{contactLabel || 'Kontakt'}</p>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 flex-shrink-0" style={{ color: primaryColor }} />
@@ -139,24 +139,24 @@ const Footer = () => {
 
           {/* Business Hours */}
           <div>
-            <p className="text-lg font-semibold text-white mb-4">{hoursLabel || 'Åpningstider'}</p>
+            <p className="text-lg font-semibold text-background mb-4">{hoursLabel || 'Åpningstider'}</p>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-start items-start gap-4">
                 <span className="w-32 shrink-0">{useContent('footer.hours.weeklabel').content || 'Mandag - Fredag'}</span>
-                <RichText className="text-white whitespace-nowrap" value={hoursWeek || '08:00 - 16:00'} />
+                <RichText className="text-background whitespace-nowrap" value={hoursWeek || '08:00 - 16:00'} />
               </li>
               <li className="flex justify-start items-start gap-4">
                 <span className="w-32 shrink-0">{useContent('footer.hours.weekendlabel').content || 'Lørdag - Søndag'}</span>
-                <RichText className="text-white whitespace-nowrap" value={hoursWeekend || 'Stengt'} />
+                <RichText className="text-background whitespace-nowrap" value={hoursWeekend || 'Stengt'} />
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+        <div className="border-t border-background/15 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-background/50">
           <RichText value={copyright || `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`} />
           <div className="mt-4 md:mt-0">
-            <Link to="/admin/login" className="flex items-center hover:text-white transition-colors">
+            <Link to="/admin/login" className="flex items-center hover:text-background transition-colors">
               <Lock className="w-3 h-3 mr-1" />
               {useContent('footer.adminlink').content || 'Admin'}
             </Link>

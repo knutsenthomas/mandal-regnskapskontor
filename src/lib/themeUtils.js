@@ -64,6 +64,20 @@ export const sanitizeToHSL = (colorStr) => {
 
 export const hexToHSL = sanitizeToHSL;
 
+const getHslLightness = (hslComponents) => {
+    if (!hslComponents || typeof hslComponents !== 'string') return null;
+    const parts = hslComponents.replace(/%/g, '').trim().split(/\s+/);
+    if (parts.length < 3) return null;
+    const lightness = Number.parseFloat(parts[2]);
+    return Number.isFinite(lightness) ? lightness : null;
+};
+
+const getReadableForegroundForBackground = (hslComponents) => {
+    const lightness = getHslLightness(hslComponents);
+    if (lightness === null) return '222.2 47.4% 11.2%';
+    return lightness < 60 ? '210 40% 98%' : '222.2 47.4% 11.2%';
+};
+
 /**
  * Converts an HSL string components back to Hex
  * @param {string} hslStr - The HSL string components (e.g., "200 50% 50%")
@@ -122,14 +136,36 @@ export const applyThemeColor = (key, value) => {
         // Keep --card in sync with --background if not explicitly set
         if (key === 'theme_background') {
             document.documentElement.style.setProperty('--card', hslComponents);
+            document.documentElement.style.setProperty('--popover', hslComponents);
         }
 
         // Standard logic for primary foreground
         if (key === 'theme_primary') {
-            const parts = hslComponents.replace(/%/g, '').split(' ');
-            const lightness = parseFloat(parts[2]);
-            const foregroundVal = lightness < 60 ? '210 40% 98%' : '222.2 47.4% 11.2%';
+            const foregroundVal = getReadableForegroundForBackground(hslComponents);
             document.documentElement.style.setProperty('--primary-foreground', foregroundVal);
+            document.documentElement.style.setProperty('--ring', hslComponents);
+        }
+
+        if (key === 'theme_secondary') {
+            document.documentElement.style.setProperty('--secondary-foreground', getReadableForegroundForBackground(hslComponents));
+        }
+
+        if (key === 'theme_muted') {
+            document.documentElement.style.setProperty('--muted-foreground', getReadableForegroundForBackground(hslComponents));
+        }
+
+        if (key === 'theme_accent') {
+            document.documentElement.style.setProperty('--accent-foreground', getReadableForegroundForBackground(hslComponents));
+        }
+
+        if (key === 'theme_card') {
+            // Keep popover close to card for shadcn components.
+            document.documentElement.style.setProperty('--popover', hslComponents);
+        }
+
+        if (key === 'theme_foreground') {
+            document.documentElement.style.setProperty('--card-foreground', hslComponents);
+            document.documentElement.style.setProperty('--popover-foreground', hslComponents);
         }
     } else {
         console.warn(`Could not sanitize theme color for ${key}:`, value);

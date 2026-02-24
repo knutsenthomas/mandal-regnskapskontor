@@ -116,7 +116,7 @@ const ContactForm = () => {
   const primaryForeground = 'hsl(var(--primary-foreground))';
 
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-24 bg-gradient-to-b from-muted to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Overskrift */}
@@ -128,9 +128,9 @@ const ContactForm = () => {
           className="text-center mb-20"
         >
           <span className="font-semibold tracking-wider text-sm uppercase mb-3 block" style={{ color: primaryColor }}>{sectionLabel || 'Ta kontakt'}</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{title || 'Kontakt oss'}</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">{title || 'Kontakt oss'}</h2>
           <RichText
-            className="text-xl text-gray-600 font-light"
+            className="text-xl text-muted-foreground font-light"
             value={subtitle || 'Vi er her for å hjelpe deg med dine behov.'}
           />
         </motion.div>
@@ -173,35 +173,35 @@ const ContactForm = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+            <form onSubmit={handleSubmit} className="space-y-6 bg-card text-card-foreground p-8 rounded-3xl shadow-lg border border-border">
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">{formName || 'Navn *'}</label>
-                  <input type="text" name="navn" value={formData.navn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formName || 'Ditt navn'} />
+                  <label className="block text-sm font-semibold text-foreground mb-2">{formName || 'Navn *'}</label>
+                  <input type="text" name="navn" value={formData.navn} onChange={handleChange} className="w-full px-4 py-3 bg-muted/50 text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" placeholder={formName || 'Ditt navn'} />
                   {errors.navn && <p className="text-red-500 text-xs mt-1">{errors.navn}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">{formPhone || 'Telefon *'}</label>
-                  <input type="tel" name="telefon" value={formData.telefon} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formPhone || 'Mobilnummer'} />
+                  <label className="block text-sm font-semibold text-foreground mb-2">{formPhone || 'Telefon *'}</label>
+                  <input type="tel" name="telefon" value={formData.telefon} onChange={handleChange} className="w-full px-4 py-3 bg-muted/50 text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" placeholder={formPhone || 'Mobilnummer'} />
                   {errors.telefon && <p className="text-red-500 text-xs mt-1">{errors.telefon}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{formEmail || 'E-post *'}</label>
-                <input type="email" name="epost" value={formData.epost} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formEmail || 'din@epost.no'} />
+                <label className="block text-sm font-semibold text-foreground mb-2">{formEmail || 'E-post *'}</label>
+                <input type="email" name="epost" value={formData.epost} onChange={handleChange} className="w-full px-4 py-3 bg-muted/50 text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" placeholder={formEmail || 'din@epost.no'} />
                 {errors.epost && <p className="text-red-500 text-xs mt-1">{errors.epost}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{formCompany || 'Bedriftsnavn'}</label>
-                <input type="text" name="bedriftsnavn" value={formData.bedriftsnavn} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none" placeholder={formCompany || 'Valgfritt'} />
+                <label className="block text-sm font-semibold text-foreground mb-2">{formCompany || 'Bedriftsnavn'}</label>
+                <input type="text" name="bedriftsnavn" value={formData.bedriftsnavn} onChange={handleChange} className="w-full px-4 py-3 bg-muted/50 text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" placeholder={formCompany || 'Valgfritt'} />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{formMessage || 'Melding *'}</label>
-                <textarea name="melding" rows={5} value={formData.melding} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1B4965] outline-none resize-none" placeholder={formMessage || 'Hva gjelder det?'} />
+                <label className="block text-sm font-semibold text-foreground mb-2">{formMessage || 'Melding *'}</label>
+                <textarea name="melding" rows={5} value={formData.melding} onChange={handleChange} className="w-full px-4 py-3 bg-muted/50 text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none" placeholder={formMessage || 'Hva gjelder det?'} />
                 {errors.melding && <p className="text-red-500 text-xs mt-1">{errors.melding}</p>}
               </div>
 

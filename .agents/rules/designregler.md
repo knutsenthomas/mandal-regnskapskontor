@@ -1,6 +1,5 @@
 ---
 trigger: always_on
-glob:
-description:
 ---
 
+Do not alter any CSS, Tailwind classes, or layout structures. Only modify logic to fix the specified errors.

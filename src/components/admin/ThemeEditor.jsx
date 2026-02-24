@@ -7,25 +7,71 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useSite } from '@/contexts/SiteContext';
 import { hexToHSL, hslToHex, applyThemeColor } from '@/lib/themeUtils';
 
+const THEME_DEFAULTS = {
+    theme_primary: '202 50.8% 23.1%',
+    theme_secondary: '204 38.3% 34.3%',
+    theme_background: '220 12% 95.1%',
+    theme_card: '#FFFFFF',
+    theme_foreground: '222 47.4% 11.2%',
+    theme_muted: '210 40% 96.1%',
+    theme_accent: '220 14.3% 95.9%',
+};
+
+const FONT_FAMILIES = [
+    'Inter', 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Courier New', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito', 'Oswald', 'Poppins', 'Source Sans Pro', 'system-ui'
+];
+
+const DEFAULT_TYPOGRAPHY = {
+    font_family: 'Roboto',
+    h1_size: '2.5rem',
+    h2_size: '2rem',
+    h3_size: '1.5rem',
+    body_size: '1rem',
+};
+
+const isHSL = (val) => val && typeof val === 'string' && val.includes(' ') && !val.startsWith('#');
+
+const ThemeColorInput = React.memo(function ThemeColorInput({
+    label,
+    description,
+    stateKey,
+    value,
+    onColorChange,
+}) {
+    const displayHex = isHSL(value) ? hslToHex(value) : value;
+
+    const handleColorInput = (nextValue) => {
+        onColorChange(stateKey, nextValue);
+    };
+
+    return (
+        <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
+            <div>
+                <h4 className="font-medium text-sm text-gray-900">{label}</h4>
+                <p className="text-xs text-gray-500">{description}</p>
+            </div>
+            <div className="flex items-center gap-3">
+                <span className="text-xs font-mono text-gray-500 uppercase">{typeof value === 'string' ? value.replace(/%/g, '') : value}</span>
+                <input
+                    type="color"
+                    value={displayHex || '#000000'}
+                    onInput={(e) => handleColorInput(e.currentTarget.value)}
+                    onChange={(e) => handleColorInput(e.currentTarget.value)}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="h-10 w-10 cursor-pointer rounded-md border-0 p-0"
+                />
+            </div>
+        </div>
+    );
+});
+
 const ThemeEditor = () => {
     const { toast } = useToast();
     const { theme, refreshSiteData } = useSite();
     const [loading, setLoading] = useState(false);
-
-    // Default colors matching index.css (approximate Hex for inputs)
-    const defaults = {
-        theme_primary: '#1B4965', // Brand Blue
-        theme_secondary: '#f1f5f9', // Slate 100
-        theme_background: '#ffffff',
-        theme_card: '#ffffff',
-        theme_foreground: '#0f172a', // Slate 900
-        theme_muted: '#f1f5f9',
-        theme_accent: '#f1f5f9',
-    };
-
-    const [colors, setColors] = useState(defaults);
-
-    const isHSL = (val) => val && typeof val === 'string' && val.includes(' ') && !val.startsWith('#');
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [colors, setColors] = useState(THEME_DEFAULTS);
 
     useEffect(() => {
         if (theme && Object.keys(theme).length > 0) {
@@ -81,20 +127,16 @@ const ThemeEditor = () => {
     };
 
     const handleReset = async () => {
-        if (!window.confirm("Er du sikker på at du vil tilbakestille alle farger til standard?")) return;
-
         setLoading(true);
         try {
-            // We can either delete the keys or set them to defaults.
-            // Deleting is cleaner as it falls back to CSS defaults if we implemented fallback logic in SiteContext (which we didn't explicitly, we just don't set the prop).
-            // However, SiteContext doesn't remove the property if the key is missing from DB (it just doesn't set it).
-            // So we should probably set them to the defaults or implement a reliable "unset" mechanism.
-            // For now, let's explicitly set to defaults to be sure.
-
-            const settingsToUpdate = Object.keys(defaults).map(key => ({
+            const settingsToUpdate = Object.keys(THEME_DEFAULTS).map(key => ({
                 key,
-                value: defaults[key]
+                value: THEME_DEFAULTS[key]
             }));
+
+            // Apply immediately in the UI before/while saving.
+            setColors(THEME_DEFAULTS);
+            settingsToUpdate.forEach((setting) => applyThemeColor(setting.key, setting.value));
 
             for (const setting of settingsToUpdate) {
                 const { error } = await supabase.rpc('upsert_site_setting', {
@@ -105,7 +147,7 @@ const ThemeEditor = () => {
             }
 
             await refreshSiteData();
-            setColors(defaults); // Update local state
+            setShowResetConfirm(false);
 
             toast({
                 title: "Tema tilbakestilt",
@@ -122,41 +164,8 @@ const ThemeEditor = () => {
         }
     };
 
-    const ColorInput = ({ label, description, stateKey }) => {
-        const value = colors[stateKey];
-        const displayHex = isHSL(value) ? hslToHex(value) : value;
-
-        return (
-            <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
-                <div>
-                    <h4 className="font-medium text-sm text-gray-900">{label}</h4>
-                    <p className="text-xs text-gray-500">{description}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-gray-500 uppercase">{typeof value === 'string' ? value.replace(/%/g, '') : value}</span>
-                    <input
-                        type="color"
-                        value={displayHex || '#000000'}
-                        onChange={(e) => handleColorChange(stateKey, e.target.value)}
-                        className="h-10 w-10 cursor-pointer rounded-md border-0 p-0"
-                    />
-                </div>
-            </div>
-        );
-    };
-
     // Legg til typografi-innstillinger
-    const fontFamilies = [
-        'Inter', 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Courier New', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Nunito', 'Oswald', 'Poppins', 'Source Sans Pro', 'system-ui'
-    ];
-    const defaultTypography = {
-        font_family: 'Roboto',
-        h1_size: '2.5rem',
-        h2_size: '2rem',
-        h3_size: '1.5rem',
-        body_size: '1rem',
-    };
-    const [typography, setTypography] = useState(defaultTypography);
+    const [typography, setTypography] = useState(DEFAULT_TYPOGRAPHY);
 
     const handleTypographyChange = (key, value) => {
         setTypography(prev => ({ ...prev, [key]: value }));
@@ -206,40 +215,54 @@ const ThemeEditor = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <ColorInput
+                    <ThemeColorInput
                         label="Hovedfarge (Primary)"
                         description="Knapper, lenker, aktive elementer og ikoner."
                         stateKey="theme_primary"
+                        value={colors.theme_primary}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Sekundærfarge (Secondary)"
                         description="Bakgrunn på kort, seksjoner og mindre viktige elementer."
                         stateKey="theme_secondary"
+                        value={colors.theme_secondary}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Bakgrunnsfarge"
                         description="Hovedbakgrunnen på hele nettsiden."
                         stateKey="theme_background"
+                        value={colors.theme_background}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Kort-bakgrunn (Card)"
                         description="Bakgrunnsfarge for bokser, kort og kalender."
                         stateKey="theme_card"
+                        value={colors.theme_card}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Tekstfarge"
                         description="Fargen på hovedteksten."
                         stateKey="theme_foreground"
+                        value={colors.theme_foreground}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Aksentfarge"
                         description="Farge for hover-effekter og uthevinger."
                         stateKey="theme_accent"
+                        value={colors.theme_accent}
+                        onColorChange={handleColorChange}
                     />
-                    <ColorInput
+                    <ThemeColorInput
                         label="Dempede elementer (Muted)"
                         description="Bakgrunner for inaktive eller dempede elementer."
                         stateKey="theme_muted"
+                        value={colors.theme_muted}
+                        onColorChange={handleColorChange}
                     />
                 </CardContent>
             </Card>
@@ -258,7 +281,7 @@ const ThemeEditor = () => {
                     <div className="flex flex-col gap-4">
                         <label className="font-medium text-sm text-gray-900">Fontfamilie
                             <select value={typography.font_family} onChange={e => handleTypographyChange('font_family', e.target.value)} className="border p-2 rounded mt-1">
-                                {fontFamilies.map(f => <option key={f} value={f}>{f}</option>)}
+                                {FONT_FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
                             </select>
                         </label>
                         <label className="font-medium text-sm text-gray-900">H1 størrelse
@@ -281,7 +304,7 @@ const ThemeEditor = () => {
                         <div style={{ fontFamily: typography.font_family, fontSize: typography.h3_size, fontWeight: 500, marginTop: '1rem' }}>Live H3: Personlig rådgivning</div>
                         <div style={{ fontFamily: typography.font_family, fontSize: typography.body_size, marginTop: '1rem' }}>Live brødtekst: Her ser du hvordan font og størrelse vil se ut på nettsiden din.</div>
                     </div>
-                    <Button onClick={handleSaveTypography} disabled={loading} className="bg-[#1B4965] hover:bg-[#0F3347] text-white mt-4">
+                    <Button type="button" onClick={handleSaveTypography} disabled={loading} className="bg-[#1B4965] hover:bg-[#0F3347] text-white mt-4">
                         {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                         Lagre typografi
                     </Button>
@@ -289,17 +312,42 @@ const ThemeEditor = () => {
             </Card>
 
             <div className="flex justify-between pt-4 border-t border-gray-100">
-                <Button
-                    variant="outline"
-                    onClick={handleReset}
-                    disabled={loading}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Tilbakestill standard
-                </Button>
+                <div className="flex items-center gap-2">
+                    {!showResetConfirm ? (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowResetConfirm(true)}
+                            disabled={loading}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                        >
+                            <RotateCcw className="w-4 h-4 mr-2" />
+                            Tilbakestill standard
+                        </Button>
+                    ) : (
+                        <>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setShowResetConfirm(false)}
+                                disabled={loading}
+                            >
+                                Avbryt
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={handleReset}
+                                disabled={loading}
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                Bekreft tilbakestilling
+                            </Button>
+                        </>
+                    )}
+                </div>
 
                 <Button
+                    type="button"
                     onClick={handleSave}
                     disabled={loading}
                     className="bg-[#1B4965] hover:bg-[#0F3347] text-white"
