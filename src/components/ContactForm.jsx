@@ -59,21 +59,23 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // 1. LAGRE I SUPABASE (Databasen din)
-      const { error: supabaseError } = await supabase
-        .from('contact_messages')
-        .insert([
-          {
-            navn: formData.navn,
-            epost: formData.epost,
-            telefon: formData.telefon,
-            bedriftsnavn: formData.bedriftsnavn,
-            melding: formData.melding,
-            read: false
-          }
-        ]);
+      // 1. Send til API-et (som både lagrer i DB og sender e-post)
+      const response = await fetch('/api/send-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          navn: formData.navn,
+          epost: formData.epost,
+          telefon: formData.telefon,
+          bedriftsnavn: formData.bedriftsnavn,
+          melding: formData.melding
+        })
+      });
 
-      if (supabaseError) throw supabaseError;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Kunne ikke sende melding');
+      }
 
       // Suksess!
       toast({
