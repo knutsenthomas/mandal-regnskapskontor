@@ -18,7 +18,15 @@ const HomePage = () => {
   const location = useLocation();
   const { loading: siteLoading } = useSite();
   const { loading: contentLoading } = useContent();
-  const isLoading = siteLoading || contentLoading;
+  const [forceShow, setForceShow] = React.useState(false);
+
+  React.useEffect(() => {
+    // Failsafe: Hvis innholdet ikke er lastet etter 4 sekunder, vis siden uansett.
+    const timer = setTimeout(() => setForceShow(true), 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isLoading = (siteLoading || contentLoading) && !forceShow;
 
   useEffect(() => {
     if (isLoading) return undefined;

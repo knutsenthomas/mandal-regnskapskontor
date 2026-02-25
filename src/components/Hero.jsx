@@ -146,7 +146,7 @@ const Hero = () => {
         >
           {resolvedHeroTitle && (
             <h1
-              className="text-4xl sm:text-6xl landscape:text-3xl sm:landscape:text-4xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mx-auto max-w-4xl lg:max-w-none"
               style={{ textWrap: 'balance' }}
             >
               {resolvedHeroTitle}

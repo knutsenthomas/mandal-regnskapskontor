@@ -40,10 +40,24 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(request.url);
     if (url.origin !== self.location.origin) return;
 
-    // Use network-first for page navigations to avoid stale index.html after deploys.
+    // Use network-first for page navigations with a timeout to fall back to cache if network is slow.
     if (request.mode === 'navigate') {
+        const fetchWithTimeout = (req, timeout = 3000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            return fetch(req, { signal: controller.signal })
+                .then(res => {
+                    clearTimeout(id);
+                    return res;
+                })
+                .catch(err => {
+                    clearTimeout(id);
+                    throw err;
+                });
+        };
+
         event.respondWith(
-            fetch(request)
+            fetchWithTimeout(request)
                 .then(async (response) => {
                     if (response && response.ok) {
                         const cache = await caches.open(CACHE_NAME);
