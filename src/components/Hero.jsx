@@ -153,7 +153,7 @@ const Hero = () => {
           {heroLines.map((line, idx) => (
             <p
               key={idx}
-              className="text-xl sm:text-2xl landscape:text-base sm:landscape:text-lg text-white/85 max-w-3xl mx-auto font-light"
+              className="text-2xl sm:text-3xl landscape:text-lg sm:landscape:text-xl text-white/85 max-w-3xl mx-auto font-light"
               style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
             >
               {line}
@@ -165,7 +165,7 @@ const Hero = () => {
               <Button
                 onClick={handleButtonClick}
                 size="lg"
-                className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30 bg-primary hover:bg-primary/90"
+                className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30 bg-primary hover:bg-primary/90 mb-8"
               >
                 {resolvedHeroButton}
                 <ArrowRight className="ml-2 h-5 w-5" />
