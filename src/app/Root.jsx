@@ -8,6 +8,7 @@ import { ContentProvider } from '@/contexts/ContentContext';
 import { SiteProvider, useSite } from '@/contexts/SiteContext';
 
 import ScrollToTop from '@/components/ScrollToTop';
+import DynamicSEO from '@/components/DynamicSEO';
 import HomePage from '@/pages/HomePage';
 import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import LoginPageWithBoundary from '@/pages/admin/LoginPageFixed';
@@ -63,6 +64,7 @@ function App() {
             <Router>
               <RouteTracker />
               <GASetup />
+              <DynamicSEO page="home" />
               <ScrollToTop />
               <main className="pt-0">
                 <Routes>
