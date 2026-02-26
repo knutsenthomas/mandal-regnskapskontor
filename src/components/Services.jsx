@@ -87,7 +87,14 @@ const Services = () => {
         image: service?.image || config?.image,
       };
     })
-    : [];
+    : defaultServices.map((service, index) => {
+      const config = serviceConfig[index] || serviceConfig[0];
+      return {
+        ...config,
+        ...service,
+        image: config?.image,
+      };
+    });
 
   const container = {
     hidden: { opacity: 0 },

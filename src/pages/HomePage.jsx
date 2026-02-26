@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,48 +18,49 @@ const HomePage = () => {
   const location = useLocation();
   const { loading: siteLoading } = useSite();
   const { loading: contentLoading } = useContent();
-  const [forceShow, setForceShow] = React.useState(false);
+  const [forceShow, setForceShow] = useState(false);
 
-  React.useEffect(() => {
-    // Failsafe: Hvis innholdet ikke er lastet etter 4 sekunder, vis siden uansett.
-    const timer = setTimeout(() => setForceShow(true), 4000);
+  // FIKS 1: Redusert failsafe fra 4 til 2 sekunder. 
+  // Da slipper du at siden føles som den "henger i evigheter".
+  useEffect(() => {
+    const timer = setTimeout(() => setForceShow(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
   const isLoading = (siteLoading || contentLoading) && !forceShow;
 
+  // Skru av nettleserens automatiske "hopp tilbake"-funksjon
   useEffect(() => {
-    if (isLoading) return undefined;
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
 
-    const rawHash = location.hash?.replace(/^#/, '');
-    if (!rawHash) return undefined;
+  // FIKS 2: En renere, enklere og mer stabil scroll-håndtering
+  useEffect(() => {
+    if (isLoading) return;
 
-    const targetId = decodeURIComponent(rawHash);
-    let cancelled = false;
-    const timeoutIds = [];
+    // Vi gir React akkurat tid til å bygge innholdet ferdig på skjermen (100ms)
+    // før vi trygt bestemmer hvor vi skal scrolle.
+    const scrollTimer = setTimeout(() => {
+      const rawHash = location.hash?.replace(/^#/, '');
+      
+      if (!rawHash) {
+        // Er det ingen hash i URL-en? Tving den trygt til toppen.
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        return;
+      }
 
-    const scrollToTarget = () => {
-      if (cancelled) return;
+      const element = document.getElementById(rawHash);
+      if (element) {
+        const headerOffset = 90;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }, 100);
 
-      const element = document.getElementById(targetId);
-      if (!element) return;
-
-      const headerOffset = 90;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-    };
-
-    // Re-apply hash scroll a few times to survive layout shifts (e.g. async-loaded calendar).
-    [0, 150, 400, 900, 1600].forEach((delay) => {
-      const id = window.setTimeout(scrollToTarget, delay);
-      timeoutIds.push(id);
-    });
-
-    return () => {
-      cancelled = true;
-      timeoutIds.forEach((id) => window.clearTimeout(id));
-    };
+    return () => clearTimeout(scrollTimer);
   }, [isLoading, location.hash]);
 
   if (isLoading) {
@@ -81,9 +82,10 @@ const HomePage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.4, ease: 'easeOut' }} // Litt kjappere fade-in
     >
       <Navigation />
+      
       <Helmet>
         <title>Mandal regnskapskontor - Profesjonell Regnskap og Finansiell Rådgivning</title>
         <meta
@@ -92,27 +94,27 @@ const HomePage = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen">
+      {/* Lagt alt inn i en main-tag med riktig scroll-padding */}
+      <main className="min-h-screen">
         <div id="hjem">
           <Hero />
         </div>
-        <div id="tjenester" className="scroll-mt-16">
+        <div id="tjenester" className="scroll-mt-24">
           <Services />
         </div>
-        <div id="om-oss" className="scroll-mt-16">
+        <div id="om-oss" className="scroll-mt-24">
           <About />
         </div>
-        <div id="kalender" className="scroll-mt-16">
+        <div id="kalender" className="scroll-mt-24">
           <FinancialCalendar />
         </div>
-        <div id="kontakt" className="scroll-mt-16">
+        <div id="kontakt" className="scroll-mt-24">
           <ContactForm />
         </div>
         <Footer />
-      </div>
+      </main>
     </motion.div>
   );
 };
-
 
 export default HomePage;

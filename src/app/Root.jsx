@@ -14,7 +14,7 @@ import { supabase } from '../lib/customSupabaseClient';
 import { Toaster } from '../components/ui/toaster';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { ContentProvider } from '../contexts/ContentContext';
-import { SiteProvider, useSite } from '../contexts/SiteContext';
+import { SiteProvider, useSite } from '@/contexts/SiteContext';
 import PrivacyPage from '../pages/PrivacyPage';
 import CookieConsent from '../components/CookieConsent';
 

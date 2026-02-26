@@ -63,9 +63,9 @@ const Hero = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  const resolvedHeroTitle = heroTitle || '';
-  const resolvedHeroImage = heroImage || '';
-  const resolvedHeroLinesRaw = heroLinesRaw || '';
+  const resolvedHeroTitle = heroTitle || 'Regnskap på dine premisser';
+  const resolvedHeroImage = heroImage || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000';
+  const resolvedHeroLinesRaw = heroLinesRaw || '["Erfaring og kompetanse som sikrer din økonomi", "Personlig oppfølging og skreddersydde løsninger", "Fokus på digitalisering og effektivisering"]';
 
   let heroLines = [];
   if (Array.isArray(resolvedHeroLinesRaw)) {
@@ -95,11 +95,8 @@ const Hero = () => {
   const heroOverlayMid = toOverlayColor(color, 0.88, 'hsl(var(--primary) / 0.88)');
   const heroOverlayEnd = toOverlayColor(color, 0.78, 'hsl(var(--primary) / 0.78)');
 
-  const hasHeroContent = Boolean(resolvedHeroTitle || resolvedHeroImage || heroLines.length > 0 || heroButton);
-
-  if (contentLoading) {
-    return null;
-  }
+  const resolvedHeroButton = heroButton || 'Kontakt oss i dag';
+  const hasHeroContent = Boolean(resolvedHeroTitle || resolvedHeroImage || heroLines.length > 0 || resolvedHeroButton);
 
   if (!hasHeroContent) {
     return null;
@@ -164,13 +161,13 @@ const Hero = () => {
           ))}
 
           <div className="pt-10 landscape:pt-4 flex flex-col items-center gap-6 landscape:gap-2">
-            {heroButton && (
+            {resolvedHeroButton && (
               <Button
                 onClick={handleButtonClick}
                 size="lg"
                 className="text-white px-10 py-7 text-lg rounded-full shadow-xl hover:scale-105 transition-transform hover:brightness-90 border-2 border-white/30 bg-primary hover:bg-primary/90"
               >
-                {heroButton}
+                {resolvedHeroButton}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             )}

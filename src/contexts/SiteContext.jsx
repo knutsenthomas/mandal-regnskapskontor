@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { applyThemeColor } from '@/lib/themeUtils';
 
-const SiteContext = createContext();
+const SiteContext = createContext({});
 
 export const useSite = () => {
     return useContext(SiteContext);
