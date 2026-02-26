@@ -153,7 +153,7 @@ const Hero = () => {
           {heroLines.map((line, idx) => (
             <p
               key={idx}
-              className="text-3xl sm:text-4xl landscape:text-xl sm:landscape:text-2xl text-white/85 max-w-3xl mx-auto font-light"
+              className="text-lg sm:text-2xl md:text-3xl landscape:text-base sm:landscape:text-xl text-white/85 max-w-3xl mx-auto font-light"
               style={{ marginTop: idx === 0 ? '0.5em' : 0 }}
             >
               {line}
