@@ -330,16 +330,6 @@ const UserManagement = () => {
                             </Button>
                         </div>
                     </div>
-
-                    <div className="bg-orange-50/50 border border-orange-100 p-5 rounded-xl space-y-3 shadow-sm">
-                        <div className="flex items-center gap-2 text-orange-800 font-bold text-[10px] uppercase tracking-widest">
-                            <AlertCircle className="w-4 h-4" />
-                            Viktig!
-                        </div>
-                        <p className="text-xs text-orange-800/80 leading-relaxed">
-                            Når du legger til en bruker her, må du også sende en invitasjon via <strong>Supabase Dashboard</strong> under Authentication for at de skal kunne logge inn.
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

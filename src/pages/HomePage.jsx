@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,35 +18,24 @@ const HomePage = () => {
   const location = useLocation();
   const { loading: siteLoading } = useSite();
   const { loading: contentLoading } = useContent();
-  const [forceShow, setForceShow] = useState(false);
 
-  // FIKS 1: Redusert failsafe fra 4 til 2 sekunder. 
-  // Da slipper du at siden føles som den "henger i evigheter".
-  useEffect(() => {
-    const timer = setTimeout(() => setForceShow(true), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  // Her har vi fjernet 'forceShow'-timeren. 
+  // Nå venter den ALLTID trygt på at databasen din skal levere det ekte innholdet.
+  const isLoading = siteLoading || contentLoading;
 
-  const isLoading = (siteLoading || contentLoading) && !forceShow;
-
-  // Skru av nettleserens automatiske "hopp tilbake"-funksjon
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
   }, []);
 
-  // FIKS 2: En renere, enklere og mer stabil scroll-håndtering
   useEffect(() => {
     if (isLoading) return;
 
-    // Vi gir React akkurat tid til å bygge innholdet ferdig på skjermen (100ms)
-    // før vi trygt bestemmer hvor vi skal scrolle.
     const scrollTimer = setTimeout(() => {
       const rawHash = location.hash?.replace(/^#/, '');
       
       if (!rawHash) {
-        // Er det ingen hash i URL-en? Tving den trygt til toppen.
         window.scrollTo({ top: 0, behavior: 'instant' });
         return;
       }
@@ -72,7 +61,7 @@ const HomePage = () => {
           className="flex flex-col items-center gap-4"
         >
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
-          <p className="text-primary font-medium tracking-widest uppercase text-xs">Laster innhold...</p>
+          <p className="text-primary font-medium tracking-widest uppercase text-xs">Henter innhold...</p>
         </motion.div>
       </div>
     );
@@ -82,7 +71,7 @@ const HomePage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }} // Litt kjappere fade-in
+      transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       <Navigation />
       
@@ -94,7 +83,6 @@ const HomePage = () => {
         />
       </Helmet>
 
-      {/* Lagt alt inn i en main-tag med riktig scroll-padding */}
       <main className="min-h-screen">
         <div id="hjem">
           <Hero />
