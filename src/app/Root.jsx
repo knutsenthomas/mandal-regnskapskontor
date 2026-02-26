@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter as Router, useLocation } from 'react-router-dom';
-import { AuthProvider } from '../contexts/AuthContext';
-import ScrollToTop from '../components/ScrollToTop';
-import HomePage from '../pages/HomePage';
-import ServiceDetailPage from '../pages/ServiceDetailPage';
-import LoginPageWithBoundary from '../pages/admin/LoginPageFixed';
-// import React fjernet, behold kun én import av React nedenfor
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import SetPasswordPage from '../pages/SetPasswordPage';
-import ProtectedRoute from '../components/ProtectedRoute';
 import ReactGA from 'react-ga4';
-import { supabase } from '../lib/customSupabaseClient';
-import { Toaster } from '../components/ui/toaster';
-import ErrorBoundary from '../components/ErrorBoundary';
-import { ContentProvider } from '../contexts/ContentContext';
+
+// BRUKER NÅ KONSEKVENT @/ FOR Å FORHINDRE DOBLE KONTEKSTER
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ContentProvider } from '@/contexts/ContentContext';
 import { SiteProvider, useSite } from '@/contexts/SiteContext';
-import PrivacyPage from '../pages/PrivacyPage';
-import CookieConsent from '../components/CookieConsent';
+
+import ScrollToTop from '@/components/ScrollToTop';
+import HomePage from '@/pages/HomePage';
+import ServiceDetailPage from '@/pages/ServiceDetailPage';
+import LoginPageWithBoundary from '@/pages/admin/LoginPageFixed';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import SetPasswordPage from '@/pages/SetPasswordPage';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import CookieConsent from '@/components/CookieConsent';
+import PrivacyPage from '@/pages/PrivacyPage';
+
+import { Toaster } from '@/components/ui/toaster';
+import { supabase } from '@/lib/customSupabaseClient';
 
 // Component to handle Google Analytics 4 based on consent
 const GASetup = () => {
