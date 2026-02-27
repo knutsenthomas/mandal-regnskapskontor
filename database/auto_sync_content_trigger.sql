@@ -31,19 +31,19 @@ BEGIN
     END IF;
 
     -- === KONTAKT SEKSJON ===
-    IF NEW.phone IS NOT NULL THEN
-        PERFORM update_content_block('contact.phone', NEW.phone, 'text');
-        PERFORM update_content_block('footer.phone', NEW.phone, 'text');
+    IF NEW.contact_phone IS NOT NULL THEN
+        PERFORM update_content_block('contact.phone', NEW.contact_phone, 'text');
+        PERFORM update_content_block('footer.phone', NEW.contact_phone, 'text');
     END IF;
 
-    IF NEW.email IS NOT NULL THEN
-        PERFORM update_content_block('contact.email', NEW.email, 'text');
-        PERFORM update_content_block('footer.email', NEW.email, 'text');
+    IF NEW.contact_email IS NOT NULL THEN
+        PERFORM update_content_block('contact.email', NEW.contact_email, 'text');
+        PERFORM update_content_block('footer.email', NEW.contact_email, 'text');
     END IF;
 
-    IF NEW.address IS NOT NULL THEN
-        PERFORM update_content_block('contact.address', NEW.address, 'text');
-        PERFORM update_content_block('footer.address', NEW.address, 'text');
+    IF NEW.contact_address IS NOT NULL THEN
+        PERFORM update_content_block('contact.address', NEW.contact_address, 'text');
+        PERFORM update_content_block('footer.address', NEW.contact_address, 'text');
     END IF;
 
     -- === FOOTER SEKSJON ===
