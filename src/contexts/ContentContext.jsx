@@ -32,69 +32,67 @@ export function ContentProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const getDashboardFallback = useCallback((slug) => {
-    if (!dashboardContent) return '[Innhold mangler]';
-
     switch (slug) {
       case 'hero.title':
-        return dashboardContent.hero_title || '[Innhold mangler]';
+        return dashboardContent?.hero_title || 'Mandal Regnskapskontor';
       case 'hero.lines':
-        return dashboardContent.hero_lines ?? dashboardContent.hero_subtitle ?? '[Innhold mangler]';
+        return dashboardContent?.hero_lines ?? dashboardContent?.hero_subtitle ?? 'Din partner for profesjonell regnskap';
       case 'hero.image':
-        return dashboardContent.hero_image || '[Innhold mangler]';
+        return dashboardContent?.hero_image || '';
 
       case 'about.text':
-        return dashboardContent.about_text || '[Innhold mangler]';
+        return dashboardContent?.about_text || 'Mandal regnskapskontor er et regnskapskontor med lang erfaring. Vi har tjenester som regnskap, lønn, fakturering og årsoppgjør – kombinert med operativ lederstøtte og praktisk hjelp der du trenger det.';
       case 'about.image':
-        return dashboardContent.about_image || '[Innhold mangler]';
+        return dashboardContent?.about_image || '';
       case 'about.values':
-        return dashboardContent.about_values ?? '[Innhold mangler]';
+        return dashboardContent?.about_values ?? [];
 
       case 'contact.phone':
-        return dashboardContent.contact_phone || '[Innhold mangler]';
+        return dashboardContent?.contact_phone || '91 75 98 55';
       case 'contact.email':
-        return dashboardContent.contact_email || '[Innhold mangler]';
+        return dashboardContent?.contact_email || 'jan@mandalregnskapskontor.no';
       case 'contact.address':
-        return dashboardContent.contact_address || '[Innhold mangler]';
+        return dashboardContent?.contact_address || 'Gamle Hålandsbakken 8, 4517 Mandal';
 
       case 'footer.companyName':
-        return dashboardContent.company_name || '[Innhold mangler]';
+        return dashboardContent?.company_name || 'Mandal Regnskapskontor';
       case 'footer.companyDesc':
-        return dashboardContent.footer_text || '[Innhold mangler]';
+        return dashboardContent?.footer_text || 'Autorisert regnskapsfører';
       case 'footer.quicklinksLabel':
-        return '[Innhold mangler]';
+        return 'Hurtiglenker';
       case 'footer.contactLabel':
-        return '[Innhold mangler]';
+        return 'Kontakt Oss';
       case 'footer.phone':
-        return dashboardContent.contact_phone || dashboardContent.phone || '[Innhold mangler]';
+        return dashboardContent?.contact_phone || dashboardContent?.phone || '91 75 98 55';
       case 'footer.email':
-        return dashboardContent.contact_email || dashboardContent.email || '[Innhold mangler]';
+        return dashboardContent?.contact_email || dashboardContent?.email || 'jan@mandalregnskapskontor.no';
       case 'footer.address':
-        return dashboardContent.contact_address || dashboardContent.address || '[Innhold mangler]';
+        return dashboardContent?.contact_address || dashboardContent?.address || 'Gamle Hålandsbakken 8, 4517 Mandal';
       case 'footer.hoursLabel':
-        return '[Innhold mangler]';
+        return 'Åpningstider';
       case 'footer.hours.weeklabel':
-        return '[Innhold mangler]';
+        return 'Mandag - Fredag:';
       case 'footer.hoursWeek':
-        return '[Innhold mangler]';
+        return '08:00 - 16:00';
       case 'footer.hours.weekendlabel':
-        return '[Innhold mangler]';
+        return 'Lørdag - Søndag:';
       case 'footer.hoursWeekend':
-        return '[Innhold mangler]';
+        return 'Stengt';
       case 'footer.copyright':
         return `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`;
       case 'footer.adminlink':
-        return '[Innhold mangler]';
+        return 'Admin';
       case 'footer.link.home':
-        return '[Innhold mangler]';
+        return 'Hjem';
       case 'footer.link.services':
-        return '[Innhold mangler]';
+        return 'Tjenester';
       case 'footer.link.about':
-        return '[Innhold mangler]';
+        return 'Om oss';
       case 'footer.link.contact':
-        return '[Innhold mangler]';
+        return 'Kontakt';
 
       default:
-        return '[Innhold mangler]';
+        return null;
     }
   }, [dashboardContent]);
 
