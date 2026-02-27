@@ -37,22 +37,6 @@ BEGIN
             PERFORM update_content_block('about.values', to_json(r.about_values)::text, 'json');
         END IF;
 
-        -- === KONTAKT SEKSJON ===
-        IF r.phone IS NOT NULL THEN
-            PERFORM update_content_block('contact.phone', r.phone, 'text');
-            PERFORM update_content_block('footer.phone', r.phone, 'text');
-        END IF;
-
-        IF r.email IS NOT NULL THEN
-            PERFORM update_content_block('contact.email', r.email, 'text');
-            PERFORM update_content_block('footer.email', r.email, 'text');
-        END IF;
-
-        IF r.address IS NOT NULL THEN
-            PERFORM update_content_block('contact.address', r.address, 'text');
-            PERFORM update_content_block('footer.address', r.address, 'text');
-        END IF;
-
         RAISE NOTICE 'Fullført! alt dynamisk innhold fra dashbordet (content table) er kopiert til content_blocks.';
     ELSE
         RAISE NOTICE 'Fant ingen data i content-tabellen. Avbryter.';

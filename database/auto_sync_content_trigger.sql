@@ -30,22 +30,6 @@ BEGIN
         PERFORM update_content_block('about.values', to_json(NEW.about_values)::text, 'json');
     END IF;
 
-    -- === KONTAKT SEKSJON ===
-    IF NEW.phone IS NOT NULL THEN
-        PERFORM update_content_block('contact.phone', NEW.phone, 'text');
-        PERFORM update_content_block('footer.phone', NEW.phone, 'text');
-    END IF;
-
-    IF NEW.email IS NOT NULL THEN
-        PERFORM update_content_block('contact.email', NEW.email, 'text');
-        PERFORM update_content_block('footer.email', NEW.email, 'text');
-    END IF;
-
-    IF NEW.address IS NOT NULL THEN
-        PERFORM update_content_block('contact.address', NEW.address, 'text');
-        PERFORM update_content_block('footer.address', NEW.address, 'text');
-    END IF;
-
     -- Returner selve raden for at selve UPDATE/INSERT-operasjonen skal fortsette som normalt
     RETURN NEW;
 END;
