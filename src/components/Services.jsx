@@ -79,22 +79,27 @@ const Services = () => {
   // Merge DB data with Config. If DB data is missing, use Default.
   const displayServices = dbServices.length > 0
     ? dbServices.map((service, index) => {
-      const config = serviceConfig[index] || serviceConfig[0];
+      const config = serviceConfig[index] || {};
       return {
         ...config,
         ...service,
-        // Keep uploaded/admin image if set, otherwise use static fallback image.
-        image: service?.image || config?.image,
+        image: service?.image || config?.image || '[Bilde mangler]',
+        title: service?.title || config?.title || '[Tittel mangler]',
+        description: service?.description || config?.description || '[Beskrivelse mangler]',
       };
     })
-    : defaultServices.map((service, index) => {
-      const config = serviceConfig[index] || serviceConfig[0];
-      return {
-        ...config,
-        ...service,
-        image: config?.image,
-      };
-    });
+    : defaultServices.length > 0
+      ? defaultServices.map((service, index) => {
+          const config = serviceConfig[index] || {};
+          return {
+            ...config,
+            ...service,
+            image: config?.image || '[Bilde mangler]',
+            title: service?.title || '[Tittel mangler]',
+            description: service?.description || '[Beskrivelse mangler]',
+          };
+        })
+      : [{ title: '[Tjeneste mangler]', description: '[Ingen tjenester tilgjengelig]', image: '[Bilde mangler]' }];
 
   const container = {
     hidden: { opacity: 0 },

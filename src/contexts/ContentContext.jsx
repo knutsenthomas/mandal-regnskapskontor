@@ -32,76 +32,76 @@ export function ContentProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const getDashboardFallback = useCallback((slug) => {
-    if (!dashboardContent) return '';
+    if (!dashboardContent) return '[Innhold mangler]';
 
     switch (slug) {
       case 'hero.title':
-        return dashboardContent.hero_title || '';
+        return dashboardContent.hero_title || '[Innhold mangler]';
       case 'hero.lines':
-        return dashboardContent.hero_lines ?? dashboardContent.hero_subtitle ?? '';
+        return dashboardContent.hero_lines ?? dashboardContent.hero_subtitle ?? '[Innhold mangler]';
       case 'hero.image':
-        return dashboardContent.hero_image || '';
+        return dashboardContent.hero_image || '[Innhold mangler]';
 
       case 'about.text':
-        return dashboardContent.about_text || '';
+        return dashboardContent.about_text || '[Innhold mangler]';
       case 'about.image':
-        return dashboardContent.about_image || '';
+        return dashboardContent.about_image || '[Innhold mangler]';
       case 'about.values':
-        return dashboardContent.about_values ?? '';
+        return dashboardContent.about_values ?? '[Innhold mangler]';
 
       case 'contact.phone':
-        return dashboardContent.contact_phone || '';
+        return dashboardContent.contact_phone || '[Innhold mangler]';
       case 'contact.email':
-        return dashboardContent.contact_email || '';
+        return dashboardContent.contact_email || '[Innhold mangler]';
       case 'contact.address':
-        return dashboardContent.contact_address || '';
+        return dashboardContent.contact_address || '[Innhold mangler]';
 
       case 'footer.companyName':
-        return dashboardContent.company_name || 'Mandal Regnskapskontor';
+        return dashboardContent.company_name || '[Innhold mangler]';
       case 'footer.companyDesc':
-        return dashboardContent.footer_text || 'Din pålitelige partner for profesjonell regnskap og finansiell rådgivning siden 2009.';
+        return dashboardContent.footer_text || '[Innhold mangler]';
       case 'footer.quicklinksLabel':
-        return 'Hurtiglenker';
+        return '[Innhold mangler]';
       case 'footer.contactLabel':
-        return 'Kontakt';
+        return '[Innhold mangler]';
       case 'footer.phone':
-        return dashboardContent.contact_phone || dashboardContent.phone || '91 75 98 55';
+        return dashboardContent.contact_phone || dashboardContent.phone || '[Innhold mangler]';
       case 'footer.email':
-        return dashboardContent.contact_email || dashboardContent.email || 'jan@mandalregnskapskontor.no';
+        return dashboardContent.contact_email || dashboardContent.email || '[Innhold mangler]';
       case 'footer.address':
-        return dashboardContent.contact_address || dashboardContent.address || 'Bryggegata 1, 4514 Mandal';
+        return dashboardContent.contact_address || dashboardContent.address || '[Innhold mangler]';
       case 'footer.hoursLabel':
-        return 'Åpningstider';
+        return '[Innhold mangler]';
       case 'footer.hours.weeklabel':
-        return 'Mandag - Fredag';
+        return '[Innhold mangler]';
       case 'footer.hoursWeek':
-        return '08:00 - 16:00';
+        return '[Innhold mangler]';
       case 'footer.hours.weekendlabel':
-        return 'Lørdag - Søndag';
+        return '[Innhold mangler]';
       case 'footer.hoursWeekend':
-        return 'Stengt';
+        return '[Innhold mangler]';
       case 'footer.copyright':
         return `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`;
       case 'footer.adminlink':
-        return 'Admin';
+        return '[Innhold mangler]';
       case 'footer.link.home':
-        return 'Hjem';
+        return '[Innhold mangler]';
       case 'footer.link.services':
-        return 'Tjenester';
+        return '[Innhold mangler]';
       case 'footer.link.about':
-        return 'Om oss';
+        return '[Innhold mangler]';
       case 'footer.link.contact':
-        return 'Kontakt';
+        return '[Innhold mangler]';
 
       default:
-        return '';
+        return '[Innhold mangler]';
     }
   }, [dashboardContent]);
 
   // Hent alle content blocks
-  const fetchBlocks = useCallback(async () => {
+  const fetchBlocks = useCallback(async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const [blocksResult, contentResult] = await Promise.all([
         supabase.from('content_blocks').select('*'),
         supabase.from('content').select('*').single(),
@@ -124,7 +124,7 @@ export function ContentProvider({ children }) {
     } catch (err) {
       console.error("Error fetching content blocks:", err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []);
 
@@ -137,21 +137,21 @@ export function ContentProvider({ children }) {
       p_type: type,
     });
     if (!error) {
-      await fetchBlocks();
+      await fetchBlocks(true);
     }
     return error;
   };
 
   useEffect(() => {
-    fetchBlocks();
+    fetchBlocks(false);
 
     const channel = supabase
       .channel('public:content_sync')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'content_blocks' }, () => {
-        fetchBlocks();
+        fetchBlocks(true);
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
-        fetchBlocks();
+        fetchBlocks(true);
       })
       .subscribe();
 

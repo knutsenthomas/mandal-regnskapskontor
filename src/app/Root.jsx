@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter as Router, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
+import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // BRUKER NÅ KONSEKVENT @/ FOR Å FORHINDRE DOBLE KONTEKSTER
 import { AuthProvider } from '@/contexts/AuthContext';
-import { ContentProvider } from '@/contexts/ContentContext';
+import { ContentProvider, useContent } from '@/contexts/ContentContext';
 import { SiteProvider, useSite } from '@/contexts/SiteContext';
 
 import ScrollToTop from '@/components/ScrollToTop';
@@ -55,37 +57,62 @@ const RouteTracker = () => {
   return null;
 };
 
+const GlobalLoader = ({ children }) => {
+  const { loading: siteLoading } = useSite();
+  const { loading: contentLoading } = useContent();
+  const isLoading = siteLoading || contentLoading;
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-background flex flex-col items-center justify-center z-[9999]">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-primary font-medium tracking-widest uppercase text-xs">Henter innhold...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <SiteProvider>
       <AuthProvider>
         <ContentProvider>
           <ErrorBoundary>
-            <Router>
-              <RouteTracker />
-              <GASetup />
-              <DynamicSEO page="home" />
-              <ScrollToTop />
-              <main className="pt-0">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/personvern" element={<PrivacyPage />} />
-                  <Route path="/service/:id" element={<ServiceDetailPage />} />
-                  <Route path="/admin/login" element={<LoginPageWithBoundary />} />
-                  <Route path="/set-password" element={<SetPasswordPage />} />
-                  <Route
-                    path="/admin/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
-              </main>
-              <CookieConsent />
-              <Toaster />
-            </Router>
+            <GlobalLoader>
+              <Router>
+                <RouteTracker />
+                <GASetup />
+                <DynamicSEO page="home" />
+                <ScrollToTop />
+                <main className="pt-0">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/personvern" element={<PrivacyPage />} />
+                    <Route path="/service/:id" element={<ServiceDetailPage />} />
+                    <Route path="/admin/login" element={<LoginPageWithBoundary />} />
+                    <Route path="/set-password" element={<SetPasswordPage />} />
+                    <Route
+                      path="/admin/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Routes>
+                </main>
+                <CookieConsent />
+                <Toaster />
+              </Router>
+            </GlobalLoader>
           </ErrorBoundary>
         </ContentProvider>
       </AuthProvider>
