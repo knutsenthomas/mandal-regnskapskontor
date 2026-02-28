@@ -92,7 +92,7 @@ export function ContentProvider({ children }) {
 
       if (!contentResult.error && contentResult.data) {
         setDashboardContent(contentResult.data);
-      } else if (contentResult.error?.code === 'PGRST116') {
+      } else {
         setDashboardContent(null);
       }
     } catch (err) {
@@ -116,7 +116,11 @@ export function ContentProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchBlocks(false);
+    let isMounted = true;
+    fetchBlocks(false).then(() => {
+      if (!isMounted) return;
+      setLoading(false); // Failsafe
+    });
 
     const channel = supabase
       .channel('public:content_sync')
@@ -129,6 +133,7 @@ export function ContentProvider({ children }) {
       .subscribe();
 
     return () => {
+      isMounted = false;
       supabase.removeChannel(channel);
     };
   }, [fetchBlocks]);

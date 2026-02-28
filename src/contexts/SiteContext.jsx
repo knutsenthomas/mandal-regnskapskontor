@@ -86,7 +86,7 @@ export const SiteProvider = ({ children }) => {
                     document.getElementsByTagName('head')[0].appendChild(link);
                 }
             }
-
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching site data:', error);
         } finally {
@@ -127,7 +127,7 @@ export const SiteProvider = ({ children }) => {
         try {
             if (siteData) {
                 // Font Family
-                if (siteData.font_family) {
+                if (siteData.font_family && typeof siteData.font_family === 'string') {
                     const fontFamily = siteData.font_family.includes(' ')
                         ? `'${siteData.font_family}'`
                         : siteData.font_family;
