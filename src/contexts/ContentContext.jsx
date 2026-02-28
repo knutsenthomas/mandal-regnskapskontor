@@ -46,7 +46,7 @@ export function ContentProvider({ children }) {
       case 'about.image':
         return dashboardContent?.about_image || null;
       case 'about.values':
-        return dashboardContent?.about_values || null;
+        return dashboardContent?.about_values ?? null;
 
       case 'contact.phone':
         return dashboardContent?.contact_phone || null;
@@ -66,7 +66,6 @@ export function ContentProvider({ children }) {
       case 'footer.address':
         return dashboardContent?.contact_address || dashboardContent?.address || null;
 
-      // Resten håndteres primært av content_blocks, så vi returnerer bare null
       default:
         return null;
     }
