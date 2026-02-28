@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 // BRUKER NÅ KONSEKVENT @/ FOR Å FORHINDRE DOBLE KONTEKSTER
 import { AuthProvider } from '@/contexts/AuthContext';
-import { ContentProvider, useContent } from '@/contexts/ContentContext';
+import { ContentProvider, ContentContext } from '@/contexts/ContentContext';
 import { SiteProvider, useSite } from '@/contexts/SiteContext';
 
 import ScrollToTop from '@/components/ScrollToTop';
@@ -59,8 +59,23 @@ const RouteTracker = () => {
 
 const GlobalLoader = ({ children }) => {
   const { loading: siteLoading } = useSite();
-  const { loading: contentLoading } = useContent();
-  const isLoading = siteLoading || contentLoading;
+  const { loading: contentLoading } = React.useContext(ContentContext);
+  const [forceClose, setForceClose] = React.useState(false);
+  const isLoading = (siteLoading || contentLoading) && !forceClose;
+
+  React.useEffect(() => {
+    let timer;
+    if (siteLoading || contentLoading) {
+      // Force exit loading state after 8 seconds to prevent indefinite freezing
+      timer = setTimeout(() => {
+        console.warn('GlobalLoader timed out. Forcing app to render.');
+        setForceClose(true);
+      }, 8000);
+    } else {
+      setForceClose(false);
+    }
+    return () => clearTimeout(timer);
+  }, [siteLoading, contentLoading]);
 
   if (isLoading) {
     return (
@@ -71,7 +86,9 @@ const GlobalLoader = ({ children }) => {
           className="flex flex-col items-center gap-4"
         >
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
-          <p className="text-primary font-medium tracking-widest uppercase text-xs">Henter innhold...</p>
+          <p className="text-primary font-medium tracking-widest uppercase text-xs">
+            Henter innhold...
+          </p>
         </motion.div>
       </div>
     );
@@ -82,10 +99,10 @@ const GlobalLoader = ({ children }) => {
 
 function App() {
   return (
-    <SiteProvider>
-      <AuthProvider>
-        <ContentProvider>
-          <ErrorBoundary>
+    <ErrorBoundary>
+      <SiteProvider>
+        <AuthProvider>
+          <ContentProvider>
             <GlobalLoader>
               <Router>
                 <RouteTracker />
@@ -113,10 +130,10 @@ function App() {
                 <Toaster />
               </Router>
             </GlobalLoader>
-          </ErrorBoundary>
-        </ContentProvider>
-      </AuthProvider>
-    </SiteProvider>
+          </ContentProvider>
+        </AuthProvider>
+      </SiteProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -103,6 +103,20 @@ const ServiceDetailPage = () => {
     fetchServiceData();
   }, [fetchServiceData]);
 
+  // Sikkerhets-timeout for å forhindre "evig lasting"
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setLoading(false);
+        if (!service) {
+          setError('Tilkoblingen tok for lang tid. Vennligst prøv igjen.');
+        }
+      }, 8000);
+    }
+    return () => clearTimeout(timer);
+  }, [loading, service]);
+
   useEffect(() => {
     if (!id) return undefined;
 
