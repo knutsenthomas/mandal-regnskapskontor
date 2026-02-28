@@ -31,66 +31,42 @@ export function ContentProvider({ children }) {
   const [dashboardContent, setDashboardContent] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // FIKS: Fjernet all hardkodet tekst. Nå stoler vi kun på databasen (content og content_blocks)
   const getDashboardFallback = useCallback((slug) => {
     switch (slug) {
       case 'hero.title':
-        return dashboardContent?.hero_title || 'Mandal Regnskapskontor';
+        return dashboardContent?.hero_title || null;
       case 'hero.lines':
-        return dashboardContent?.hero_lines ?? dashboardContent?.hero_subtitle ?? 'Din partner for profesjonell regnskap';
+        return dashboardContent?.hero_lines ?? dashboardContent?.hero_subtitle ?? null;
       case 'hero.image':
-        return dashboardContent?.hero_image || '';
+        return dashboardContent?.hero_image || null;
 
       case 'about.text':
-        return dashboardContent?.about_text || 'Mandal regnskapskontor er et regnskapskontor med lang erfaring. Vi har tjenester som regnskap, lønn, fakturering og årsoppgjør – kombinert med operativ lederstøtte og praktisk hjelp der du trenger det.';
+        return dashboardContent?.about_text || null;
       case 'about.image':
-        return dashboardContent?.about_image || '';
+        return dashboardContent?.about_image || null;
       case 'about.values':
-        return dashboardContent?.about_values ?? [];
+        return dashboardContent?.about_values || null;
 
       case 'contact.phone':
-        return dashboardContent?.contact_phone || '91 75 98 55';
+        return dashboardContent?.contact_phone || null;
       case 'contact.email':
-        return dashboardContent?.contact_email || 'jan@mandalregnskapskontor.no';
+        return dashboardContent?.contact_email || null;
       case 'contact.address':
-        return dashboardContent?.contact_address || 'Gamle Hålandsbakken 8, 4517 Mandal';
+        return dashboardContent?.contact_address || null;
 
       case 'footer.companyName':
-        return dashboardContent?.company_name || 'Mandal Regnskapskontor';
+        return dashboardContent?.company_name || null;
       case 'footer.companyDesc':
-        return dashboardContent?.footer_text || 'Autorisert regnskapsfører';
-      case 'footer.quicklinksLabel':
-        return 'Hurtiglenker';
-      case 'footer.contactLabel':
-        return 'Kontakt Oss';
+        return dashboardContent?.footer_text || null;
       case 'footer.phone':
-        return dashboardContent?.contact_phone || dashboardContent?.phone || '91 75 98 55';
+        return dashboardContent?.contact_phone || dashboardContent?.phone || null;
       case 'footer.email':
-        return dashboardContent?.contact_email || dashboardContent?.email || 'jan@mandalregnskapskontor.no';
+        return dashboardContent?.contact_email || dashboardContent?.email || null;
       case 'footer.address':
-        return dashboardContent?.contact_address || dashboardContent?.address || 'Gamle Hålandsbakken 8, 4517 Mandal';
-      case 'footer.hoursLabel':
-        return 'Åpningstider';
-      case 'footer.hours.weeklabel':
-        return 'Mandag - Fredag:';
-      case 'footer.hoursWeek':
-        return '08:00 - 16:00';
-      case 'footer.hours.weekendlabel':
-        return 'Lørdag - Søndag:';
-      case 'footer.hoursWeekend':
-        return 'Stengt';
-      case 'footer.copyright':
-        return `© ${new Date().getFullYear()} Mandal Regnskapskontor. Alle rettigheter reservert.`;
-      case 'footer.adminlink':
-        return 'Admin';
-      case 'footer.link.home':
-        return 'Hjem';
-      case 'footer.link.services':
-        return 'Tjenester';
-      case 'footer.link.about':
-        return 'Om oss';
-      case 'footer.link.contact':
-        return 'Kontakt';
+        return dashboardContent?.contact_address || dashboardContent?.address || null;
 
+      // Resten håndteres primært av content_blocks, så vi returnerer bare null
       default:
         return null;
     }
@@ -125,7 +101,6 @@ export function ContentProvider({ children }) {
       if (!silent) setLoading(false);
     }
   }, []);
-
 
   // Oppdater én content block
   const updateBlock = async (slug, content, type = 'text') => {
@@ -168,14 +143,15 @@ export function ContentProvider({ children }) {
 export function useContent(slug) {
   const { blocks, loading, updateBlock, getDashboardFallback } = useContext(ContentContext);
   const block = blocks[slug];
-  const dashboardFallback = getDashboardFallback ? getDashboardFallback(slug) : '';
+  const dashboardFallback = getDashboardFallback ? getDashboardFallback(slug) : null;
   const content = block?.content;
   const hasBlockValue = hasValue(content);
   const hasDashboardValue = hasValue(dashboardFallback);
   const prefersDashboard = DASHBOARD_MANAGED_SLUGS.has(slug);
+
   const resolvedContent = prefersDashboard
     ? (hasDashboardValue ? dashboardFallback : (hasBlockValue ? content : ''))
-    : (hasBlockValue ? content : dashboardFallback);
+    : (hasBlockValue ? content : dashboardFallback || '');
 
   return {
     content: resolvedContent,
