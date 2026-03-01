@@ -82,16 +82,16 @@ const GlobalLoader = ({ children }) => {
     <>
       {children}
       {isLoading && (
-        <div className="fixed inset-0 bg-background flex flex-col items-center justify-center z-[9999]">
+        <div className="fixed bottom-6 right-6 z-[9999] pointer-events-none">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="bg-white shadow-2xl rounded-full px-5 py-3 border border-gray-100 flex items-center gap-3 pointer-events-auto"
           >
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-primary font-medium tracking-widest uppercase text-xs">
-              Henter innhold...
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+            <p className="text-primary font-bold tracking-widest uppercase text-[10px] m-0 leading-none mt-[2px]">
+              Oppdaterer data...
             </p>
           </motion.div>
         </div>
