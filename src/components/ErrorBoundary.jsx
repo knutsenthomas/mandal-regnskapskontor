@@ -11,6 +11,16 @@ class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
+        if (error && error.message && error.message.includes('Failed to fetch dynamically imported module')) {
+            const hasReloaded = sessionStorage.getItem('chunk_failed_reload');
+            if (!hasReloaded) {
+                sessionStorage.setItem('chunk_failed_reload', 'true');
+                console.log('Lazy chunk missing, reloading page...');
+                window.location.reload();
+                return;
+            }
+        }
+
         this.setState({
             error: error,
             errorInfo: errorInfo
