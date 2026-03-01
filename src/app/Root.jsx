@@ -11,7 +11,7 @@ import { SiteProvider, useSite } from '@/contexts/SiteContext';
 
 import ScrollToTop from '@/components/ScrollToTop';
 import DynamicSEO from '@/components/DynamicSEO';
-const HomePage = React.lazy(() => import('@/pages/HomePage'));
+import HomePage from '@/pages/HomePage';
 const ServiceDetailPage = React.lazy(() => import('@/pages/ServiceDetailPage'));
 const LoginPageWithBoundary = React.lazy(() => import('@/pages/admin/LoginPageFixed'));
 const AdminDashboard = React.lazy(() => import('@/pages/admin/AdminDashboard'));
