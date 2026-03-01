@@ -310,12 +310,12 @@ const LoginPage = () => {
         </motion.div>
       </div>
     );
-  };
+};
 
-  const LoginPageWithBoundary = () => (
-    <ErrorBoundary>
-      <LoginPage />
-    </ErrorBoundary>
-  );
+const LoginPageWithBoundary = () => (
+  <ErrorBoundary>
+    <LoginPage />
+  </ErrorBoundary>
+);
 
-  export default LoginPageWithBoundary;
+export default LoginPageWithBoundary;
