@@ -36,6 +36,19 @@ const toOverlayColor = (value, alpha, fallback) => {
 
   return fallback;
 };
+const optimizeUnsplashImage = (url, width) => {
+  if (!url || typeof url !== 'string') return url;
+  if (!url.includes('images.unsplash.com')) return url;
+  try {
+    const urlObj = new URL(url);
+    if (!urlObj.searchParams.has('w')) urlObj.searchParams.set('w', width);
+    if (!urlObj.searchParams.has('q')) urlObj.searchParams.set('q', '80');
+    if (!urlObj.searchParams.has('auto')) urlObj.searchParams.set('auto', 'format');
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
 
 const Hero = () => {
   const { content: heroTitle, loading: contentLoading } = useContent('hero.title');
@@ -63,8 +76,10 @@ const Hero = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const optimizedHeroImage = optimizeUnsplashImage(heroImage, '2000');
+  const resolvedHeroImage = optimizedHeroImage || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000';
   const resolvedHeroTitle = heroTitle || 'Regnskap på dine premisser';
-  const resolvedHeroImage = heroImage || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000';
   const resolvedHeroLinesRaw = heroLinesRaw || '["Erfaring og kompetanse som sikrer din økonomi", "Personlig oppfølging og skreddersydde løsninger", "Fokus på digitalisering og effektivisering"]';
 
   let heroLines = [];

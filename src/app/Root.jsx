@@ -11,15 +11,16 @@ import { SiteProvider, useSite } from '@/contexts/SiteContext';
 
 import ScrollToTop from '@/components/ScrollToTop';
 import DynamicSEO from '@/components/DynamicSEO';
-import HomePage from '@/pages/HomePage';
-import ServiceDetailPage from '@/pages/ServiceDetailPage';
-import LoginPageWithBoundary from '@/pages/admin/LoginPageFixed';
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import SetPasswordPage from '@/pages/SetPasswordPage';
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const ServiceDetailPage = React.lazy(() => import('@/pages/ServiceDetailPage'));
+const LoginPageWithBoundary = React.lazy(() => import('@/pages/admin/LoginPageFixed'));
+const AdminDashboard = React.lazy(() => import('@/pages/admin/AdminDashboard'));
+const SetPasswordPage = React.lazy(() => import('@/pages/SetPasswordPage'));
+const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
+
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import CookieConsent from '@/components/CookieConsent';
-import PrivacyPage from '@/pages/PrivacyPage';
 
 import { Toaster } from '@/components/ui/toaster';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -110,21 +111,27 @@ function App() {
                 <DynamicSEO page="home" />
                 <ScrollToTop />
                 <main className="pt-0">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/personvern" element={<PrivacyPage />} />
-                    <Route path="/service/:id" element={<ServiceDetailPage />} />
-                    <Route path="/admin/login" element={<LoginPageWithBoundary />} />
-                    <Route path="/set-password" element={<SetPasswordPage />} />
-                    <Route
-                      path="/admin/dashboard"
-                      element={
-                        <ProtectedRoute>
-                          <AdminDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                  </Routes>
+                  <React.Suspense fallback={
+                    <div className="flex items-center justify-center min-h-[50vh]">
+                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    </div>
+                  }>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/personvern" element={<PrivacyPage />} />
+                      <Route path="/service/:id" element={<ServiceDetailPage />} />
+                      <Route path="/admin/login" element={<LoginPageWithBoundary />} />
+                      <Route path="/set-password" element={<SetPasswordPage />} />
+                      <Route
+                        path="/admin/dashboard"
+                        element={
+                          <ProtectedRoute>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                    </Routes>
+                  </React.Suspense>
                 </main>
                 <CookieConsent />
                 <Toaster />

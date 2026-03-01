@@ -5,6 +5,20 @@ import { useContent } from '@/contexts/ContentContext';
 
 const containsHtml = (value) => /<\/?[a-z][\s\S]*>/i.test(value || '');
 
+const optimizeUnsplashImage = (url, width) => {
+  if (!url || typeof url !== 'string') return url;
+  if (!url.includes('images.unsplash.com')) return url;
+  try {
+    const urlObj = new URL(url);
+    if (!urlObj.searchParams.has('w')) urlObj.searchParams.set('w', width);
+    if (!urlObj.searchParams.has('q')) urlObj.searchParams.set('q', '80');
+    if (!urlObj.searchParams.has('auto')) urlObj.searchParams.set('auto', 'format');
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
 const About = () => {
   const icons = [Award, Users, Target, Lightbulb];
   const { content: aboutText } = useContent('about.text');
@@ -31,7 +45,7 @@ const About = () => {
   }
 
   const defaultImage = "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bmV1dHJhbCUyMG9mZmljZXxlbnwwfHwwfHx8MA%3D%3D";
-  const displayImage = aboutImage || defaultImage;
+  const displayImage = optimizeUnsplashImage(aboutImage || defaultImage, '1200');
   const defaultText = `Mandal Regnskapskontor er et ledende regnskapsbyrå med solid forankring i lokalsamfunnet. Med over 15 års erfaring har vi bygget opp en bred kompetanse som kommer våre kunder til gode hver eneste dag.\n\nVi spesialiserer oss på å levere høykvalitets regnskaps- og finansielle tjenester til små og mellomstore bedrifter. Vårt dedikerte team av erfarne regnskapsførere og revisor er forpliktet til å gi deg den beste service, personlig oppfølging og strategisk rådgivning.`;
   const displayText = aboutText || defaultText;
   const valuesGridCols = parsedValues.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
@@ -39,7 +53,7 @@ const About = () => {
   return (
     <section className="py-20 md:py-24 bg-background text-foreground relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -86,7 +100,7 @@ const About = () => {
             <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold text-primary mb-6 leading-snug">
               {useContent('about.subtitle').content || 'Din lokale partner for økonomisk vekst'}
             </h3>
-            
+
             {containsHtml(displayText) ? (
               <div
                 // JUSTERT: prose-base på mobil, prose-lg på desktop

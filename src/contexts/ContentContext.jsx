@@ -27,9 +27,25 @@ const hasValue = (value) => (
 );
 
 export function ContentProvider({ children }) {
-  const [blocks, setBlocks] = useState({});
-  const [dashboardContent, setDashboardContent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const getInitialBlocks = () => {
+    try {
+      const cached = localStorage.getItem('cached_content_blocks');
+      if (cached) return JSON.parse(cached);
+    } catch (e) { }
+    return {};
+  };
+
+  const getInitialDashboard = () => {
+    try {
+      const cached = localStorage.getItem('cached_dashboard_content');
+      if (cached) return JSON.parse(cached);
+    } catch (e) { }
+    return null;
+  };
+
+  const [blocks, setBlocks] = useState(getInitialBlocks);
+  const [dashboardContent, setDashboardContent] = useState(getInitialDashboard);
+  const [loading, setLoading] = useState(!(localStorage.getItem('cached_content_blocks') && localStorage.getItem('cached_dashboard_content')));
 
   // FIKS: Fjernet all hardkodet tekst. Nå stoler vi kun på databasen (content og content_blocks)
   const getDashboardFallback = useCallback((slug) => {
@@ -87,12 +103,15 @@ export function ContentProvider({ children }) {
           mapped[block.slug] = block;
         });
         setBlocks(mapped);
+        try { localStorage.setItem('cached_content_blocks', JSON.stringify(mapped)); } catch (e) { }
       }
 
       if (!contentResult.error && contentResult.data) {
         setDashboardContent(contentResult.data);
+        try { localStorage.setItem('cached_dashboard_content', JSON.stringify(contentResult.data)); } catch (e) { }
       } else {
         setDashboardContent(null);
+        try { localStorage.removeItem('cached_dashboard_content'); } catch (e) { }
       }
     } catch (err) {
       console.error("Error fetching content blocks:", err);

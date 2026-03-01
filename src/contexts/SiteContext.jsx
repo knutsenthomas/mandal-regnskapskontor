@@ -9,15 +9,23 @@ export const useSite = () => {
 };
 
 export const SiteProvider = ({ children }) => {
-    const [siteData, setSiteData] = useState({
-        logoUrl: null,
-        logoText: null,
-        faviconUrl: null,
-        gaId: null,
-        theme: {},
-        font_family: null,
-    });
-    const [loading, setLoading] = useState(true);
+    const getInitialSiteData = () => {
+        try {
+            const cached = localStorage.getItem('cached_site_data');
+            if (cached) return JSON.parse(cached);
+        } catch (e) { }
+        return {
+            logoUrl: null,
+            logoText: null,
+            faviconUrl: null,
+            gaId: null,
+            theme: {},
+            font_family: null,
+        };
+    };
+
+    const [siteData, setSiteData] = useState(getInitialSiteData);
+    const [loading, setLoading] = useState(!localStorage.getItem('cached_site_data'));
     const [cookieConsent, setCookieConsent] = useState(null); // null = not set, 'all', 'partial', 'none'
     const [cookiePreferences, setCookiePreferences] = useState({
         necessary: true,
@@ -75,6 +83,11 @@ export const SiteProvider = ({ children }) => {
             };
 
             setSiteData(newSiteData);
+            try {
+                localStorage.setItem('cached_site_data', JSON.stringify(newSiteData));
+            } catch (e) {
+                console.error("Storage error:", e);
+            }
 
             // Update Favicon dynamically
             if (newSiteData.faviconUrl) {
