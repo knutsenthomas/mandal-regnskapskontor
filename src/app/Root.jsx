@@ -25,6 +25,7 @@ import CookieConsent from '@/components/CookieConsent';
 import { Toaster } from '@/components/ui/toaster';
 import { supabase } from '@/lib/customSupabaseClient';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 
 // Component to handle Google Analytics 4 based on consent
 const GASetup = () => {
@@ -139,6 +140,7 @@ function App() {
                 <CookieConsent />
                 <Toaster />
                 <SpeedInsights />
+                <Analytics />
               </Router>
             </GlobalLoader>
           </ContentProvider>
