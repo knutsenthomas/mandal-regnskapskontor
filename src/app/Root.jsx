@@ -78,24 +78,26 @@ const GlobalLoader = ({ children }) => {
     return () => clearTimeout(timer);
   }, [siteLoading, contentLoading]);
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-background flex flex-col items-center justify-center z-[9999]">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col items-center gap-4"
-        >
-          <Loader2 className="w-10 h-10 animate-spin text-primary" />
-          <p className="text-primary font-medium tracking-widest uppercase text-xs">
-            Henter innhold...
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return children;
+  return (
+    <>
+      {children}
+      {isLoading && (
+        <div className="fixed inset-0 bg-background flex flex-col items-center justify-center z-[9999]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            <p className="text-primary font-medium tracking-widest uppercase text-xs">
+              Henter innhold...
+            </p>
+          </motion.div>
+        </div>
+      )}
+    </>
+  );
 };
 
 function App() {
