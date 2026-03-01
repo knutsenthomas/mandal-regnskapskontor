@@ -82,6 +82,8 @@ const CookieConsent = () => {
                                     <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Statistikk</span>
                                     <button
                                         onClick={() => setPrefs(prev => ({ ...prev, statistics: !prev.statistics }))}
+                                        aria-label="Toggle statistikk-cookies"
+                                        aria-pressed={prefs.statistics}
                                         className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.statistics ? 'bg-primary' : 'bg-gray-300'}`}
                                     >
                                         <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.statistics ? 'translate-x-4' : 'translate-x-0'}`}></div>
@@ -93,6 +95,8 @@ const CookieConsent = () => {
                                     <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Markedsføring</span>
                                     <button
                                         onClick={() => setPrefs(prev => ({ ...prev, marketing: !prev.marketing }))}
+                                        aria-label="Toggle markedsføring-cookies"
+                                        aria-pressed={prefs.marketing}
                                         className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.marketing ? 'bg-primary' : 'bg-gray-300'}`}
                                     >
                                         <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.marketing ? 'translate-x-4' : 'translate-x-0'}`}></div>

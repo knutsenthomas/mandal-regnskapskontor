@@ -197,6 +197,7 @@ const Navigation = () => {
             <div className={`lg:hidden shrink-0 ml-2 ${isOpen ? 'hidden' : 'block'}`}>
               <button
                 onClick={() => setIsOpen(true)}
+                aria-label="Åpne meny"
                 className={`flex items-center justify-center p-2 transition-colors duration-300 focus:outline-none ${isTransparent ? 'text-white' : ''
                   }`}
                 style={!isTransparent ? { color: primaryColor } : undefined}
@@ -237,6 +238,7 @@ const Navigation = () => {
 
               <button
                 onClick={() => setIsOpen(false)}
+                aria-label="Lukk meny"
                 className="flex items-center justify-center p-2 text-white hover:text-white/75 transition-colors focus:outline-none shrink-0 ml-2"
               >
                 <X size={32} />
