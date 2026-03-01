@@ -83,6 +83,8 @@ const About = () => {
                 <img
                   src={displayImage}
                   alt="Mandal Regnskapskontor"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-[350px] md:h-[400px] lg:h-[500px] object-cover rounded-2xl"
                 />
               </div>

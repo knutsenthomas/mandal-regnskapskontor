@@ -128,6 +128,8 @@ const Hero = () => {
           <img
             src={resolvedHeroImage}
             alt="Regnskapskontor"
+            fetchpriority="high"
+            decoding="async"
             className="w-full h-full object-cover object-center transition-opacity duration-700"
             onLoad={() => setImageLoaded(true)}
             style={{ opacity: imageLoaded ? 1 : 0 }}
