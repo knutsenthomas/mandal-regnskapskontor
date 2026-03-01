@@ -198,6 +198,8 @@ const Hero = () => {
                     <button
                       key={loc.id}
                       onClick={() => setSelectedLocation(selectedLocation === loc.id ? null : loc.id)}
+                      aria-label={`Velg lokasjon: ${loc.name}`}
+                      aria-pressed={selectedLocation === loc.id}
                       className={`
                         flex items-center gap-2 px-6 py-2 rounded-full border-2 transition-all font-medium
                         ${selectedLocation === loc.id
