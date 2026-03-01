@@ -135,7 +135,8 @@ export function ContentProvider({ children }) {
 
   useEffect(() => {
     let isMounted = true;
-    fetchBlocks(false).then(() => {
+    const hasCache = !!(localStorage.getItem('cached_content_blocks') && localStorage.getItem('cached_dashboard_content'));
+    fetchBlocks(hasCache).then(() => {
       if (!isMounted) return;
       setLoading(false); // Failsafe
     });
