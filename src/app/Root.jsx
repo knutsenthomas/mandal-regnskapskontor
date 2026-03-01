@@ -26,35 +26,72 @@ import { Toaster } from '@/components/ui/toaster';
 import { supabase } from '@/lib/customSupabaseClient';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
-// Component to handle Google Analytics 4 based on consent
-const GASetup = () => {
-  const { cookiePreferences, gaId } = useSite();
-
-  useEffect(() => {
-    if (cookiePreferences?.statistics && gaId) {
-      const measurementId = String(gaId).trim();
-      ReactGA.initialize(measurementId);
-      ReactGA.send({
-        hitType: "pageview",
-        page: window.location.pathname + window.location.search,
-      });
-    }
-  }, [cookiePreferences?.statistics, gaId]);
-
-  return null;
-};
-
-// Component to handle route changes
-const RouteTracker = () => {
+// Unified Component to handle Google Analytics 4 initialization and route tracking based on consent
+const GoogleAnalytics = () => {
   const location = useLocation();
-  const { cookiePreferences } = useSite();
+  const { cookiePreferences, gaId, cookieConsent } = useSite();
+  const [isInitialized, setIsInitialized] = React.useState(false);
 
+  // 1. Initialize GA immediately with DEFAULT consent (denied) if gaId is present
   useEffect(() => {
-    // Send page view on route change ONLY if consent is given
-    if (cookiePreferences?.statistics) {
-      ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+    const measurementId = String(gaId).trim();
+    if (measurementId && measurementId !== 'null' && measurementId !== '' && !isInitialized) {
+      try {
+        // Set default consent state before initializing
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+
+        // Only set default if we haven't set consent yet
+        if (cookieConsent === null) {
+          gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+          });
+        }
+
+        ReactGA.initialize(measurementId);
+        setIsInitialized(true);
+        console.log('Google Analytics 4 initialisert med Consent Mode:', measurementId);
+      } catch (error) {
+        console.error('GA4 initialiseringsfeil:', error);
+      }
     }
-  }, [location, cookiePreferences?.statistics]);
+  }, [gaId, isInitialized, cookieConsent]);
+
+  // 2. Update Consent Mode when preferences change
+  useEffect(() => {
+    if (isInitialized) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+
+      const hasAnalyticsConsent = cookiePreferences?.statistics === true;
+      const hasMarketingConsent = cookiePreferences?.marketing === true;
+
+      gtag('consent', 'update', {
+        'analytics_storage': hasAnalyticsConsent ? 'granted' : 'denied',
+        'ad_storage': hasMarketingConsent ? 'granted' : 'denied',
+        'ad_user_data': hasMarketingConsent ? 'granted' : 'denied',
+        'ad_personalization': hasMarketingConsent ? 'granted' : 'denied',
+      });
+      console.log('GA4 Consent oppdatert:', { analytics: hasAnalyticsConsent, marketing: hasMarketingConsent });
+    }
+  }, [cookiePreferences, isInitialized]);
+
+  // 3. Track page views on route change (GA4 handles the anonymization automatically based on consent state)
+  useEffect(() => {
+    if (isInitialized) {
+      try {
+        ReactGA.send({
+          hitType: "pageview",
+          page: location.pathname + location.search
+        });
+      } catch (error) {
+        console.error('GA4 trackingfeil:', error);
+      }
+    }
+  }, [isInitialized, location]);
 
   return null;
 };
@@ -109,8 +146,7 @@ function App() {
           <ContentProvider>
             <GlobalLoader>
               <Router>
-                <RouteTracker />
-                <GASetup />
+                <GoogleAnalytics />
                 <DynamicSEO page="home" />
                 <ScrollToTop />
                 <main className="pt-0">
