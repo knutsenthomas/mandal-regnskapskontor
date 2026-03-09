@@ -16,7 +16,7 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, toggleSidebar }) => {
         { id: 'about', label: 'Om oss', icon: Info },
         { id: 'calendar', label: 'Kalender', icon: Calendar },
         { id: 'contact-settings', label: 'Kontakt Info', icon: Settings },
-        { id: 'footer', label: 'Footer / Innstillinger', icon: Settings },
+        { id: 'footer', label: 'Innstillinger', icon: Settings },
         { id: 'theme', label: 'Design', icon: Palette },
         { id: 'privacy', label: 'Personvern & Cookies', icon: ShieldCheck },
         { id: 'seo', label: 'SEO & Synlighet', icon: Globe },
