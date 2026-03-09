@@ -1,0 +1,30 @@
+name: Deploy to One.com
+
+on:
+  push:
+    branches:
+      - main # Change this if your main branch has a different name, e.g., 'master'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTP to One.com
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./ # Laster opp alt i prosjektet ditt, unntatt det som er ekskludert under
+          server-dir: / # Hvor på One.com koden skal lastes opp (ofte bare / eller /httpd.www/)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .github/
+            .vscode/
+            .env*

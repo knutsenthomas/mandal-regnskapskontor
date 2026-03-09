@@ -4,11 +4,11 @@ import { Briefcase } from 'lucide-react';
 import { useSite } from '@/contexts/SiteContext';
 
 const Logo = ({
-	color = 'dark',
-	isMobileMenu = false
+  color = 'dark',
+  isMobileMenu = false
 }) => {
-	const { logoUrl, logoText } = useSite();
-	const isDarkText = color === 'dark';
+  const { logoUrl, logoText, subtitleText } = useSite();
+  const isDarkText = color === 'dark';
 
 	return (
 		<motion.div initial={false} className="flex items-center gap-1.5 sm:gap-3 cursor-pointer select-none min-w-0 w-full lg:w-auto">
@@ -53,7 +53,7 @@ const Logo = ({
 					transition={{ duration: 0.3 }}
 					className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mt-0.5 hidden sm:block whitespace-nowrap"
 				>
-					AUTORISERT REGNSKAPSFØRER
+					{subtitleText || "AUTORISERT REGNSKAPSFØRER"}
 				</motion.span>
 
 				<motion.span
@@ -62,7 +62,7 @@ const Logo = ({
 					transition={{ duration: 0.3 }}
 					className="text-[9px] font-bold tracking-[0.08em] uppercase mt-0.5 sm:hidden"
 				>
-					AUTORISERT REGNSKAPSFØRER
+					{subtitleText || "AUTORISERT REGNSKAPSFØRER"}
 				</motion.span>
 			</div>
 		</motion.div>

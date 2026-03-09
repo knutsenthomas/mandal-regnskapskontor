@@ -22,12 +22,14 @@ const GeneralEditor = ({ content, onUpdate }) => {
     const [uploading, setUploading] = useState(false);
     const [logoUrl, setLogoUrl] = useState('');
     const [logoText, setLogoText] = useState('');
-    const [faviconUrl, setFaviconUrl] = useState('');
-    const [gaId, setGaId] = useState('');
+        const [faviconUrl, setFaviconUrl] = useState('');
+        const [gaId, setGaId] = useState('');
+        const [subtitleText, setSubtitleText] = useState('');
 
     useEffect(() => {
         if (content) {
             setLogoUrl(content.logo_url || '');
+                setSubtitleText(content.subtitle_text || '');
         }
         fetchSettings();
     }, [content]);
@@ -45,7 +47,8 @@ const GeneralEditor = ({ content, onUpdate }) => {
 
             setGaId(settingsMap['google_analytics_id'] || '');
             setLogoText(settingsMap['logo_text'] || '');
-            setFaviconUrl(settingsMap['favicon_url'] || '');
+                setSubtitleText(settingsMap['subtitle_text'] || '');
+                setFaviconUrl(settingsMap['favicon_url'] || '');
             if (settingsMap['logo_url']) {
                 setLogoUrl(settingsMap['logo_url']);
             }
@@ -136,8 +139,9 @@ const GeneralEditor = ({ content, onUpdate }) => {
             const settingsToUpdate = [
                 { key: 'google_analytics_id', value: gaId },
                 { key: 'logo_text', value: logoText },
-                { key: 'favicon_url', value: faviconUrl },
-                { key: 'logo_url', value: logoUrl }
+                    { key: 'subtitle_text', value: subtitleText },
+                    { key: 'favicon_url', value: faviconUrl },
+                    { key: 'logo_url', value: logoUrl }
             ];
 
             for (const setting of settingsToUpdate) {
