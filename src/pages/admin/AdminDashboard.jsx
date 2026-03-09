@@ -280,10 +280,9 @@ const AdminDashboard = () => {
           ) : <p>Laster...</p>;
         case 'service-details': {
           if (!content) return <p>Laster...</p>;
-          // Velg automatisk første tjeneste hvis ingen valgt
           if (!selectedServiceId && servicesList.length > 0) {
             setSelectedServiceId(servicesList[0].id);
-            return null; // Venter på state update
+            return null;
           }
           const effectiveServiceId = selectedServiceId || servicesList[0]?.id;
           const effectiveServiceName = servicesList.find(s => s.id === effectiveServiceId)?.name || '';
@@ -337,7 +336,7 @@ const AdminDashboard = () => {
         case 'privacy':
           return <PrivacyEditor />;
         default:
-          return renderDashboardHome();
+          return <p>Velg en side fra menyen.</p>;
       }
     })();
 
