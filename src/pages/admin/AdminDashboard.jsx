@@ -56,7 +56,8 @@ const AdminDashboard = () => {
 
   // Sync state with URL params on mount/update
   useEffect(() => {
-    const tabParam = searchParams.get('tab');
+    const rawTabParam = searchParams.get('tab');
+    const tabParam = rawTabParam === 'footer' ? 'innstillinger' : rawTabParam;
     if (tabParam && tabParam !== activeTab) {
       setActiveTab(tabParam);
     }
@@ -80,6 +81,7 @@ const AdminDashboard = () => {
       'about': 'Om oss',
       'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
+      'footer': 'Innstillinger',
       'innstillinger': 'Innstillinger',
       'theme': 'Tema & farger',
       'seo': 'SEO & synlighet',
@@ -320,6 +322,7 @@ const AdminDashboard = () => {
         case 'contact-settings':
         case 'contact':
           return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
+        case 'footer':
         case 'innstillinger':
           return (
             <div className="space-y-12">
