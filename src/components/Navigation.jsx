@@ -172,7 +172,7 @@ const Navigation = () => {
                 <button
                   key={item}
                   onClick={() => item === 'hjem' ? handleLogoClick() : handleLinkClick(item)}
-                  className={`font-bold text-sm tracking-widest uppercase whitespace-nowrap transition-colors duration-300 ${isTransparent
+                  className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
                     ? 'text-white hover:text-gray-200'
                     : 'hover:opacity-80'
                     }`}
