@@ -193,6 +193,21 @@ const GeneralEditor = ({ content, onUpdate }) => {
 
     return (
         <div className="space-y-6">
+            <AdminHeader
+                icon={Settings}
+                title="Generelle innstillinger"
+                description="Administrer nettsidens logo, merkevare og analyseverktøy."
+            >
+                <Button
+                    onClick={handleSave}
+                    disabled={loading || uploading}
+                    className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
+                >
+                    {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Lagre endringer
+                </Button>
+            </AdminHeader>
+
                                 {/* NAVIGATION TEXT SECTION */}
                                 <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
                                     <CardHeader className="bg-gray-50/50 border-b border-gray-100">
@@ -246,21 +261,6 @@ const GeneralEditor = ({ content, onUpdate }) => {
                                         </div>
                                     </CardContent>
                                 </Card>
-            <AdminHeader
-                icon={Settings}
-                title="Generelle innstillinger"
-                description="Administrer nettsidens logo, merkevare og analyseverktøy."
-            >
-                <Button
-                    onClick={handleSave}
-                    disabled={loading || uploading}
-                    className="bg-[#1B4965] hover:bg-[#0F3347] text-white flex items-center gap-2"
-                >
-                    {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                    Lagre endringer
-                </Button>
-            </AdminHeader>
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* LOGO SECTION */}
                 <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
