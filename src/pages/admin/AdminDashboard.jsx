@@ -80,7 +80,7 @@ const AdminDashboard = () => {
       'about': 'Om oss',
       'contact-settings': 'Kontaktinformasjon',
       'contact': 'Kontaktinformasjon',
-      'footer': 'Footer & innstillinger',
+      'innstillinger': 'Innstillinger',
       'theme': 'Tema & farger',
       'seo': 'SEO & synlighet',
       'administration': 'Brukeradministrasjon',
@@ -164,10 +164,6 @@ const AdminDashboard = () => {
 
   const renderDashboardHome = () => (
     <div className="space-y-6">
-      {/* GENERELLE INNSTILLINGER */}
-      <div>
-        {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
-      </div>
       {/* WELCOME BANNER */}
       <div className="bg-gradient-to-r from-[#1B4965] to-[#0F3347] rounded-xl p-8 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
@@ -325,9 +321,10 @@ const AdminDashboard = () => {
         case 'contact-settings':
         case 'contact':
           return content ? <ContactEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>;
-        case 'footer':
+        case 'innstillinger':
           return (
             <div className="space-y-12">
+              {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
               {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
             </div>
           );
