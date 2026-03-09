@@ -264,6 +264,17 @@ const GeneralEditor = ({ content, onUpdate }) => {
                                 />
                                 <p className="text-[10px] text-gray-400 italic">Dette er teksten som vises ved siden av bilde-logoen.</p>
                             </div>
+                            <div className="space-y-2 mt-4">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Undertittel (f.eks. AUTORISERT REGNSKAPSFØRER)</label>
+                                <input
+                                    type="text"
+                                    placeholder="AUTORISERT REGNSKAPSFØRER"
+                                    value={subtitleText}
+                                    onChange={e => setSubtitleText(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                />
+                                <p className="text-[10px] text-gray-400 italic">Dette er undertittelen som vises under logoen på forsiden.</p>
+                            </div>
                         </CardContent>
                     </Card>
 
