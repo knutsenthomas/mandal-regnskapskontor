@@ -164,6 +164,10 @@ const AdminDashboard = () => {
 
   const renderDashboardHome = () => (
     <div className="space-y-6">
+      {/* GENERELLE INNSTILLINGER */}
+      <div>
+        {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
+      </div>
       {/* WELCOME BANNER */}
       <div className="bg-gradient-to-r from-[#1B4965] to-[#0F3347] rounded-xl p-8 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
