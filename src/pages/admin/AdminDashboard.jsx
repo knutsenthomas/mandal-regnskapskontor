@@ -328,7 +328,6 @@ const AdminDashboard = () => {
         case 'footer':
           return (
             <div className="space-y-12">
-              {content ? <GeneralEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
               {content ? <FooterEditor content={content} onUpdate={fetchContent} /> : <p>Laster...</p>}
             </div>
           );
