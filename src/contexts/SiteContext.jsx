@@ -21,7 +21,12 @@ export const SiteProvider = ({ children }) => {
             gaId: null,
             theme: {},
             font_family: null,
-               subtitleText: null,
+            subtitleText: null,
+            nav_home: null,
+            nav_services: null,
+            nav_about: null,
+            nav_calendar: null,
+            nav_contact: null,
         };
     };
 
@@ -77,7 +82,12 @@ export const SiteProvider = ({ children }) => {
                 gaId: settingsMap['google_analytics_id'] || null,
                 theme: themeSettings,
                 font_family: settingsMap['font_family'] || null,
-                   subtitleText: settingsMap['subtitle_text'] || null,
+                subtitleText: settingsMap['subtitle_text'] || null,
+                nav_home: settingsMap['nav_home'] || null,
+                nav_services: settingsMap['nav_services'] || null,
+                nav_about: settingsMap['nav_about'] || null,
+                nav_calendar: settingsMap['nav_calendar'] || null,
+                nav_contact: settingsMap['nav_contact'] || null,
                 h1_size: settingsMap['h1_size'] || null,
                 h2_size: settingsMap['h2_size'] || null,
                 h3_size: settingsMap['h3_size'] || null,

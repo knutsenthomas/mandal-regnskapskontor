@@ -25,11 +25,21 @@ const GeneralEditor = ({ content, onUpdate }) => {
         const [faviconUrl, setFaviconUrl] = useState('');
         const [gaId, setGaId] = useState('');
         const [subtitleText, setSubtitleText] = useState('');
+        const [navHome, setNavHome] = useState('');
+        const [navServices, setNavServices] = useState('');
+        const [navAbout, setNavAbout] = useState('');
+        const [navCalendar, setNavCalendar] = useState('');
+        const [navContact, setNavContact] = useState('');
 
     useEffect(() => {
         if (content) {
             setLogoUrl(content.logo_url || '');
                 setSubtitleText(content.subtitle_text || '');
+            setNavHome(content.nav_home || '');
+            setNavServices(content.nav_services || '');
+            setNavAbout(content.nav_about || '');
+            setNavCalendar(content.nav_calendar || '');
+            setNavContact(content.nav_contact || '');
         }
         fetchSettings();
     }, [content]);
@@ -47,8 +57,13 @@ const GeneralEditor = ({ content, onUpdate }) => {
 
             setGaId(settingsMap['google_analytics_id'] || '');
             setLogoText(settingsMap['logo_text'] || '');
-                setSubtitleText(settingsMap['subtitle_text'] || '');
-                setFaviconUrl(settingsMap['favicon_url'] || '');
+            setSubtitleText(settingsMap['subtitle_text'] || '');
+            setNavHome(settingsMap['nav_home'] || '');
+            setNavServices(settingsMap['nav_services'] || '');
+            setNavAbout(settingsMap['nav_about'] || '');
+            setNavCalendar(settingsMap['nav_calendar'] || '');
+            setNavContact(settingsMap['nav_contact'] || '');
+            setFaviconUrl(settingsMap['favicon_url'] || '');
             if (settingsMap['logo_url']) {
                 setLogoUrl(settingsMap['logo_url']);
             }
@@ -139,9 +154,14 @@ const GeneralEditor = ({ content, onUpdate }) => {
             const settingsToUpdate = [
                 { key: 'google_analytics_id', value: gaId },
                 { key: 'logo_text', value: logoText },
-                    { key: 'subtitle_text', value: subtitleText },
-                    { key: 'favicon_url', value: faviconUrl },
-                    { key: 'logo_url', value: logoUrl }
+                { key: 'subtitle_text', value: subtitleText },
+                { key: 'nav_home', value: navHome },
+                { key: 'nav_services', value: navServices },
+                { key: 'nav_about', value: navAbout },
+                { key: 'nav_calendar', value: navCalendar },
+                { key: 'nav_contact', value: navContact },
+                { key: 'favicon_url', value: faviconUrl },
+                { key: 'logo_url', value: logoUrl }
             ];
 
             for (const setting of settingsToUpdate) {
@@ -173,6 +193,59 @@ const GeneralEditor = ({ content, onUpdate }) => {
 
     return (
         <div className="space-y-6">
+                                {/* NAVIGATION TEXT SECTION */}
+                                <Card className="border-none shadow-sm ring-1 ring-gray-100 rounded-xl overflow-hidden">
+                                    <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                            Navigasjonstekster
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Hjem</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Hjem"
+                                                value={navHome}
+                                                onChange={e => setNavHome(e.target.value)}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                            />
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Tjenester</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Tjenester"
+                                                value={navServices}
+                                                onChange={e => setNavServices(e.target.value)}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                            />
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Om oss</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Om oss"
+                                                value={navAbout}
+                                                onChange={e => setNavAbout(e.target.value)}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                            />
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Kalender</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Kalender"
+                                                value={navCalendar}
+                                                onChange={e => setNavCalendar(e.target.value)}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                            />
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Kontakt oss</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Kontakt oss"
+                                                value={navContact}
+                                                onChange={e => setNavContact(e.target.value)}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-gray-50/50 font-bold"
+                                            />
+                                            <p className="text-[10px] text-gray-400 italic">Disse tekstene vises i hovedmenyen. Du kan bruke små og store bokstaver.</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
             <AdminHeader
                 icon={Settings}
                 title="Generelle innstillinger"

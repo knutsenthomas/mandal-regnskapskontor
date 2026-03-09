@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import { cn } from '@/lib/utils';
 import { useContent } from '@/contexts/ContentContext';
+import { useSite } from '@/contexts/SiteContext';
 
 const stripHtml = (value) => String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 const toTelHref = (value) => {
@@ -28,6 +29,7 @@ const Navigation = () => {
   const { content: footerPhone } = useContent('footer.phone');
   const { content: footerEmail } = useContent('footer.email');
   const { content: footerAddress } = useContent('footer.address');
+  const { nav_home, nav_services, nav_about, nav_calendar, nav_contact } = useSite();
 
   const isHome = location.pathname === '/' || location.pathname === '';
   const isTransparent = isHome && !scrolled;
@@ -168,19 +170,46 @@ const Navigation = () => {
 
             {/* Desktop Menu */}
             <nav className={`hidden lg:flex items-center gap-8 ml-auto ${isOpen ? 'opacity-0' : 'opacity-100'}`}>
-              {['hjem', 'tjenester', 'om-oss', 'kalender'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => item === 'hjem' ? handleLogoClick() : handleLinkClick(item)}
-                  className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
-                    ? 'text-white hover:text-gray-200'
-                    : 'hover:opacity-80'
-                    }`}
-                  style={!isTransparent ? { color: primaryColor } : undefined}
-                >
-                  {item.replace('-', ' ')}
-                </button>
-              ))}
+              <button
+                onClick={handleLogoClick}
+                className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
+                  ? 'text-white hover:text-gray-200'
+                  : 'hover:opacity-80'
+                  }`}
+                style={!isTransparent ? { color: primaryColor } : undefined}
+              >
+                {nav_home || 'Hjem'}
+              </button>
+              <button
+                onClick={() => handleLinkClick('tjenester')}
+                className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
+                  ? 'text-white hover:text-gray-200'
+                  : 'hover:opacity-80'
+                  }`}
+                style={!isTransparent ? { color: primaryColor } : undefined}
+              >
+                {nav_services || 'Tjenester'}
+              </button>
+              <button
+                onClick={() => handleLinkClick('om-oss')}
+                className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
+                  ? 'text-white hover:text-gray-200'
+                  : 'hover:opacity-80'
+                  }`}
+                style={!isTransparent ? { color: primaryColor } : undefined}
+              >
+                {nav_about || 'Om oss'}
+              </button>
+              <button
+                onClick={() => handleLinkClick('kalender')}
+                className={`font-bold text-sm tracking-widest whitespace-nowrap transition-colors duration-300 ${isTransparent
+                  ? 'text-white hover:text-gray-200'
+                  : 'hover:opacity-80'
+                  }`}
+                style={!isTransparent ? { color: primaryColor } : undefined}
+              >
+                {nav_calendar || 'Kalender'}
+              </button>
               <Button
                 onClick={() => handleLinkClick('kontakt')}
                 className={`font-bold rounded-full whitespace-nowrap transition-all duration-300 ${isTransparent
@@ -189,7 +218,7 @@ const Navigation = () => {
                   }`}
                 style={isTransparent ? { color: primaryColor } : { backgroundColor: primaryColor, color: primaryForeground }}
               >
-                KONTAKT OSS
+                {nav_contact || 'Kontakt oss'}
               </Button>
             </nav>
 
