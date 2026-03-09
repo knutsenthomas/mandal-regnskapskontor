@@ -51,7 +51,7 @@ const Logo = ({
 					initial={false}
 					animate={{ color: isDarkText ? 'hsl(var(--muted-foreground))' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
-					className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mt-0.5 hidden sm:block whitespace-nowrap"
+					  className="text-[10px] sm:text-xs font-bold tracking-[0.15em] mt-0.5 hidden sm:block whitespace-nowrap"
 				>
 					{subtitleText || "AUTORISERT REGNSKAPSFØRER"}
 				</motion.span>
@@ -60,7 +60,7 @@ const Logo = ({
 					initial={false}
 					animate={{ color: isDarkText ? 'hsl(var(--muted-foreground))' : 'rgba(255, 255, 255, 0.75)' }}
 					transition={{ duration: 0.3 }}
-					className="text-[9px] font-bold tracking-[0.08em] uppercase mt-0.5 sm:hidden"
+					  className="text-[9px] font-bold tracking-[0.08em] mt-0.5 sm:hidden"
 				>
 					{subtitleText || "AUTORISERT REGNSKAPSFØRER"}
 				</motion.span>
