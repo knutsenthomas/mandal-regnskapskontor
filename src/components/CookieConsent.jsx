@@ -3,6 +3,44 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSite } from '@/contexts/SiteContext';
 import { Link } from 'react-router-dom';
 
+const PreferenceToggle = ({ active, disabled = false, onClick, label }) => (
+    <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        aria-label={label}
+        aria-pressed={active}
+        aria-disabled={disabled}
+        className={`
+            relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-transparent transition-colors
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2
+            ${active ? 'bg-primary' : 'bg-gray-300'}
+            ${disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}
+        `}
+    >
+        <span
+            className={`
+                pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform
+                ${active ? 'translate-x-5' : 'translate-x-0.5'}
+            `}
+        />
+    </button>
+);
+
+const PreferenceOption = ({ label, active, disabled = false, onClick, muted = false }) => (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-3">
+        <span className={`min-w-0 text-xs font-bold uppercase tracking-wider ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
+            {label}
+        </span>
+        <PreferenceToggle
+            active={active}
+            disabled={disabled}
+            onClick={onClick}
+            label={`Toggle ${label.toLowerCase()}-cookies`}
+        />
+    </div>
+);
+
 const CookieConsent = () => {
     const { cookieConsent, updateConsent } = useSite();
     const [isVisible, setIsVisible] = useState(false);
@@ -69,39 +107,22 @@ const CookieConsent = () => {
                         {/* Preferences area - more compact */}
                         <div className="bg-gray-50 rounded-[16px] p-4 mb-6 border border-gray-100">
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                {/* Necessary */}
-                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Nødvendige</span>
-                                    <div className="w-8 h-4 bg-primary/20 rounded-full p-0.5 ml-auto sm:ml-0">
-                                        <div className="w-3 h-3 bg-white rounded-full translate-x-4"></div>
-                                    </div>
-                                </div>
-
-                                {/* Statistics */}
-                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
-                                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Statistikk</span>
-                                    <button
-                                        onClick={() => setPrefs(prev => ({ ...prev, statistics: !prev.statistics }))}
-                                        aria-label="Toggle statistikk-cookies"
-                                        aria-pressed={prefs.statistics}
-                                        className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.statistics ? 'bg-primary' : 'bg-gray-300'}`}
-                                    >
-                                        <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.statistics ? 'translate-x-4' : 'translate-x-0'}`}></div>
-                                    </button>
-                                </div>
-
-                                {/* Marketing */}
-                                <div className="flex items-center justify-between sm:justify-start gap-3 px-2 py-1">
-                                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">Markedsføring</span>
-                                    <button
-                                        onClick={() => setPrefs(prev => ({ ...prev, marketing: !prev.marketing }))}
-                                        aria-label="Toggle markedsføring-cookies"
-                                        aria-pressed={prefs.marketing}
-                                        className={`w-8 h-4 rounded-full p-0.5 transition-colors ml-auto sm:ml-0 ${prefs.marketing ? 'bg-primary' : 'bg-gray-300'}`}
-                                    >
-                                        <div className={`w-3 h-3 bg-white rounded-full transition-transform ${prefs.marketing ? 'translate-x-4' : 'translate-x-0'}`}></div>
-                                    </button>
-                                </div>
+                                <PreferenceOption
+                                    label="Nødvendige"
+                                    active
+                                    disabled
+                                    muted
+                                />
+                                <PreferenceOption
+                                    label="Statistikk"
+                                    active={prefs.statistics}
+                                    onClick={() => setPrefs(prev => ({ ...prev, statistics: !prev.statistics }))}
+                                />
+                                <PreferenceOption
+                                    label="Markedsføring"
+                                    active={prefs.marketing}
+                                    onClick={() => setPrefs(prev => ({ ...prev, marketing: !prev.marketing }))}
+                                />
                             </div>
                         </div>
 
