@@ -72,15 +72,25 @@
 		gtag('config', 'G-0HWDM4R4TY');
 	</script>
 
-	<script>
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('/sw.js')
-					.then(reg => console.log('Service Worker registered', reg))
-					.catch(err => console.log('Service Worker registration failed', err));
-			});
-		}
-	</script>
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.getRegistrations()
+						.then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+						.catch((err) => console.log('Service Worker cleanup failed', err));
+
+					if ('caches' in window) {
+						caches.keys()
+							.then((keys) => Promise.all(
+								keys
+									.filter((key) => key.startsWith('mandal-rk'))
+									.map((key) => caches.delete(key))
+							))
+							.catch((err) => console.log('Cache cleanup failed', err));
+					}
+				});
+			}
+		</script>
 </head>
 
 <body>

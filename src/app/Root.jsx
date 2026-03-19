@@ -100,12 +100,13 @@ const GlobalLoader = ({ children }) => {
   const { loading: siteLoading } = useSite();
   const { loading: contentLoading } = React.useContext(ContentContext);
   const [forceClose, setForceClose] = React.useState(false);
-  const isLoading = (siteLoading || contentLoading) && !forceClose;
+  const hasPendingInitialLoad = siteLoading || contentLoading;
+  const isBlocking = hasPendingInitialLoad && !forceClose;
 
   React.useEffect(() => {
     let timer;
-    if (siteLoading || contentLoading) {
-      // Force exit loading state after 8 seconds to prevent indefinite freezing
+    if (hasPendingInitialLoad) {
+      // Force exit loading state after 8 seconds to prevent indefinite freezing.
       timer = setTimeout(() => {
         console.warn('GlobalLoader timed out. Forcing app to render.');
         setForceClose(true);
@@ -114,26 +115,28 @@ const GlobalLoader = ({ children }) => {
       setForceClose(false);
     }
     return () => clearTimeout(timer);
-  }, [siteLoading, contentLoading]);
+  }, [hasPendingInitialLoad]);
+
+  if (isBlocking) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 rounded-full border border-border bg-card px-6 py-4 text-card-foreground shadow-xl"
+        >
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+          <p className="text-sm font-semibold tracking-wide">
+            Laster nettstedet...
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <>
       {children}
-      {isLoading && (
-        <div className="fixed bottom-6 right-6 z-[9999] pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="bg-white shadow-2xl rounded-full px-5 py-3 border border-gray-100 flex items-center gap-3 pointer-events-auto"
-          >
-            <Loader2 className="w-5 h-5 animate-spin text-primary" />
-            <p className="text-primary font-bold tracking-widest uppercase text-[10px] m-0 leading-none mt-[2px]">
-              Oppdaterer data...
-            </p>
-          </motion.div>
-        </div>
-      )}
     </>
   );
 };

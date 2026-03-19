@@ -1,85 +1,20 @@
-const CACHE_NAME = 'mandal-rk-v2';
-const APP_SHELL = ['/', '/index.html', '/manifest.json'];
-
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches
-            .open(CACHE_NAME)
-            .then((cache) => cache.addAll(APP_SHELL))
-            .then(() => self.skipWaiting())
-    );
+self.addEventListener('install', () => {
+    self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches
-            .keys()
-            .then((cacheNames) =>
-                Promise.all(
-                    cacheNames
-                        .filter((name) => name !== CACHE_NAME)
-                        .map((name) => caches.delete(name))
-                )
-            )
-            .then(() => self.clients.claim())
-    );
-});
+    event.waitUntil((async () => {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+        await self.registration.unregister();
 
-const cacheStaticAsset = async (request, response) => {
-    if (!response || !response.ok) return response;
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(request, response.clone());
-    return response;
-};
+        const clients = await self.clients.matchAll({
+            type: 'window',
+            includeUncontrolled: true,
+        });
 
-self.addEventListener('fetch', (event) => {
-    const { request } = event;
-
-    if (request.method !== 'GET') return;
-
-    const url = new URL(request.url);
-    if (url.origin !== self.location.origin) return;
-
-    // Use network-first for page navigations with a timeout to fall back to cache if network is slow.
-    if (request.mode === 'navigate') {
-        const fetchWithTimeout = (req, timeout = 3000) => {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            return fetch(req, { signal: controller.signal })
-                .then(res => {
-                    clearTimeout(id);
-                    return res;
-                })
-                .catch(err => {
-                    clearTimeout(id);
-                    throw err;
-                });
-        };
-
-        event.respondWith(
-            fetchWithTimeout(request)
-                .then(async (response) => {
-                    if (response && response.ok) {
-                        const cache = await caches.open(CACHE_NAME);
-                        cache.put('/index.html', response.clone());
-                    }
-                    return response;
-                })
-                .catch(async () => {
-                    const cachedIndex = await caches.match('/index.html');
-                    return cachedIndex || caches.match('/');
-                })
-        );
-        return;
-    }
-
-    const cacheableDestinations = new Set(['script', 'style', 'image', 'font']);
-    if (!cacheableDestinations.has(request.destination)) return;
-
-    event.respondWith(
-        caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-            return fetch(request).then((response) => cacheStaticAsset(request, response));
-        })
-    );
+        clients.forEach((client) => {
+            client.navigate(client.url);
+        });
+    })());
 });

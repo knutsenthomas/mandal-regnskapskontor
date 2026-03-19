@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Calculator, FileText, Users, ClipboardCheck, TrendingUp } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { ContentContext } from '@/contexts/ContentContext';
 import ServiceCard from './ServiceCard';
 
 const Services = () => {
-  const [dbServices, setDbServices] = useState([]);
+  const { dashboardContent, loading } = React.useContext(ContentContext);
+  const dbServices = Array.isArray(dashboardContent?.services_data)
+    ? dashboardContent.services_data
+    : [];
 
   // Static configuration for visual assets (Icons and Gradients)
   // We map these to the database data by index
@@ -33,50 +36,6 @@ const Services = () => {
     }
   ];
 
-  // Default data in case DB is empty or loading
-  const defaultServices = [
-    { title: 'Regnskap', description: 'Full digital kontroll og presisjon i hver postering. Med våre moderne systemer sikrer vi at du alltid har full kontroll over din økonomiske status.' },
-    { title: 'Fakturering', description: 'Effektive rutiner som sikrer raskere innbetaling.' }, // Shortened description for card layout
-    { title: 'Lønn & Personal', description: 'Trygg håndtering av dine ansattes viktigste gode.' },
-    { title: 'Revisjon', description: 'Grundig gjennomgang som gir trygghet og innsikt.' },
-    { title: 'Skatteplanlegging', description: 'Optimaliser din skattesituasjon på en lovlig og effektiv måte.' }
-  ];
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('content')
-          .select('services_data')
-          .single();
-
-        if (error) throw error;
-
-        if (data && data.services_data && Array.isArray(data.services_data) && data.services_data.length > 0) {
-          setDbServices(data.services_data);
-        } else {
-          setDbServices([]);
-        }
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      }
-    };
-
-    fetchServices();
-
-    const channel = supabase
-      .channel('public:services_sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'content' }, () => {
-        fetchServices();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  // Merge DB data with Config. If DB data is missing, use Default.
   const displayServices = dbServices.length > 0
     ? dbServices.map((service, index) => {
       const config = serviceConfig[index] || {};
@@ -88,18 +47,11 @@ const Services = () => {
         description: service?.description || config?.description || '[Beskrivelse mangler]',
       };
     })
-    : defaultServices.length > 0
-      ? defaultServices.map((service, index) => {
-          const config = serviceConfig[index] || {};
-          return {
-            ...config,
-            ...service,
-            image: config?.image || '[Bilde mangler]',
-            title: service?.title || '[Tittel mangler]',
-            description: service?.description || '[Beskrivelse mangler]',
-          };
-        })
-      : [{ title: '[Tjeneste mangler]', description: '[Ingen tjenester tilgjengelig]', image: '[Bilde mangler]' }];
+    : [];
+
+  if (loading || displayServices.length === 0) {
+    return null;
+  }
 
   const container = {
     hidden: { opacity: 0 },
