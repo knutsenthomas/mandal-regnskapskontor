@@ -28,11 +28,11 @@ const PreferenceToggle = ({ active, disabled = false, onClick, label }) => (
 );
 
 const PreferenceOption = ({ label, active, disabled = false, onClick, muted = false }) => (
-    <div className="flex min-h-[92px] flex-col justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3">
-        <span className={`block text-[11px] font-bold uppercase tracking-[0.12em] leading-tight ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
+    <div className="flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:min-h-[92px] sm:flex-col sm:items-stretch sm:justify-between sm:gap-3 sm:py-3">
+        <span className={`block min-w-0 text-left text-[11px] font-bold uppercase tracking-[0.12em] leading-tight sm:text-center ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
             {label}
         </span>
-        <div className="flex justify-end">
+        <div className="flex shrink-0 justify-end">
             <PreferenceToggle
                 active={active}
                 disabled={disabled}
