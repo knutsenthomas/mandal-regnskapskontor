@@ -32,7 +32,7 @@ const PreferenceOption = ({ label, active, disabled = false, onClick, muted = fa
         <span className={`min-w-0 flex-1 pr-2 text-left text-[11px] font-bold uppercase tracking-[0.12em] leading-tight ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
             {label}
         </span>
-        <div className="flex shrink-0 justify-end">
+        <div className="flex w-16 shrink-0 justify-center sm:w-20">
             <PreferenceToggle
                 active={active}
                 disabled={disabled}
