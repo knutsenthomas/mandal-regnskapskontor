@@ -28,8 +28,8 @@ const PreferenceToggle = ({ active, disabled = false, onClick, label }) => (
 );
 
 const PreferenceOption = ({ label, active, disabled = false, onClick, muted = false }) => (
-    <div className="flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:min-h-[92px] sm:flex-col sm:items-stretch sm:justify-between sm:gap-3 sm:py-3">
-        <span className={`block min-w-0 text-left text-[11px] font-bold uppercase tracking-[0.12em] leading-tight sm:text-center ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
+    <div className="flex min-h-[72px] items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-4">
+        <span className={`min-w-0 flex-1 pr-2 text-left text-[11px] font-bold uppercase tracking-[0.12em] leading-tight ${muted ? 'text-gray-400' : 'text-gray-700'}`}>
             {label}
         </span>
         <div className="flex shrink-0 justify-end">
@@ -108,7 +108,7 @@ const CookieConsent = () => {
 
                         {/* Preferences area - more compact */}
                         <div className="bg-gray-50 rounded-[16px] p-4 mb-6 border border-gray-100">
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div className="space-y-3">
                                 <PreferenceOption
                                     label="Nødvendige"
                                     active
