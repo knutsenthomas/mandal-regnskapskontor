@@ -26,7 +26,6 @@ import MessagesView from '@/components/admin/MessagesView';
 import SearchCommand from '@/components/admin/SearchCommand';
 import ProfileSettings from '@/components/admin/ProfileSettings';
 import SEOEditor from '@/app/admin/SEOEditor';
-import AnalyticsOverview from '@/components/admin/AnalyticsOverview';
 import UserManagement from '@/components/admin/UserManagement';
 import PrivacyEditor from '@/components/admin/PrivacyEditor';
 // import ContentBlocksEditor from '@/components/admin/ContentBlocksEditor';
@@ -99,9 +98,6 @@ const AdminDashboard = () => {
     }))
     : [];
 
-  // State for Settings
-  const [gaId, setGaId] = useState(null);
-
   const fetchContent = async () => {
     try {
       setFetchError(null);
@@ -111,16 +107,10 @@ const AdminDashboard = () => {
         setTimeout(() => reject(new Error("Tilkoblingen til databasen tok for lang tid.")), 10000)
       );
 
-      // Parallel Fetch: Content & Settings
-      const fetchPromise = Promise.all([
-        supabase.from('content').select('*').single(),
-        supabase.from('site_settings').select('value').eq('key', 'google_analytics_id').single()
-      ]);
-
-      const [contentResult, settingsResult] = await Promise.race([fetchPromise, timeoutPromise]);
+      const fetchPromise = supabase.from('content').select('*').single();
+      const contentResult = await Promise.race([fetchPromise, timeoutPromise]);
 
       let { data: contentData, error: contentError } = contentResult;
-      const { data: settingsData } = settingsResult;
 
       if (contentError) {
         if (contentError.code === 'PGRST116') {
@@ -143,7 +133,6 @@ const AdminDashboard = () => {
       }
 
       setContent(contentData || {});
-      setGaId(settingsData?.value || null);
 
     } catch (error) {
       console.error("Critical fetch error:", error);
@@ -185,11 +174,8 @@ const AdminDashboard = () => {
         <Activity className="absolute right-4 bottom-4 w-48 h-48 text-white/5 rotate-[-15deg]" />
       </div>
 
-      {/* GOOGLE ANALYTICS OVERSIKT */}
-      <AnalyticsOverview />
-
       {/* QUICK STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="border-none shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-500">Aktive Tjenester</CardTitle>
@@ -212,31 +198,6 @@ const AdminDashboard = () => {
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
               Systemet kjører
             </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.open('https://analytics.google.com/', '_blank')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Google Analytics</CardTitle>
-            <Activity className="h-4 w-4 text-[#1B4965]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{gaId ? 'Aktiv' : 'Ikke satt'}</div>
-            {gaId ? (
-              <div className="mt-1">
-                <p className="text-xs text-green-600 flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  Sporer besøkende
-                </p>
-                <p className="text-xs text-blue-600 mt-2 hover:underline">
-                  Åpne rapport &rarr;
-                </p>
-              </div>
-            ) : (
-              <p className="text-xs text-gray-400 mt-1">
-                Gå til Innstillinger for å koble til
-              </p>
-            )}
           </CardContent>
         </Card>
       </div>
