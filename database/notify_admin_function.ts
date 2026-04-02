@@ -57,7 +57,7 @@ serve(async (req) => {
                         <div class="message-box">${record.melding}</div>
 
                         <div style="text-align: center;">
-                            <a href="https://mandal-regnskapskontor.vercel.app/admin/dashboard?tab=messages" class="button">Gå til Innboks</a>
+                            <a href="https://mandalregnskapskontor.no/admin/dashboard?tab=messages" class="button">Gå til Innboks</a>
                         </div>
                     </div>
                     <div class="footer">Dette er en automatisert melding fra Mandal Regnskapskontor.</div>

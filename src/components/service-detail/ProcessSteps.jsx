@@ -21,7 +21,7 @@ const ProcessSteps = ({ steps }) => {
                     </div>
 
                     {/* Content */}
-                    <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-2xl bg-card text-card-foreground shadow-sm border border-border hover:shadow-md transition-shadow">
+                    <div className="w-[calc(100%-3.5rem)] sm:w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 sm:p-6 rounded-2xl bg-card text-card-foreground shadow-sm border border-border hover:shadow-md transition-shadow">
                         <h3 className="font-bold text-lg text-foreground mb-2">{step.title}</h3>
                         <div
                             className="text-muted-foreground prose prose-sm max-w-none prose-p:my-0"

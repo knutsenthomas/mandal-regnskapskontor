@@ -168,7 +168,7 @@ const ServiceDetailPage = () => {
       <Navigation />
 
       {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative pt-24 pb-12 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-muted/40 z-0"></div>
         <div className="absolute top-0 right-0 w-1/3 h-full blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: 'hsl(var(--primary) / 0.12)' }}></div>
 
@@ -200,11 +200,11 @@ const ServiceDetailPage = () => {
                 <Icon className="w-8 h-8" style={{ color: primaryColor }} />
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-8 tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-6 md:mb-8 tracking-tight leading-tight">
                 {service.title}
               </h1>
 
-              <div className="prose prose-lg text-muted-foreground max-w-none mb-12 leading-relaxed">
+              <div className="prose prose-base sm:prose-lg text-muted-foreground max-w-none mb-10 md:mb-12 leading-relaxed">
                 {containsHtml(extendedDescription) ? (
                   <div
                     className="[&_*]:!font-sans [&_span]:!text-inherit [&_p]:!text-inherit [&_*]:!bg-transparent"
@@ -212,7 +212,7 @@ const ServiceDetailPage = () => {
                   />
                 ) : (
                   extendedDescription.split('\n').filter(Boolean).map((paragraph, idx) => (
-                    <p key={idx} className="mb-6">{paragraph}</p>
+                    <p key={idx} className="mb-4 sm:mb-6">{paragraph}</p>
                   ))
                 )}
               </div>
@@ -238,7 +238,7 @@ const ServiceDetailPage = () => {
               transition={{ delay: 0.1 }}
               className="lg:col-span-5 lg:sticky lg:top-32 self-start"
             >
-              <div className="bg-card text-card-foreground rounded-3xl p-8 md:p-10 shadow-xl border border-border">
+              <div className="bg-card text-card-foreground rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl border border-border">
                 {details?.offerings && details.offerings.length > 0 && (
                   <>
                     <h2 className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2">
@@ -249,7 +249,7 @@ const ServiceDetailPage = () => {
                   </>
                 )}
 
-                <div className="mt-12 rounded-2xl p-8 text-white relative overflow-hidden group" style={{ backgroundColor: primaryColor }}>
+                <div className="mt-10 sm:mt-12 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden group" style={{ backgroundColor: primaryColor }}>
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                     <Icon className="w-24 h-24" />
                   </div>
@@ -272,18 +272,18 @@ const ServiceDetailPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="p-6 md:p-14 bg-card/80 backdrop-blur-md rounded-[2.5rem] md:rounded-[3rem] border border-border shadow-2xl"
+                className="p-6 md:p-14 bg-card/80 backdrop-blur-md rounded-3xl md:rounded-[3rem] border border-border shadow-2xl"
               >
                 <div className="flex flex-col mb-8">
                   <span className="font-bold text-xs uppercase tracking-widest mb-2" style={{ color: primaryColor }}>Målgruppe</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 lg:gap-16 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-16 items-start">
                   {containsHtml(details.target_audience) ? (
                     details.target_audience.split(/(?=<h[23])/i).filter(s => s.trim()).map((section, idx) => (
                       <div
                         key={idx}
-                        className={`prose prose-base md:prose-lg text-muted-foreground max-w-none 
+                        className={`prose prose-base sm:prose-lg text-muted-foreground max-w-none 
                           [&>p]:mt-0 [&>p]:mb-2 md:[&>p]:mb-6
                           [&>h2:first-child]:mt-0 [&>h3:first-child]:mt-0
                           [&>h3]:mt-6 [&>h3]:mb-4 md:[&>h3]:mt-8 md:[&>h3]:mb-6
@@ -308,8 +308,8 @@ const ServiceDetailPage = () => {
       {details?.process_steps && details.process_steps.length > 0 && (
         <section className="py-24 bg-card border-y border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Slik fungerer det</h2>
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">Slik fungerer det</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">Vår prosess er designet for å gi deg best mulig resultat med minst mulig hodebry.</p>
             </div>
             <ProcessSteps steps={details.process_steps} />
@@ -321,8 +321,8 @@ const ServiceDetailPage = () => {
       {details?.pricing_packages && details.pricing_packages.length > 0 && (
         <section className="py-24 bg-muted/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Priser & Pakker</h2>
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">Priser & Pakker</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">Velg den løsningen som passer ditt volum og behov.</p>
             </div>
             <PricingPackages packages={details.pricing_packages} />
@@ -334,8 +334,8 @@ const ServiceDetailPage = () => {
       {details?.faqs && details.faqs.length > 0 && (
         <section className="py-24 bg-card">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-foreground mb-4">Ofte stilte spørsmål</h2>
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Ofte stilte spørsmål</h2>
               <p className="text-muted-foreground">Svar på det de fleste lurer på om {service.title}.</p>
             </div>
             <FAQSection faqs={details.faqs} />

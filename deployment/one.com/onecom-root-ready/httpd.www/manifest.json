@@ -1,0 +1,17 @@
+{
+    "name": "Mandal Regnskapskontor",
+    "short_name": "Mandal RK",
+    "description": "Profesjonelle regnskapstjenester for bedrifter og privatpersoner.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1B4965",
+    "icons": [
+        {
+            "src": "/logo.svg",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

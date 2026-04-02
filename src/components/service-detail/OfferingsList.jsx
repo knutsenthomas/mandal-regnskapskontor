@@ -32,14 +32,14 @@ const OfferingsList = ({ offerings }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-center p-5 bg-card text-card-foreground rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 border border-transparent hover:border-border"
+            className="flex items-center p-4 sm:p-5 bg-card text-card-foreground rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 border border-transparent hover:border-border"
           >
-            <div className="flex-shrink-0 mr-5">
-              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
-                <IconComponent className="w-5 h-5 stroke-[2.5px]" />
+            <div className="flex-shrink-0 mr-4 sm:mr-5">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
+                <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5px]" />
               </div>
             </div>
-            <span className="font-semibold text-foreground text-lg">{item.title}</span>
+            <span className="font-semibold text-foreground text-base sm:text-lg">{item.title}</span>
           </motion.div>
         );
       })}

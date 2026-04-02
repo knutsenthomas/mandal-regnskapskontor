@@ -23,8 +23,6 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import CookieConsent from '@/components/CookieConsent';
 
 import { Toaster } from '@/components/ui/toaster';
-import { supabase } from '@/lib/customSupabaseClient';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Unified Component to handle Google Analytics 4 initialization and route tracking based on consent
 const GoogleAnalytics = () => {
@@ -177,7 +175,6 @@ function App() {
                 </main>
                 <CookieConsent />
                 <Toaster />
-                <SpeedInsights />
               </Router>
             </GlobalLoader>
           </ContentProvider>

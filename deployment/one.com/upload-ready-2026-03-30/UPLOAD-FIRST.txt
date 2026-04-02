@@ -1,0 +1,10 @@
+Last opp innholdet i denne mappen slik:
+
+1. Alt inni `httpd.www/` -> `httpd.www/` hos one.com
+2. Filen `httpd.private/mandal-regnskapskontor-config.php` -> `httpd.private/` hos one.com
+3. Hvis du ikke har tilgang til `httpd.private` i one.com File Manager, kan samme config-fil legges i `httpd.www/` som `mandal-regnskapskontor-config.php`
+
+Fyll inn ekte verdier i `mandal-regnskapskontor-config.php` før opplasting.
+
+Merk:
+Denne pakken er laget fra den nåværende lokale builden.
