@@ -82,17 +82,16 @@ const FinancialCalendar = () => {
 
     // Fetch all data
     useEffect(() => {
+        let isMounted = true;
+        const controller = new AbortController();
+
         const loadCalendarData = async () => {
             try {
-                setLoading(true);
-                // Generate deadlines for current year AND next year to be safe?
-                // For simplicity, just current year. If user navigates year, we'd need more logic.
-                // Keeping it simple: Show deadlines for the year of the CURRENTLY DISPLAYED month.
-                // But efficient react way: Regenerate when currentYear changes.
+                if (isMounted) setLoading(true);
 
                 let allEvents = getSystemDeadlines(currentYear);
 
-                // 1. Fetch Manual Events
+                // 1. Fetch Manual Events (Supabase)
                 const { data: manualData } = await supabase
                     .from('calendar_events')
                     .select('*');
@@ -100,11 +99,9 @@ const FinancialCalendar = () => {
                 if (manualData) {
                     const formattedManual = manualData.map(ev => {
                         const dateObj = new Date(ev.date);
-                        // Only include if matches current year logic? 
-                        // Actually, 'calendar_events' has full dates, so we just filter later.
                         return {
                             year: dateObj.getFullYear(),
-                            month: dateObj.getMonth(), // 0-11
+                            month: dateObj.getMonth(),
                             date: dateObj.toLocaleDateString('no-NO', { day: '2-digit', month: '2-digit', year: 'numeric' }),
                             task: ev.title,
                             type: 'manual',
@@ -114,17 +111,28 @@ const FinancialCalendar = () => {
                     allEvents = [...allEvents, ...formattedManual];
                 }
 
-                // 2. Fetch iCal Feed
+                // Show local and system events immediately (progressive enhancement)
+                if (isMounted) {
+                    setEvents([...allEvents]);
+                    setLoading(false);
+                }
+
+                // 2. Fetch iCal Feed (External)
                 const { data: settingsData } = await supabase
                     .from('site_settings')
                     .select('value')
                     .eq('key', 'ical_feed_url')
-                    .single();
+                    .maybeSingle();
 
-                if (settingsData && settingsData.value) {
+                if (settingsData && settingsData.value && isMounted) {
                     try {
                         const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(settingsData.value);
-                        const response = await fetch(proxyUrl);
+                        
+                        // Set a timeout of 5 seconds for the external fetch to avoid infinite hanging on mobile
+                        const timeoutId = setTimeout(() => controller.abort(), 5000);
+                        const response = await fetch(proxyUrl, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        
                         const icalData = await response.text();
 
                         if (icalData) {
@@ -143,23 +151,36 @@ const FinancialCalendar = () => {
                                     type: 'external'
                                 };
                             });
-                            allEvents = [...allEvents, ...externalEvents];
+                            
+                            // Silently append external events if successfully fetched
+                            if (isMounted && externalEvents.length > 0) {
+                                setEvents(prev => {
+                                    // Make sure we don't duplicate events if re-rendered
+                                    const combined = [...prev, ...externalEvents];
+                                    return combined;
+                                });
+                            }
                         }
                     } catch (err) {
                         console.warn("Failed to fetch/parse iCal feed:", err);
                     }
                 }
 
-                setEvents(allEvents);
-
             } catch (error) {
                 console.error("Calendar sync error:", error);
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         loadCalendarData();
+
+        return () => {
+            isMounted = false;
+            controller.abort();
+        };
     }, [currentYear]); // Refresh if year changes (though we only change Month index mostly)
 
     const nextMonth = () => {
