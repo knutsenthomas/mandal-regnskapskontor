@@ -6,38 +6,46 @@ import { Button } from "@/components/ui/button";
 import ICAL from 'ical.js';
 import { supabase } from '@/lib/customSupabaseClient';
 
-// --- SYSTEM DEADLINES (Moms, Skatt, etc.) ---
-const systemDeadlines = [
-    { month: 0, date: "15.01", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (6. termin)", type: "payroll" },
-    { month: 0, date: "31.01", task: "Frist for Aksjonærregisteroppgaven", type: "report" },
-    { month: 1, date: "01.02", task: "Sammenstillingsoppgave (lønn) til ansatte", type: "payroll" },
-    { month: 1, date: "10.02", task: "Mva-melding (6. termin)", type: "vat" },
-    { month: 1, date: "15.02", task: "Forskuddsskatt for aksjeselskap (1. termin)", type: "tax" },
-    { month: 2, date: "10.03", task: "Mva-melding årstermin (omsetning < 1 mill)", type: "vat" },
-    { month: 2, date: "15.03", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (1. termin)", type: "payroll" },
-    { month: 2, date: "15.03", task: "Forskuddsskatt ENK og privatpersoner (1. termin)", type: "tax" },
-    { month: 3, date: "10.04", task: "Mva-melding (1. termin)", type: "vat" },
-    { month: 3, date: "15.04", task: "Forskuddsskatt for aksjeselskap (2. termin)", type: "tax" },
-    { month: 4, date: "15.05", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (2. termin)", type: "payroll" },
-    { month: 4, date: "31.05", task: "Levering av skattemelding for næringsdrivende", type: "report", highlight: true },
-    { month: 5, date: "10.06", task: "Mva-melding (2. termin)", type: "vat" },
-    { month: 5, date: "15.06", task: "Forskuddsskatt ENK og privatpersoner (2. termin)", type: "tax" },
-    { month: 5, date: "30.06", task: "Frist for godkjenning av årsregnskap", type: "report" },
-    { month: 6, date: "15.07", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (3. termin)", type: "payroll" },
-    { month: 6, date: "31.07", task: "Innlevering av årsregnskap til Brønnøysundregistrene", type: "report", highlight: true },
-    { month: 7, date: "31.08", task: "Mva-melding (3. termin)", type: "vat" },
-    { month: 8, date: "15.09", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (4. termin)", type: "payroll" },
-    { month: 8, date: "15.09", task: "Forskuddsskatt ENK og privatpersoner (3. termin)", type: "tax" },
-    { month: 9, date: "10.10", task: "Mva-melding (4. termin)", type: "vat" },
-    { month: 10, date: "15.11", task: "Betaling av forskuddstrekk og arbeidsgiveravgift (5. termin)", type: "payroll" },
-    { month: 11, date: "10.12", task: "Mva-melding (5. termin)", type: "vat" },
-    { month: 11, date: "15.12", task: "Forskuddsskatt ENK og privatpersoner (4. termin)", type: "tax" }
-];
-
 const monthNames = [
     "Januar", "Februar", "Mars", "April", "Mai", "Juni",
     "Juli", "August", "September", "Oktober", "November", "Desember"
 ];
+
+const formatCalendarDate = (dateObj) => (
+    new Intl.DateTimeFormat('no-NO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }).format(dateObj)
+);
+
+const getEventYear = (event, fallbackYear) => {
+    if (Number.isInteger(event.year)) {
+        return event.year;
+    }
+
+    const yearPart = String(event.date || '').split('.')[2];
+    const parsedYear = Number.parseInt(yearPart, 10);
+
+    return Number.isNaN(parsedYear) ? fallbackYear : parsedYear;
+};
+
+const mergeUniqueEvents = (...collections) => {
+    const merged = new Map();
+
+    collections
+        .flat()
+        .filter(Boolean)
+        .forEach((event) => {
+            const key = `${event.type || 'event'}:${event.date}:${event.task}`;
+
+            if (!merged.has(key)) {
+                merged.set(key, event);
+            }
+        });
+
+    return Array.from(merged.values());
+};
 
 const FinancialCalendar = () => {
     // Start with current date
@@ -46,7 +54,7 @@ const FinancialCalendar = () => {
     // Initialize to current month
     const [currentIndex, setCurrentIndex] = useState(today.getMonth());
     const [direction, setDirection] = useState(0);
-    const [events, setEvents] = useState([]);
+    const [syncedEvents, setSyncedEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const primaryColor = 'hsl(var(--primary))';
 
@@ -80,59 +88,95 @@ const FinancialCalendar = () => {
         ];
     };
 
+    const baseEvents = getSystemDeadlines(currentYear);
+
     // Fetch all data
     useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();
 
         const loadCalendarData = async () => {
+            if (isMounted) {
+                setSyncedEvents([]);
+                setLoading(true);
+            }
+
             try {
-                if (isMounted) setLoading(true);
+                let nextSyncedEvents = [];
 
-                let allEvents = getSystemDeadlines(currentYear);
+                const [manualResult, settingsResult] = await Promise.allSettled([
+                    supabase
+                        .from('calendar_events')
+                        .select('*'),
+                    supabase
+                        .from('site_settings')
+                        .select('value')
+                        .eq('key', 'ical_feed_url')
+                        .maybeSingle(),
+                ]);
 
-                // 1. Fetch Manual Events (Supabase)
-                const { data: manualData } = await supabase
-                    .from('calendar_events')
-                    .select('*');
+                if (manualResult.status === 'fulfilled') {
+                    const { data: manualData, error: manualError } = manualResult.value;
 
-                if (manualData) {
-                    const formattedManual = manualData.map(ev => {
-                        const dateObj = new Date(ev.date);
-                        return {
-                            year: dateObj.getFullYear(),
-                            month: dateObj.getMonth(),
-                            date: dateObj.toLocaleDateString('no-NO', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                            task: ev.title,
-                            type: 'manual',
-                            highlight: false
-                        };
-                    });
-                    allEvents = [...allEvents, ...formattedManual];
+                    if (manualError) {
+                        console.warn('Failed to fetch manual calendar events:', manualError);
+                    } else if (manualData) {
+                        const formattedManual = manualData
+                            .map((event) => {
+                                const dateObj = new Date(`${event.date}T12:00:00`);
+
+                                if (Number.isNaN(dateObj.getTime())) {
+                                    return null;
+                                }
+
+                                return {
+                                    year: dateObj.getFullYear(),
+                                    month: dateObj.getMonth(),
+                                    date: formatCalendarDate(dateObj),
+                                    task: event.title,
+                                    type: 'manual',
+                                    highlight: false,
+                                };
+                            })
+                            .filter(Boolean);
+
+                        nextSyncedEvents = mergeUniqueEvents(nextSyncedEvents, formattedManual);
+                    }
+                } else {
+                    console.warn('Failed to fetch manual calendar events:', manualResult.reason);
                 }
 
-                // Show local and system events immediately (progressive enhancement)
                 if (isMounted) {
-                    setEvents([...allEvents]);
-                    setLoading(false);
+                    setSyncedEvents(nextSyncedEvents);
                 }
 
-                // 2. Fetch iCal Feed (External)
-                const { data: settingsData } = await supabase
-                    .from('site_settings')
-                    .select('value')
-                    .eq('key', 'ical_feed_url')
-                    .maybeSingle();
+                let icalFeedUrl = '';
 
-                if (settingsData && settingsData.value && isMounted) {
+                if (settingsResult.status === 'fulfilled') {
+                    const { data: settingsData, error: settingsError } = settingsResult.value;
+
+                    if (settingsError) {
+                        console.warn('Failed to fetch iCal settings:', settingsError);
+                    } else {
+                        icalFeedUrl = settingsData?.value?.trim() || '';
+                    }
+                } else {
+                    console.warn('Failed to fetch iCal settings:', settingsResult.reason);
+                }
+
+                if (icalFeedUrl) {
+                    let timeoutId;
+
                     try {
-                        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(settingsData.value);
-                        
-                        // Set a timeout of 5 seconds for the external fetch to avoid infinite hanging on mobile
-                        const timeoutId = setTimeout(() => controller.abort(), 5000);
+                        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(icalFeedUrl)}`;
+
+                        timeoutId = window.setTimeout(() => controller.abort(), 5000);
                         const response = await fetch(proxyUrl, { signal: controller.signal });
-                        clearTimeout(timeoutId);
-                        
+
+                        if (!response.ok) {
+                            throw new Error(`Failed to load iCal feed (${response.status})`);
+                        }
+
                         const icalData = await response.text();
 
                         if (icalData) {
@@ -140,32 +184,43 @@ const FinancialCalendar = () => {
                             const comp = new ICAL.Component(jcalData);
                             const vevents = comp.getAllSubcomponents('vevent');
 
-                            const externalEvents = vevents.map(ve => {
-                                const event = new ICAL.Event(ve);
-                                const dateObj = event.startDate.toJSDate();
-                                return {
-                                    year: dateObj.getFullYear(),
-                                    month: dateObj.getMonth(),
-                                    date: dateObj.toLocaleDateString('no-NO', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                                    task: event.summary,
-                                    type: 'external'
-                                };
-                            });
-                            
-                            // Silently append external events if successfully fetched
-                            if (isMounted && externalEvents.length > 0) {
-                                setEvents(prev => {
-                                    // Make sure we don't duplicate events if re-rendered
-                                    const combined = [...prev, ...externalEvents];
-                                    return combined;
-                                });
+                            const externalEvents = vevents
+                                .map((vevent) => {
+                                    const event = new ICAL.Event(vevent);
+                                    const dateObj = event.startDate?.toJSDate();
+
+                                    if (!dateObj || Number.isNaN(dateObj.getTime())) {
+                                        return null;
+                                    }
+
+                                    return {
+                                        year: dateObj.getFullYear(),
+                                        month: dateObj.getMonth(),
+                                        date: formatCalendarDate(dateObj),
+                                        task: event.summary,
+                                        type: 'external',
+                                    };
+                                })
+                                .filter(Boolean);
+
+                            nextSyncedEvents = mergeUniqueEvents(nextSyncedEvents, externalEvents);
+
+                            if (isMounted) {
+                                setSyncedEvents(nextSyncedEvents);
                             }
                         }
                     } catch (err) {
-                        console.warn("Failed to fetch/parse iCal feed:", err);
+                        if (err.name === 'AbortError') {
+                            console.warn('iCal feed fetch timed out');
+                        } else {
+                            console.warn("Failed to fetch/parse iCal feed:", err);
+                        }
+                    } finally {
+                        if (timeoutId) {
+                            window.clearTimeout(timeoutId);
+                        }
                     }
                 }
-
             } catch (error) {
                 console.error("Calendar sync error:", error);
             } finally {
@@ -207,23 +262,12 @@ const FinancialCalendar = () => {
         });
     };
 
-    // Filter events based on month index (and ideally year matches too, but systemDeadlines are currentYear based)
-    const currentMonthEvents = events
+    const currentMonthEvents = mergeUniqueEvents(baseEvents, syncedEvents)
         .filter(e => {
-            // Check month match
             if (e.month !== currentIndex) return false;
-
-            // For system deadlines, they don't have 'year' prop explicitly in my array above, so I parse date or trust generation
-            // Actually, I added full date string to system deadlines.
-            // Let's rely on simple month match for now, assuming system deadlines are rebuilt for currentYear.
-            // But if we have mixed years events, we must check year.
-
-            // Safe parsing:
-            const eventYear = e.year || parseInt(e.date.split('.')[2]) || currentYear;
-            return eventYear === currentYear;
+            return getEventYear(e, currentYear) === currentYear;
         })
         .sort((a, b) => {
-            // Sort by day DD.MM.YYYY
             const dayA = parseInt(a.date.split('.')[0]);
             const dayB = parseInt(b.date.split('.')[0]);
             return dayA - dayB;
@@ -300,6 +344,12 @@ const FinancialCalendar = () => {
                                     <span className="text-sm font-medium text-muted-foreground">
                                         {currentYear}
                                     </span>
+                                    {loading && (
+                                        <div className="mt-1 flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                            Oppdaterer
+                                        </div>
+                                    )}
                                 </div>
 
                                 <Button
@@ -327,13 +377,13 @@ const FinancialCalendar = () => {
                                         }}
                                         className="w-full space-y-4"
                                     >
-                                        {loading ? (
+                                        {loading && currentMonthEvents.length === 0 ? (
                                             <div className="flex justify-center py-10">
                                                 <Loader2 className="w-8 h-8 animate-spin" style={{ color: primaryColor }} />
                                             </div>
                                         ) : currentMonthEvents.length > 0 ? (
                                             currentMonthEvents.map((item, idx) => (
-                                                <div key={idx} className={`relative flex items-center p-4 rounded-xl transition-all border ${item.highlight ? 'bg-amber-50 border-amber-200 shadow-sm' : 'bg-card border-border hover:border-border hover:shadow-sm'}`}>
+                                                <div key={`${item.type}-${item.date}-${item.task}-${idx}`} className={`relative flex items-center p-4 rounded-xl transition-all border ${item.highlight ? 'bg-amber-50 border-amber-200 shadow-sm' : 'bg-card border-border hover:border-border hover:shadow-sm'}`}>
                                                     <div className="flex-shrink-0 w-14 text-center mr-4">
                                                         <span className="block text-xl font-bold leading-none" style={{ color: primaryColor }}>
                                                             {item.date.split('.')[0]}
