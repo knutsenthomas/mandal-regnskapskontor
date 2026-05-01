@@ -47,6 +47,14 @@ const mergeUniqueEvents = (...collections) => {
     return Array.from(merged.values());
 };
 
+const CALENDAR_SYNC_CACHE_KEY = 'mandal-financial-calendar-sync-v1';
+
+const getSemiAnnualCacheWindow = (date = new Date()) => {
+    const year = date.getFullYear();
+    const half = date.getMonth() < 6 ? 'H1' : 'H2';
+    return `${year}-${half}`;
+};
+
 const FinancialCalendar = () => {
     // Start with current date
     const today = new Date();
@@ -90,12 +98,32 @@ const FinancialCalendar = () => {
 
     const baseEvents = getSystemDeadlines(currentYear);
 
-    // Fetch all data
+    // Fetch all data (cached per half-year to avoid unnecessary re-syncs)
     useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();
 
         const loadCalendarData = async () => {
+            const cacheWindow = getSemiAnnualCacheWindow();
+
+            try {
+                const cachedRaw = window.localStorage.getItem(CALENDAR_SYNC_CACHE_KEY);
+
+                if (cachedRaw) {
+                    const cached = JSON.parse(cachedRaw);
+
+                    if (cached?.window === cacheWindow && Array.isArray(cached.events)) {
+                        if (isMounted) {
+                            setSyncedEvents(cached.events);
+                            setLoading(false);
+                        }
+                        return;
+                    }
+                }
+            } catch (cacheError) {
+                console.warn('Failed to read calendar cache:', cacheError);
+            }
+
             if (isMounted) {
                 setSyncedEvents([]);
                 setLoading(true);
@@ -204,10 +232,6 @@ const FinancialCalendar = () => {
                                 .filter(Boolean);
 
                             nextSyncedEvents = mergeUniqueEvents(nextSyncedEvents, externalEvents);
-
-                            if (isMounted) {
-                                setSyncedEvents(nextSyncedEvents);
-                            }
                         }
                     } catch (err) {
                         if (err.name === 'AbortError') {
@@ -220,6 +244,23 @@ const FinancialCalendar = () => {
                             window.clearTimeout(timeoutId);
                         }
                     }
+                }
+
+                if (isMounted) {
+                    setSyncedEvents(nextSyncedEvents);
+                }
+
+                try {
+                    window.localStorage.setItem(
+                        CALENDAR_SYNC_CACHE_KEY,
+                        JSON.stringify({
+                            window: cacheWindow,
+                            events: nextSyncedEvents,
+                            updatedAt: new Date().toISOString(),
+                        })
+                    );
+                } catch (cacheError) {
+                    console.warn('Failed to write calendar cache:', cacheError);
                 }
             } catch (error) {
                 console.error("Calendar sync error:", error);
@@ -236,7 +277,7 @@ const FinancialCalendar = () => {
             isMounted = false;
             controller.abort();
         };
-    }, [currentYear]); // Refresh if year changes (though we only change Month index mostly)
+    }, []);
 
     const nextMonth = () => {
         setDirection(1);
@@ -433,7 +474,7 @@ const FinancialCalendar = () => {
 
                 <div className="mt-8 text-center">
                     <p className="text-muted-foreground text-sm">
-                        * Datoer oppdateres automatisk. Ta forbehold om lokale endringer.
+                        * Datoer synkroniseres automatisk to ganger i året. Ta forbehold om lokale endringer.
                     </p>
                 </div>
             </div>
