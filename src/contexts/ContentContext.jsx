@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase } from '../lib/customSupabaseClient';
+import { supabase } from '@/lib/customSupabaseClient';
 
 export const ContentContext = createContext({});
 const DASHBOARD_MANAGED_SLUGS = new Set([

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/customSupabaseClient";
-import AdminHeader from "../../components/admin/layout/AdminHeader";
+import { useToast } from "@/components/ui/use-toast";
+import AdminHeader from "@/components/admin/layout/AdminHeader";
 import { Globe, Save, Eye, EyeOff } from "lucide-react";
 
 const staticPages = [
@@ -47,6 +48,7 @@ const defaultSEO = {
 };
 
 export default function SEOEditor({ seo = defaultSEO, onSave }) {
+  const { toast } = useToast();
   const [pageOptions, setPageOptions] = useState(staticPages);
   const [selectedPage, setSelectedPage] = useState(staticPages[0].id);
   const [form, setForm] = useState(seo);
@@ -131,24 +133,51 @@ export default function SEOEditor({ seo = defaultSEO, onSave }) {
       open_graph_type: sanitizeInput(form.ogType),
       strukturert_data: sanitizeInput(form.jsonLd),
     };
-    const { data: existing } = await supabase
-      .from('seo_innstillinger')
-      .select('id')
-      .eq('side', selectedPage)
-      .single();
-    if (existing && existing.id) {
-      await supabase
+
+    try {
+      const { data: existing, error: selectError } = await supabase
         .from('seo_innstillinger')
-        .update(seoData)
-        .eq('id', existing.id);
-    } else {
-      await supabase
-        .from('seo_innstillinger')
-        .insert([seoData]);
+        .select('id')
+        .eq('side', selectedPage)
+        .single();
+      
+      if (selectError && selectError.code !== 'PGRST116') {
+        throw selectError;
+      }
+
+      let saveError;
+      if (existing && existing.id) {
+        const { error } = await supabase
+          .from('seo_innstillinger')
+          .update(seoData)
+          .eq('id', existing.id);
+        saveError = error;
+      } else {
+        const { error } = await supabase
+          .from('seo_innstillinger')
+          .insert([seoData]);
+        saveError = error;
+      }
+
+      if (saveError) throw saveError;
+
+      setSaveStatus('Endringer lagret!');
+      toast({
+        title: "Suksess",
+        description: "SEO-innstillingene ble lagret.",
+        className: "bg-green-50 border-green-200",
+      });
+      setTimeout(() => setSaveStatus(''), 2000);
+      if (onSave) onSave(form);
+    } catch (err) {
+      console.error("Feil ved lagring av SEO:", err);
+      setSaveStatus('');
+      toast({
+        title: "Feil ved lagring",
+        description: err.message || "Kunne ikke lagre endringene til databasen.",
+        variant: "destructive",
+      });
     }
-    setSaveStatus('Endringer lagret!');
-    setTimeout(() => setSaveStatus(''), 2000);
-    if (onSave) onSave(form);
   };
 
   let lastUploadTime = 0;
