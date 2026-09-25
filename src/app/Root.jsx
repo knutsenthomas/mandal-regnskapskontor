@@ -23,6 +23,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import CookieConsent from '@/components/CookieConsent';
 
 import { Toaster } from '@/components/ui/toaster';
+import { Analytics } from '@vercel/analytics/react';
 
 // Unified Component to handle Google Analytics 4 initialization and route tracking based on consent
 const GoogleAnalytics = () => {
@@ -175,6 +176,7 @@ function App() {
                 </main>
                 <CookieConsent />
                 <Toaster />
+                <Analytics />
               </Router>
             </GlobalLoader>
           </ContentProvider>
