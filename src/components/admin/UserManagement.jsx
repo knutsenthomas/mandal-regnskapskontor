@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
+import { adminHeaders } from '@/lib/admin-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -63,7 +64,7 @@ const UserManagement = () => {
         try {
             const response = await fetch('/api/invite-admin', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: await adminHeaders(),
                 body: JSON.stringify({
                     email,
                     full_name: newName.trim(),
@@ -139,7 +140,7 @@ const UserManagement = () => {
         try {
             const response = await fetch('/api/remove-admin', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: await adminHeaders(),
                 body: JSON.stringify({ email })
             });
 

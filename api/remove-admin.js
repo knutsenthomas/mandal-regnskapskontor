@@ -1,29 +1,20 @@
-import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from './_admin-auth.js';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { email } = req.body;
+    const authorization = await requireAdmin(req, res);
+    if (!authorization) return;
+    const supabase = authorization.client;
+
+    const { email } = req.body || {};
 
     if (!email) {
         return res.status(400).json({ error: 'Email is required' });
     }
 
-    const supabaseUrl = 'https://ovbqtaxwwxflvxdjkeih.supabase.co';
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!serviceRoleKey) {
-        return res.status(500).json({ error: 'Server misconfigured: Missing service role key' });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    });
 
     try {
         // 1. Try to find and delete from Auth first (optional step)

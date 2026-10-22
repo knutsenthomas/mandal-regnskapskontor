@@ -265,3 +265,34 @@ function app_site_url()
 
     return $scheme . '://' . $host;
 }
+
+// Verify the caller before using any service-role operation.
+function app_require_admin()
+{
+    $header = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] : '');
+    if (!is_string($header) || !preg_match('/^Bearer ([^\\s]+)$/i', $header, $matches)) {
+        app_json_response(401, ['error' => 'Logg inn som administrator.']);
+    }
+    $key = app_supabase_service_key();
+    if ($key === '') {
+        app_json_response(503, ['error' => 'Administrator-API er ikke konfigurert.']);
+    }
+    $identity = app_http_request('GET', app_supabase_url() . '/auth/v1/user', [
+        'apikey: ' . $key,
+        'Authorization: Bearer ' . $matches[1],
+    ]);
+    $user = isset($identity['json']) ? $identity['json'] : null;
+    if (!app_is_success($identity['status']) || !is_array($user) || empty($user['id']) || empty($user['email']) || empty($user['email_confirmed_at']) || !empty($user['is_anonymous'])) {
+        app_json_response(401, ['error' => 'Innloggingen kunne ikke bekreftes.']);
+    }
+    $response = app_supabase_rest_request('GET', 'admin_users', ['select' => 'email']);
+    if (!app_is_success($response['status']) || !isset($response['json']) || !is_array($response['json'])) {
+        app_json_response(503, ['error' => 'Administratortilgang kunne ikke kontrolleres.']);
+    }
+    foreach ($response['json'] as $row) {
+        if (isset($row['email']) && strtolower(trim($row['email'])) === strtolower(trim($user['email']))) {
+            return $user;
+        }
+    }
+    app_json_response(403, ['error' => 'Du har ikke administratortilgang.']);
+}

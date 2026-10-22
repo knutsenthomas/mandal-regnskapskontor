@@ -30,10 +30,8 @@ export const AuthProvider = ({ children }) => {
       return { isAdmin: false, error };
     }
 
-    // Hvis data er tom, betyr det sannsynligvis at RLS (Row Level Security) blokkerer lesing.
-    // I dette tilfellet stoler vi på at Supabase Auth har autentisert brukeren, for å unngå at alle blir låst ute.
     const isAdmin = Array.isArray(data)
-      && (data.length === 0 || data.some((row) => normalizeEmail(row?.email) === normalizedEmail));
+      && data.some((row) => normalizeEmail(row?.email) === normalizedEmail);
 
     return { isAdmin, error: null };
   };

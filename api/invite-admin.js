@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from './_admin-auth.js';
 
 // NOTE: You MUST add SUPABASE_SERVICE_ROLE_KEY to your Vercel Environment Variables.
 // This key is found in Supabase Dashboard > Settings > API > service_role (secret).
@@ -9,28 +9,17 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { email, full_name, phone } = req.body;
+    const authorization = await requireAdmin(req, res);
+    if (!authorization) return;
+    const supabase = authorization.client;
+
+    const { email, full_name, phone } = req.body || {};
 
     if (!email) {
         return res.status(400).json({ error: 'Email is required' });
     }
 
     // 2. Initialize Supabase Admin
-    const supabaseUrl = 'https://ovbqtaxwwxflvxdjkeih.supabase.co';
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!serviceRoleKey) {
-        return res.status(500).json({
-            error: 'SUPABASE_SERVICE_ROLE_KEY er ikke konfigurert i Vercel-innstillingene dine. Legg den til for å aktivere invitasjoner.'
-        });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    });
 
     try {
         // 3. Invite user via Supabase Auth
@@ -41,7 +30,7 @@ export default async function handler(req, res) {
                 phone: phone || ''
             },
             // Redirect back to the set-password page
-            redirectTo: `${req.headers.origin || 'https://mandal-regnskapskontor.vercel.app'}/set-password`
+            redirectTo: 'https://mandalregnskapskontor.no/set-password'
         });
 
         if (inviteError) {

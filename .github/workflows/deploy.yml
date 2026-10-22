@@ -1,9 +1,9 @@
 name: Deploy to One.com
 
 on:
-  push:
-    branches:
-      - main # Change this if your main branch has a different name, e.g., 'master'
+  # The live site deploys through Vercel. Do not upload the source repository
+  # automatically to the retired one.com web-hosting setup.
+  workflow_dispatch:
 
 jobs:
   deploy:

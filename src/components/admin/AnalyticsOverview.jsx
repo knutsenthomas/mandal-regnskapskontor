@@ -1,3 +1,4 @@
+import { adminHeaders } from '@/lib/admin-api';
 import React, { useEffect, useState } from 'react';
 import { Activity, RefreshCw, AlertCircle, Users, Globe, Layout, MousePointer2, Smartphone, Monitor } from 'lucide-react';
 
@@ -47,7 +48,7 @@ const AnalyticsOverview = () => {
       try {
         const response = await fetch('/api/ga4-overview', {
           method: 'GET',
-          headers: { Accept: 'application/json' },
+          headers: { ...(await adminHeaders()), Accept: 'application/json' },
         });
 
         const json = await response.json().catch(() => ({}));

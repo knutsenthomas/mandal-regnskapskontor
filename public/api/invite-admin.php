@@ -3,6 +3,7 @@
 require __DIR__ . '/_bootstrap.php';
 
 app_require_method('POST');
+app_require_admin();
 
 $payload = app_json_input();
 $email = strtolower(app_string(isset($payload['email']) ? $payload['email'] : ''));
