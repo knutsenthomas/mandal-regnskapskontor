@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter as Router, useLocation } from 'react-router-dom';
-import ReactGA from 'react-ga4';
 import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -20,79 +19,27 @@ const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import CookieConsent from '@/components/CookieConsent';
 
 import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@vercel/analytics/react';
 
-// Unified Component to handle Google Analytics 4 initialization and route tracking based on consent
+// Optional measurements load only after the first-party consent choice.
 const GoogleAnalytics = () => {
-  const location = useLocation();
-  const { cookiePreferences, gaId, cookieConsent } = useSite();
-  const [isInitialized, setIsInitialized] = React.useState(false);
-
-  // 1. Initialize GA immediately with DEFAULT consent (denied) if gaId is present
+  const { pathname } = useLocation();
+  const { gaId } = useSite();
+  const [allowed, setAllowed] = React.useState(() => window.SitePrivacy?.allows('analytics') === true);
   useEffect(() => {
-    const measurementId = String(gaId).trim();
-    if (measurementId && measurementId !== 'null' && measurementId !== '' && !isInitialized) {
-      try {
-        // Set default consent state before initializing
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { window.dataLayer.push(arguments); }
-
-        // Only set default if we haven't set consent yet
-        if (cookieConsent === null) {
-          gtag('consent', 'default', {
-            'analytics_storage': 'denied',
-            'ad_storage': 'denied',
-            'ad_user_data': 'denied',
-            'ad_personalization': 'denied',
-          });
-        }
-
-        ReactGA.initialize(measurementId);
-        setIsInitialized(true);
-        console.log('Google Analytics 4 initialisert med Consent Mode:', measurementId);
-      } catch (error) {
-        console.error('GA4 initialiseringsfeil:', error);
-      }
-    }
-  }, [gaId, isInitialized, cookieConsent]);
-
-  // 2. Update Consent Mode when preferences change
+    const sync = () => setAllowed(window.SitePrivacy?.allows('analytics') === true);
+    window.addEventListener('siteprivacychange', sync);
+    sync();
+    return () => window.removeEventListener('siteprivacychange', sync);
+  }, []);
+  useEffect(() => { window.SitePrivacy?.setMeasurementId(gaId); }, [gaId]);
   useEffect(() => {
-    if (isInitialized) {
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { window.dataLayer.push(arguments); }
-
-      const hasAnalyticsConsent = cookiePreferences?.statistics === true;
-      const hasMarketingConsent = cookiePreferences?.marketing === true;
-
-      gtag('consent', 'update', {
-        'analytics_storage': hasAnalyticsConsent ? 'granted' : 'denied',
-        'ad_storage': hasMarketingConsent ? 'granted' : 'denied',
-        'ad_user_data': hasMarketingConsent ? 'granted' : 'denied',
-        'ad_personalization': hasMarketingConsent ? 'granted' : 'denied',
-      });
-      console.log('GA4 Consent oppdatert:', { analytics: hasAnalyticsConsent, marketing: hasMarketingConsent });
-    }
-  }, [cookiePreferences, isInitialized]);
-
-  // 3. Track page views on route change (GA4 handles the anonymization automatically based on consent state)
-  useEffect(() => {
-    if (isInitialized) {
-      try {
-        ReactGA.send({
-          hitType: "pageview",
-          page: location.pathname + location.search
-        });
-      } catch (error) {
-        console.error('GA4 trackingfeil:', error);
-      }
-    }
-  }, [isInitialized, location]);
-
-  return null;
+    window.SitePrivacy?.pageView();
+    setAllowed(window.SitePrivacy?.allows('analytics') === true);
+  }, [pathname]);
+  return allowed ? <Analytics beforeSend={event => window.SitePrivacy?.cleanEvent(event) ?? null} /> : null;
 };
 
 const GlobalLoader = ({ children }) => {
@@ -174,9 +121,7 @@ function App() {
                     </Routes>
                   </React.Suspense>
                 </main>
-                <CookieConsent />
                 <Toaster />
-                <Analytics />
               </Router>
             </GlobalLoader>
           </ContentProvider>
