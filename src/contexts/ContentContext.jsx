@@ -1,3 +1,4 @@
+import { memoryCache } from '@/lib/memoryCache';
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 
@@ -29,7 +30,7 @@ const hasValue = (value) => (
 export function ContentProvider({ children }) {
   const getInitialBlocks = () => {
     try {
-      const cached = localStorage.getItem('cached_content_blocks');
+      const cached = memoryCache.getItem('cached_content_blocks');
       if (cached) return JSON.parse(cached);
     } catch (e) { }
     return {};
@@ -37,7 +38,7 @@ export function ContentProvider({ children }) {
 
   const getInitialDashboard = () => {
     try {
-      const cached = localStorage.getItem('cached_dashboard_content');
+      const cached = memoryCache.getItem('cached_dashboard_content');
       if (cached) return JSON.parse(cached);
     } catch (e) { }
     return null;
@@ -45,7 +46,7 @@ export function ContentProvider({ children }) {
 
   const [blocks, setBlocks] = useState(getInitialBlocks);
   const [dashboardContent, setDashboardContent] = useState(getInitialDashboard);
-  const [loading, setLoading] = useState(!(localStorage.getItem('cached_content_blocks') && localStorage.getItem('cached_dashboard_content')));
+  const [loading, setLoading] = useState(!(memoryCache.getItem('cached_content_blocks') && memoryCache.getItem('cached_dashboard_content')));
 
   // FIKS: Fjernet all hardkodet tekst. Nå stoler vi kun på databasen (content og content_blocks)
   const getDashboardFallback = useCallback((slug) => {
@@ -103,15 +104,15 @@ export function ContentProvider({ children }) {
           mapped[block.slug] = block;
         });
         setBlocks(mapped);
-        try { localStorage.setItem('cached_content_blocks', JSON.stringify(mapped)); } catch (e) { }
+        try { memoryCache.setItem('cached_content_blocks', JSON.stringify(mapped)); } catch (e) { }
       }
 
       if (!contentResult.error && contentResult.data) {
         setDashboardContent(contentResult.data);
-        try { localStorage.setItem('cached_dashboard_content', JSON.stringify(contentResult.data)); } catch (e) { }
+        try { memoryCache.setItem('cached_dashboard_content', JSON.stringify(contentResult.data)); } catch (e) { }
       } else {
         setDashboardContent(null);
-        try { localStorage.removeItem('cached_dashboard_content'); } catch (e) { }
+        try { memoryCache.removeItem('cached_dashboard_content'); } catch (e) { }
       }
     } catch (err) {
       console.error("Error fetching content blocks:", err);
@@ -135,7 +136,7 @@ export function ContentProvider({ children }) {
 
   useEffect(() => {
     let isMounted = true;
-    const hasCache = !!(localStorage.getItem('cached_content_blocks') && localStorage.getItem('cached_dashboard_content'));
+    const hasCache = !!(memoryCache.getItem('cached_content_blocks') && memoryCache.getItem('cached_dashboard_content'));
     fetchBlocks(hasCache).then(() => {
       if (!isMounted) return;
       setLoading(false); // Failsafe

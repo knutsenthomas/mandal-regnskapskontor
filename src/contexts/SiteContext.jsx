@@ -1,3 +1,4 @@
+import { memoryCache } from '@/lib/memoryCache';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { applyThemeColor } from '@/lib/themeUtils';
@@ -11,7 +12,7 @@ export const useSite = () => {
 export const SiteProvider = ({ children }) => {
     const getInitialSiteData = () => {
         try {
-            const cached = localStorage.getItem('cached_site_data');
+            const cached = memoryCache.getItem('cached_site_data');
             if (cached) return JSON.parse(cached);
         } catch (e) { }
         return {
@@ -31,7 +32,7 @@ export const SiteProvider = ({ children }) => {
     };
 
     const [siteData, setSiteData] = useState(getInitialSiteData);
-    const [loading, setLoading] = useState(!localStorage.getItem('cached_site_data'));
+    const [loading, setLoading] = useState(!memoryCache.getItem('cached_site_data'));
     const [cookieConsent, setCookieConsent] = useState(null); // null = not set, 'all', 'partial', 'none'
     const [cookiePreferences, setCookiePreferences] = useState({
         necessary: true,
@@ -96,7 +97,7 @@ export const SiteProvider = ({ children }) => {
 
             setSiteData(newSiteData);
             try {
-                localStorage.setItem('cached_site_data', JSON.stringify(newSiteData));
+                memoryCache.setItem('cached_site_data', JSON.stringify(newSiteData));
             } catch (e) {
                 console.error("Storage error:", e);
             }

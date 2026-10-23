@@ -1,3 +1,4 @@
+import PrivacyStorageInfo from '@/components/PrivacyStorageInfo';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -112,6 +113,7 @@ const PrivacyPage = () => {
                                         <p key={i} className="mb-6">{p}</p>
                                     ))
                                 )}
+                                <PrivacyStorageInfo />
                             </div>
                         </motion.div>
 

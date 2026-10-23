@@ -1,3 +1,4 @@
+import { memoryCache } from '@/lib/memoryCache';
 import React, { useState, useEffect } from 'react';
 import { Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -107,7 +108,7 @@ const FinancialCalendar = () => {
             const cacheWindow = getSemiAnnualCacheWindow();
 
             try {
-                const cachedRaw = window.localStorage.getItem(CALENDAR_SYNC_CACHE_KEY);
+                const cachedRaw = memoryCache.getItem(CALENDAR_SYNC_CACHE_KEY);
 
                 if (cachedRaw) {
                     const cached = JSON.parse(cachedRaw);
@@ -251,7 +252,7 @@ const FinancialCalendar = () => {
                 }
 
                 try {
-                    window.localStorage.setItem(
+                    memoryCache.setItem(
                         CALENDAR_SYNC_CACHE_KEY,
                         JSON.stringify({
                             window: cacheWindow,
